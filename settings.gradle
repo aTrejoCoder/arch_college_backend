@@ -1,3 +1,4 @@
 rootProject.name = 'arch_college_backend'
 
+include 'admin-service'
 
