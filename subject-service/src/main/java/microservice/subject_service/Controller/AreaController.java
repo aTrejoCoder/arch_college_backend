@@ -31,7 +31,10 @@ public class AreaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound(areaResult.getErrorMessage()));
         }
 
-        return ResponseEntity.ok(ResponseWrapper.ok(areaResult.getData(), "Area With ID" + areaId + " successfully fetched"));
+        return ResponseEntity.ok(ResponseWrapper.buildResponse(
+                ResponseWrapper.StatusType.FOUND, "Area", "ID", areaId.toString(), areaResult.getData()
+
+        ));
     }
 
     @GetMapping("/{name}")

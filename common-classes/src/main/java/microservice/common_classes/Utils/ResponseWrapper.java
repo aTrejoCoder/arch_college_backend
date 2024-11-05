@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 
 import java.time.LocalDateTime;
 
@@ -35,46 +34,40 @@ public class ResponseWrapper<T> {
     @Schema(description = "Timestamp of the response", example = "2024-09-15T10:30:00")
     private LocalDateTime timestamp;
 
-
-    public static <T> ResponseWrapper<T> ok(T data, String message) {
-        return new ResponseWrapper<>(
-                true,
-                data,
-                message,
-                HttpStatus.OK.value(),
-                LocalDateTime.now()
-        );
+    public enum StatusType {
+        CREATED, UPDATED, DELETED, FOUND, NOT_FOUND, CONFLICT, BAD_REQUEST, ERROR;
     }
 
-    public static <T> ResponseWrapper<T> error(String message, int code) {
-        return new ResponseWrapper<>(
-                false,
-                null,
-                message,
-                code,
-                LocalDateTime.now()
-        );
+    private static String getDefaultMessage(StatusType type, String entity, String parameter, String parameterValue) {
+        return switch (type) {
+            case FOUND -> entity + " with " + parameter + " " + parameterValue + " successfully fetched";
+            case NOT_FOUND -> entity + " with " + parameter + " " + parameterValue + " not found";
+            case UPDATED -> entity + " successfully updated";
+            case CREATED -> entity + " successfully created";
+            case DELETED -> entity + " successfully deleted";
+            case CONFLICT -> "Conflict occurred for " + entity;
+            case BAD_REQUEST -> "Bad request for " + entity;
+            case ERROR -> "Error processing " + entity;
+        };
     }
 
-    public static <T> ResponseWrapper<T> notFound(String message) {
-        return new ResponseWrapper<>(
-                false,
-                null,
-                message,
-                HttpStatus.NOT_FOUND.value(),
-                LocalDateTime.now()
-        );
+    public static <T> ResponseWrapper<T> buildResponse(boolean success, T data, String message, HttpStatus status) {
+        return new ResponseWrapper<>(success, data, message, status.value(), LocalDateTime.now());
     }
 
-    public static <T> ResponseWrapper<T> badRequest(String message) {
-        return new ResponseWrapper<>(
-                false,
-                null,
-                message,
-                HttpStatus.BAD_REQUEST.value(),
-                LocalDateTime.now()
-        );
-    }
+    public static <T> ResponseWrapper<T> buildResponse(StatusType type, String entity, String parameter, String parameterValue, T data) {
+        HttpStatus status = switch (type) {
+            case CREATED -> HttpStatus.CREATED;
+            case UPDATED, DELETED, FOUND -> HttpStatus.OK;
+            case NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case CONFLICT -> HttpStatus.CONFLICT;
+            case BAD_REQUEST -> HttpStatus.BAD_REQUEST;
+            case ERROR -> HttpStatus.INTERNAL_SERVER_ERROR;
+        };
 
+        String message = getDefaultMessage(type, entity, parameter, parameterValue);
+        boolean success = status.is2xxSuccessful();
+
+        return new ResponseWrapper<>(success, data, message, status.value(), LocalDateTime.now());
+    }
 }
-
