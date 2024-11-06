@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ElectiveSubjectDTO {
-    @JsonProperty("elective_subject_id")
-    private Long electiveSubjectId;
+    @JsonProperty("id")
+    private Long id;
 
     @JsonProperty("name")
     private String name;

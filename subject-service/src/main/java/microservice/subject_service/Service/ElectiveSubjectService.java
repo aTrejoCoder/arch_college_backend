@@ -7,11 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ElectiveSubjectService {
-    Result<ElectiveSubjectDTO> getById(Long subjectId);
-    Result<ElectiveSubjectDTO> getByName(String name);
-    Page<ElectiveSubjectDTO> getByProfessionalLineId(Long professionalLineId, Pageable pageable);
-    Page<ElectiveSubjectDTO> getByAreaId(Long subjectId, Pageable pageable);
-    Page<ElectiveSubjectDTO> getAll(Pageable pageable);
+    Result<ElectiveSubjectDTO> getSubjectById(Long subjectId);
+    Result<ElectiveSubjectDTO> getSubjectByName(String name);
+    Page<ElectiveSubjectDTO> getSubjectByProfessionalLineId(Long professionalLineId, Pageable pageable);
+    Page<ElectiveSubjectDTO> getSubjectByAreaId(Long subjectId, Pageable pageable);
+    Page<ElectiveSubjectDTO> getSubjectAll(Pageable pageable);
 
     void createElectiveSubject(ElectiveSubjectInsertDTO electiveSubjectInsertDTO);
     void updateElectiveSubject(ElectiveSubjectInsertDTO electiveSubjectInsertDTO, Long subjectId);

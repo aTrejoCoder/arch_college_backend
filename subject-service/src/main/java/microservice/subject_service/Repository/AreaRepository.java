@@ -13,7 +13,7 @@ public interface AreaRepository extends JpaRepository<Area, Long> {
     @Query("SELECT a FROM Area a " +
             "LEFT JOIN FETCH a.ordinarySubjects os " +
             "LEFT JOIN FETCH a.electiveSubjects es " +
-            "WHERE a.areaId = :areaId")
-    Optional<Area> findByIdWithSubjects(Long areaId, Pageable pageable);
+            "WHERE a.id = :areaId")
+    Page<Area> findByIdWithSubjects(Long areaId, Pageable pageable);
 
 }

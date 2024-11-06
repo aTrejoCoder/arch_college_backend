@@ -7,11 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface OrdinarySubjectService {
-    Result<OrdinarySubjectDTO> getById(Long areaId);
-    Result<OrdinarySubjectDTO> getByName(String name);
-    Page<OrdinarySubjectDTO> getBySemester(int semester, Pageable pageable);
-    Page<OrdinarySubjectDTO> getsById(Long areaId, Pageable pageable);
+    Result<OrdinarySubjectDTO> getSubjectById(Long areaId);
+    Result<OrdinarySubjectDTO> getSubjectByName(String name);
+    Page<OrdinarySubjectDTO> getSubjectBySemester(int semester, Pageable pageable);
     Page<OrdinarySubjectDTO> getAllSubjects(Pageable pageable);
+    Page<OrdinarySubjectDTO> getSubjectByAreaId(Long areaId, Pageable pageable);
 
     void createOrdinarySubject(OrdinarySubjectInsertDTO ordinarySubjectInsertDTO);
     void updateOrdinarySubject(OrdinarySubjectInsertDTO ordinarySubjectInsertDTO, Long subjectId);

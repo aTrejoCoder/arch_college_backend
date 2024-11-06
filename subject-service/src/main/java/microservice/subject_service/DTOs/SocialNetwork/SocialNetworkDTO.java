@@ -9,8 +9,8 @@ import microservice.subject_service.Model.SocialNetworkName;
 @Data
 @NoArgsConstructor
 public class SocialNetworkDTO {
-    @JsonProperty("social_network_id")
-    private Long socialNetworkId;
+    @JsonProperty("id")
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     private SocialNetworkName name;

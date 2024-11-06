@@ -1,6 +1,5 @@
 package microservice.subject_service.Model;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,8 +16,7 @@ import java.util.List;
 public class ProfessionalLine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "professional_line_id")
-    private Long professionalLineId;
+    private Long id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -28,6 +26,10 @@ public class ProfessionalLine {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "area_id")
+    private Area area;
 
     @OneToMany(mappedBy = "professionalLine", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ElectiveSubject> subjects;

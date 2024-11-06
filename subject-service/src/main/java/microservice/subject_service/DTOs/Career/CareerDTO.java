@@ -14,8 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CareerDTO {
-    @JsonProperty("career_id")
-    private Long careerId;
+    @JsonProperty("id")
+    private Long id;
 
     @JsonProperty("key")
     private String key;
@@ -36,11 +36,5 @@ public class CareerDTO {
     private int totalCredits;
 
     @JsonProperty("career_director_id")
-    private Long CareerDirectorId;
-
-    private List<SocialNetwork> socialNetworks;
-
-    private List<OrdinarySubject> ordinarySubjects;
-
-    private List<ElectiveSubject> electiveSubjects;
+    private Long careerDirectorId;
 }

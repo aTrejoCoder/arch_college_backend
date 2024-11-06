@@ -6,10 +6,12 @@ import microservice.common_classes.Utils.Result;
 import microservice.subject_service.DTOs.ProfessionalLine.ProfessionalLineDTO;
 import microservice.subject_service.DTOs.ProfessionalLine.ProfessionalLineInsertDTO;
 import microservice.subject_service.Mappers.ProfessionalLineMapper;
+import microservice.subject_service.Model.Area;
 import microservice.subject_service.Model.ProfessionalLine;
+import microservice.subject_service.Repository.AreaRepository;
 import microservice.subject_service.Repository.ProfessionalLineRepository;
 import microservice.subject_service.Service.ProfessionalLineService;
-import org.jvnet.hk2.annotations.Service;
+import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -18,12 +20,16 @@ import java.util.Optional;
 @Service
 public class ProfessionalLineServiceImpl implements ProfessionalLineService {
     private final ProfessionalLineMapper professionalLineMapper;
+    private final AreaRepository areaRepository;
     private final ProfessionalLineRepository professionalLineRepository;
+
 
     @Autowired
     public ProfessionalLineServiceImpl(ProfessionalLineMapper professionalLineMapper,
+                                       AreaRepository areaRepository,
                                        ProfessionalLineRepository professionalLineRepository) {
         this.professionalLineMapper = professionalLineMapper;
+        this.areaRepository = areaRepository;
         this.professionalLineRepository = professionalLineRepository;
     }
 
@@ -60,6 +66,9 @@ public class ProfessionalLineServiceImpl implements ProfessionalLineService {
     @Transactional
     public void createProfessionalLine(ProfessionalLineInsertDTO professionalLineInsertDTO) {
         ProfessionalLine professionalLine = professionalLineMapper.insertDtoToEntity(professionalLineInsertDTO);
+
+        getAndSetArea(professionalLine, professionalLineInsertDTO.getAreaId());
+
         professionalLineRepository.save(professionalLine);
     }
 
@@ -81,5 +90,11 @@ public class ProfessionalLineServiceImpl implements ProfessionalLineService {
         }
 
         professionalLineRepository.deleteById(professionalLineId);
+    }
+
+    private void getAndSetArea(ProfessionalLine professionalLine, Long areaId) {
+        Area area = areaRepository.findById(areaId)
+                .orElseThrow (() -> new RuntimeException("Area is not available"));
+        professionalLine.setArea(area);
     }
 }

@@ -1,12 +1,12 @@
 package microservice.subject_service.Repository;
 
 import microservice.subject_service.Model.ElectiveSubject;
-import microservice.subject_service.Model.OrdinarySubject;
-import microservice.subject_service.Model.ProfessionalLine;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ElectiveSubjectRepository extends JpaRepository<ElectiveSubject, Long> {
@@ -14,5 +14,7 @@ public interface ElectiveSubjectRepository extends JpaRepository<ElectiveSubject
     Page<ElectiveSubject> findByProfessionalLine(Long professionalLineId, Pageable pageable);
     Page<ElectiveSubject> findByAreaId(Long areaId, Pageable pageable);
 
-    Page<ElectiveSubject> findByAll(Pageable pageable);
+    @Query("SELECT COUNT(es) FROM ElectiveSubject es WHERE es.professionalLine.id = ?1")
+    int countByProfessionalLineId(Long professionalLineId);
+    Page<ElectiveSubject> findAll(Pageable pageable);
 }

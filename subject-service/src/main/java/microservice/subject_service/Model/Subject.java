@@ -1,11 +1,16 @@
 package microservice.subject_service.Model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@MappedSuperclass
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Subject {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "career_id", nullable = false)
@@ -23,10 +28,4 @@ public class Subject {
 
     @Column(name = "subject_program_url")
     private String subjectProgramUrl;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 }

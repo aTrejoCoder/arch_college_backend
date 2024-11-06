@@ -13,5 +13,6 @@ public interface OrdinarySubjectRepository extends JpaRepository<OrdinarySubject
     Page<OrdinarySubject> findBySemester(int semester, Pageable pageable);
     Page<OrdinarySubject> findByAreaId(Long areaId, Pageable pageable);
 
-    Page<OrdinarySubject> findByAll(Pageable pageable);
+    List<OrdinarySubject> findBySemester(int semester);
+    Page<OrdinarySubject> findAll(Pageable pageable);
 }

@@ -13,15 +13,10 @@ import java.time.LocalDateTime;
 public class SocialNetwork {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "social_network_id")
-    private Long socialNetworkId;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     private SocialNetworkName name;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "career_id", nullable = false)
-    private Career career;
 
     @Column(name = "url", nullable = false)
     private String URL;

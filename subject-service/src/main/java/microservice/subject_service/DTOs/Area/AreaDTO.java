@@ -13,8 +13,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class  AreaDTO {
-    @JsonProperty("area_id")
-    private Long areaId;
+    @JsonProperty("id")
+    private Long id;
 
     @JsonProperty("name")
     private String name;

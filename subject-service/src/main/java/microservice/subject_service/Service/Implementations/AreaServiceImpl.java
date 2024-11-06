@@ -5,37 +5,43 @@ import jakarta.transaction.Transactional;
 import microservice.common_classes.Utils.Result;
 import microservice.subject_service.DTOs.Area.AreaDTO;
 import microservice.subject_service.DTOs.Area.AreaInsertDTO;
+import microservice.subject_service.DTOs.Area.AreaWithRelationsDTO;
+import microservice.subject_service.DTOs.Subject.ElectiveSubjectDTO;
+import microservice.subject_service.DTOs.Subject.OrdinarySubjectDTO;
 import microservice.subject_service.Mappers.AreaMapper;
 import microservice.subject_service.Model.Area;
 
 import microservice.subject_service.Repository.AreaRepository;
-import microservice.subject_service.Repository.ElectiveSubjectRepository;
-import microservice.subject_service.Repository.OrdinarySubjectRepository;
 import microservice.subject_service.Service.AreaService;
-import org.jvnet.hk2.annotations.Service;
+import microservice.subject_service.Service.ElectiveSubjectService;
+import microservice.subject_service.Service.OrdinarySubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class AreaServiceImpl implements AreaService {
-    public final AreaRepository areaRepository;
-    public final AreaMapper areaMapper;
-    public final OrdinarySubjectRepository ordinarySubjectRepository;
-    public final ElectiveSubjectRepository electiveSubjectRepository;
+    private final AreaRepository areaRepository;
+    private final AreaMapper areaMapper;
+    private final OrdinarySubjectService ordinarySubjectService;
+    private final ElectiveSubjectService electiveSubjectService;
 
     @Autowired
     public AreaServiceImpl(AreaRepository areaRepository,
                            AreaMapper areaMapper,
-                           OrdinarySubjectRepository ordinarySubjectRepository,
-                           ElectiveSubjectRepository electiveSubjectRepository,
-                           ElectiveSubjectRepository electiveSubjectRepository1) {
+                           OrdinarySubjectService ordinarySubjectService,
+                           ElectiveSubjectService electiveSubjectService) {
         this.areaRepository = areaRepository;
         this.areaMapper = areaMapper;
-        this.ordinarySubjectRepository = ordinarySubjectRepository;
-        this.electiveSubjectRepository = electiveSubjectRepository1;
+        this.ordinarySubjectService = ordinarySubjectService;
+        this.electiveSubjectService = electiveSubjectService;
     }
 
     @Override
@@ -46,13 +52,12 @@ public class AreaServiceImpl implements AreaService {
     }
 
     @Override
-    public Result<AreaDTO> getAreaByIdWithSubjects(Long areaId, Pageable pageable) {
-        Optional<Area> optionalArea = areaRepository.findById(areaId);
-        if (optionalArea.isEmpty()) {
-             return Result.error("Area with ID " + areaId + " not found");
-        }
-        Area area = optionalArea.get();
-        return Result.success(areaMapper.entityToDTO(area));
+    public AreaWithRelationsDTO getAreaByIdWithSubjects(Long areaId, Pageable pageable) {
+        Area area = areaRepository.findById(areaId)
+                .orElseThrow(() -> new EntityNotFoundException("Area with ID " + areaId + " not found"));
+
+        AreaWithRelationsDTO areaWithRelationsDTO = areaMapper.entityToDTOWithRelations(area);
+        return fetchSubjectsAsync(areaWithRelationsDTO, areaId, pageable).join();
     }
 
     @Override
@@ -88,9 +93,24 @@ public class AreaServiceImpl implements AreaService {
     @Override
     @Transactional
     public void deleteArea(Long areaId) {
-       if (areaRepository.existsById(areaId)) {
+       if (!areaRepository.existsById(areaId)) {
            throw new EntityNotFoundException("Area with ID " + areaId + " not found");
        }
        areaRepository.deleteById(areaId);
+    }
+
+    @Async("TaskExecutor")
+    private CompletableFuture<AreaWithRelationsDTO> fetchSubjectsAsync(AreaWithRelationsDTO areaWithRelationsDTO, Long areaId, Pageable pageable) {
+        CompletableFuture<Page<OrdinarySubjectDTO>> ordinarySubjectDTOS =
+                CompletableFuture.supplyAsync(() -> ordinarySubjectService.getSubjectByAreaId(areaId, pageable));
+        CompletableFuture<Page<ElectiveSubjectDTO>> electiveSubjectDTOS =
+                CompletableFuture.supplyAsync(() -> electiveSubjectService.getSubjectByAreaId(areaId, pageable));
+
+        return CompletableFuture.allOf(ordinarySubjectDTOS, electiveSubjectDTOS)
+                .thenApply(v -> {
+                    areaWithRelationsDTO.setOrdinarySubjects(ordinarySubjectDTOS.join());
+                    areaWithRelationsDTO.setElectiveSubjects(electiveSubjectDTOS.join());
+                    return areaWithRelationsDTO;
+                });
     }
 }

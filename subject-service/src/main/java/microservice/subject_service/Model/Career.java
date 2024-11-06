@@ -14,10 +14,10 @@ import java.util.List;
 @Entity
 @Table(name = "career")
 public class Career {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "career_id")
-    private Long careerId;
+    private Long id;
 
     @Column(name = "key", nullable = false)
     private String key;
@@ -25,7 +25,7 @@ public class Career {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
@@ -44,14 +44,21 @@ public class Career {
     private int totalCredits;
 
     @Column(name = "career_director_id", nullable = false)
-    private Long CareerDirectorId;
-
-    @OneToMany(mappedBy = "career", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<SocialNetwork> socialNetworks;
+    private Long careerDirectorId;
 
     @OneToMany(mappedBy = "career", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OrdinarySubject> ordinarySubjects;
 
     @OneToMany(mappedBy = "career", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ElectiveSubject> electiveSubjects;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

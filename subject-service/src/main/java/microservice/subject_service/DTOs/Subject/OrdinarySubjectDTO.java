@@ -9,14 +9,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrdinarySubjectDTO {
-    @JsonProperty("ordinary_subject_id")
-    private Long ordinarySubjectId;
+    @JsonProperty("id")
+    private Long id;
 
     @JsonProperty("name")
     private String name;
 
     @JsonProperty("area_id")
     private Long areaId;
+
+    @JsonProperty("number")
+    private int number;
 
     @JsonProperty("semester_number")
     private int semesterNumber;

@@ -15,8 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class AreaWithRelationsDTO {
-    @JsonProperty("area_id")
-    private Long areaId;
+    private Long id;
 
     @JsonProperty("name")
     private String name;
@@ -30,4 +29,11 @@ public class AreaWithRelationsDTO {
     private Page<OrdinarySubjectDTO> ordinarySubjects;
 
     private Page<ElectiveSubjectDTO> electiveSubjects;
+
+
+    public void setRelationships(Page<OrdinarySubjectDTO> ordinarySubjects,
+                                 Page<ElectiveSubjectDTO> electiveSubjects) {
+        this.ordinarySubjects = ordinarySubjects;
+        this.electiveSubjects = electiveSubjects;
+    }
 }

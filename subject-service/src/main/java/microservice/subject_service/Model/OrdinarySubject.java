@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
@@ -13,13 +15,22 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "ordinary_subject")
 public class OrdinarySubject extends Subject {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "professional_line_id", nullable = false)
-    private ProfessionalLine professionalLine;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "number")
+    private int number;
 
     @Column(name = "semester")
     private int semester;
 
     @Column(name = "credits", nullable = false)
     private int credits;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }

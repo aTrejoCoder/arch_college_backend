@@ -1,7 +1,7 @@
 package microservice.subject_service.Service.Implementations;
 
 import microservice.subject_service.Model.Career;
-import org.jvnet.hk2.annotations.Service;
+import org.springframework.stereotype.Service;
 
 @Service
 public class CareerDomainService {

@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface OrdinarySubjectMapper {
 
-    @Mapping(target = "ordinarySubjectId", ignore = true)
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
     OrdinarySubject insertDtoToEntity(OrdinarySubjectInsertDTO ordinarySubjectInsertDTO);

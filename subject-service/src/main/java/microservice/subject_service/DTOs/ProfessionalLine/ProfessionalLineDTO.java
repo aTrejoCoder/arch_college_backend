@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProfessionalLineDTO {
-    @JsonProperty("professional_line_id")
-    private Long professionalLineId;
+    @JsonProperty("id")
+    private Long id;
 
     @JsonProperty("name")
     private String name;

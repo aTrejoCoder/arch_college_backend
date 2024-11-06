@@ -8,7 +8,8 @@ import microservice.subject_service.Mappers.CareerMapper;
 import microservice.subject_service.Model.Career;
 import microservice.subject_service.Repository.CareerRepository;
 import microservice.subject_service.Service.CareerService;
-import org.jvnet.hk2.annotations.Service;
+import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -31,14 +32,14 @@ public class CareerServiceImpl implements CareerService {
     public Result<CareerDTO> getCareerById(Long careerId) {
         Optional<Career> optionalCareer = careerRepository.findById(careerId);
         return optionalCareer.map(career ->  Result.success(careerMapper.entityToDTO(career)))
-                .orElseGet(() -> Result.error("Career with ID" + careerId + " not found"));
+                .orElseGet(() -> Result.error("Career with ID " + careerId + " not found"));
     }
 
     @Override
     public Result<CareerDTO> getCareerByIdWithSubjects(Long careerId) {
         Optional<Career> optionalCareer = careerRepository.findById(careerId);
         if (optionalCareer.isEmpty()) {
-            return  Result.error("Career with ID" + careerId + " not found");
+            return  Result.error("Career with ID " + careerId + " not found");
         }
         Career career = optionalCareer.get();
 
@@ -49,7 +50,7 @@ public class CareerServiceImpl implements CareerService {
     public Result<CareerDTO> getCareerByName(String name) {
         Optional<Career> optionalCareer = careerRepository.findByName(name);
         return optionalCareer.map(career ->  Result.success(careerMapper.entityToDTO(career)))
-                .orElseGet(() -> Result.error("Career with name" + name + " not found"));
+                .orElseGet(() -> Result.error("Career with name " + name + " not found"));
     }
 
     @Override
@@ -68,18 +69,9 @@ public class CareerServiceImpl implements CareerService {
     @Override
     public void updateCareer(CareerInsertDTO careerInsertDTO, Long careerId) {
         Career career = careerRepository.findById(careerId)
-                .orElseThrow(() -> new EntityNotFoundException("Career with ID" + careerId + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Career with ID " + careerId + " not found"));
 
         careerMapper.updateEntity(career, careerInsertDTO);
         careerRepository.save(career);
-    }
-
-    @Override
-    public void deleteCareer(Long careerId) {
-        if (!careerRepository.existsById(careerId)) {
-            throw new EntityNotFoundException("Career with ID" + careerId + " not found");
-        }
-
-        careerRepository.deleteById(careerId);
     }
 }
