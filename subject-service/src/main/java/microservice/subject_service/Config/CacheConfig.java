@@ -16,11 +16,28 @@ public class CacheConfig {
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
-                "studentById",
-                "studentsByAccountNumber",
-                "studentsByLastname",
-                "studentByAccountNumber"
-        );        cacheManager.setCaffeine(Caffeine.newBuilder()
+                "areaByIdCache",
+                "areaWithSubjectsCache",
+                "areaByNameCache",
+                "allAreasCache",
+                "careerByNameCache",
+                "allCareersCache",
+                "electiveSubjectByIdCache",
+                "electiveSubjectByNameCache",
+                "electiveSubjectsByProfessionalLineIdCache",
+                "electiveSubjectsByAreaIdCache",
+                "allElectiveSubjectsCache",
+                "ordinarySubjectByIdCache",
+                "ordinarySubjectsByAreaIdCache",
+                "ordinarySubjectByNameCache",
+                "ordinarySubjectsBySemesterCache",
+                "allOrdinarySubjectsCache",
+                "professionalLineWithSubjectsCache",
+                "professionalLineWithSubjectsCache",
+                "professionalLineByNameCache",
+                "allProfessionalLinesCache"
+                );
+        cacheManager.setCaffeine(Caffeine.newBuilder()
                 .maximumSize(100)
                 .expireAfterAccess(1, TimeUnit.DAYS));
         cacheManager.setAllowNullValues(false);

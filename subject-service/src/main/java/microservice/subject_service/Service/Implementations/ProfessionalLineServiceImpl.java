@@ -11,6 +11,7 @@ import microservice.subject_service.Model.ProfessionalLine;
 import microservice.subject_service.Repository.AreaRepository;
 import microservice.subject_service.Repository.ProfessionalLineRepository;
 import microservice.subject_service.Service.ProfessionalLineService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,6 +35,7 @@ public class ProfessionalLineServiceImpl implements ProfessionalLineService {
     }
 
     @Override
+    @Cacheable(value = "professionalLineByIdCache", key = "#professionalLineId")
     public Result<ProfessionalLineDTO> getProfessionalLineById(Long professionalLineId) {
         Optional<ProfessionalLine> optionalProfessionalLine = professionalLineRepository.findById(professionalLineId);
         return optionalProfessionalLine.map(professionalLine -> Result.success(professionalLineMapper.entityToDTO(professionalLine)))
@@ -41,6 +43,7 @@ public class ProfessionalLineServiceImpl implements ProfessionalLineService {
     }
 
     @Override
+    @Cacheable(value = "professionalLineWithSubjectsCache", key = "#professionalLineId")
     public Result<ProfessionalLineDTO> getProfessionalLineByIdWithSubjects(Long professionalLineId) {
         Optional<ProfessionalLine> optionalProfessionalLine = professionalLineRepository.findById(professionalLineId);
         if (optionalProfessionalLine.isEmpty()) {
@@ -51,6 +54,7 @@ public class ProfessionalLineServiceImpl implements ProfessionalLineService {
     }
 
     @Override
+    @Cacheable(value = "professionalLineByNameCache", key = "#name")
     public Result<ProfessionalLineDTO> getProfessionalLineByName(String name) {
         Optional<ProfessionalLine> optionalProfessionalLine = professionalLineRepository.findByName(name);
         return optionalProfessionalLine.map(professionalLine -> Result.success(professionalLineMapper.entityToDTO(professionalLine)))
@@ -58,10 +62,10 @@ public class ProfessionalLineServiceImpl implements ProfessionalLineService {
     }
 
     @Override
+    @Cacheable(value = "allProfessionalLinesCache")
     public List<ProfessionalLineDTO> getAllProfessionalLines() {
         return professionalLineRepository.findAll().stream().map(professionalLineMapper::entityToDTO).toList();
     }
-
     @Override
     @Transactional
     public void createProfessionalLine(ProfessionalLineInsertDTO professionalLineInsertDTO) {

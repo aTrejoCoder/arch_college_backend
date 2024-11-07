@@ -15,6 +15,8 @@ import microservice.subject_service.Repository.OrdinarySubjectRepository;
 import microservice.subject_service.Service.OrdinarySubjectService;
 
 import java.util.Optional;
+
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,33 +42,37 @@ public class OrdinaryServiceImpl implements OrdinarySubjectService {
     }
 
     @Override
+    @Cacheable(value = "ordinarySubjectByIdCache", key = "#subjectId")
     public Result<OrdinarySubjectDTO> getSubjectById(Long subjectId) {
         Optional<OrdinarySubject> optionalSubject = ordinarySubjectRepository.findById(subjectId);
-        return optionalSubject.map(ordinarySubject -> Result.success(ordinarySubjectMapper.entityToDTO(ordinarySubject)))
-                .orElseGet(() -> Result.error("Subject with ID" + subjectId + " not found"));
+        return optionalSubject.map(subject -> Result.success(ordinarySubjectMapper.entityToDTO(subject)))
+                .orElseGet(() -> Result.error("Subject with ID " + subjectId + " not found"));
     }
 
-
     @Override
+    @Cacheable(value = "ordinarySubjectsByAreaIdCache", key = "#areaId")
     public Page<OrdinarySubjectDTO> getSubjectByAreaId(Long areaId, Pageable pageable) {
-        Page<OrdinarySubject> ordinarySubjects = ordinarySubjectRepository.findByAreaId(areaId, pageable);
-        return ordinarySubjects.map(ordinarySubjectMapper::entityToDTO);
+        Page<OrdinarySubject> subjects = ordinarySubjectRepository.findByAreaId(areaId, pageable);
+        return subjects.map(ordinarySubjectMapper::entityToDTO);
     }
 
     @Override
+    @Cacheable(value = "ordinarySubjectByNameCache", key = "#name")
     public Result<OrdinarySubjectDTO> getSubjectByName(String name) {
         Optional<OrdinarySubject> optionalSubject = ordinarySubjectRepository.findByName(name);
-        return optionalSubject.map(ordinarySubject -> Result.success(ordinarySubjectMapper.entityToDTO(ordinarySubject)))
-                .orElseGet(() -> Result.error("Subject with name" + name + " not found"));
+        return optionalSubject.map(subject -> Result.success(ordinarySubjectMapper.entityToDTO(subject)))
+                .orElseGet(() -> Result.error("Subject with name " + name + " not found"));
     }
 
     @Override
+    @Cacheable(value = "ordinarySubjectsBySemesterCache", key = "#semester")
     public Page<OrdinarySubjectDTO> getSubjectBySemester(int semester, Pageable pageable) {
-        Page<OrdinarySubject> ordinarySubjects = ordinarySubjectRepository.findBySemester(semester, pageable);
-        return ordinarySubjects.map(ordinarySubjectMapper::entityToDTO);
+        Page<OrdinarySubject> subjects = ordinarySubjectRepository.findBySemester(semester, pageable);
+        return subjects.map(ordinarySubjectMapper::entityToDTO);
     }
 
     @Override
+    @Cacheable(value = "allOrdinarySubjectsCache")
     public Page<OrdinarySubjectDTO> getAllSubjects(Pageable pageable) {
         return ordinarySubjectRepository.findAll(pageable).map(ordinarySubjectMapper::entityToDTO);
     }

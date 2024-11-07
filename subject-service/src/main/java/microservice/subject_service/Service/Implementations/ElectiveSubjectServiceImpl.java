@@ -14,11 +14,13 @@ import microservice.subject_service.Repository.CareerRepository;
 import microservice.subject_service.Repository.ElectiveSubjectRepository;
 import microservice.subject_service.Repository.ProfessionalLineRepository;
 import microservice.subject_service.Service.ElectiveSubjectService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -44,32 +46,37 @@ public class ElectiveSubjectServiceImpl implements ElectiveSubjectService {
     }
 
     @Override
+    @Cacheable(value = "electiveSubjectByIdCache", key = "#subjectId")
     public Result<ElectiveSubjectDTO> getSubjectById(Long subjectId) {
         Optional<ElectiveSubject> optionalSubject = electiveSubjectRepository.findById(subjectId);
         return optionalSubject.map(electiveSubject -> Result.success(electiveSubjectMapper.entityToDTO(electiveSubject)))
-                .orElseGet(() -> Result.error("Subject with ID" + subjectId + " not found"));
+                .orElseGet(() -> Result.error("Subject with ID " + subjectId + " not found"));
     }
 
     @Override
+    @Cacheable(value = "electiveSubjectByNameCache", key = "#name")
     public Result<ElectiveSubjectDTO> getSubjectByName(String name) {
         Optional<ElectiveSubject> optionalSubject = electiveSubjectRepository.findByName(name);
         return optionalSubject.map(electiveSubject -> Result.success(electiveSubjectMapper.entityToDTO(electiveSubject)))
-                .orElseGet(() -> Result.error("Subject with name" + name + " not found"));
+                .orElseGet(() -> Result.error("Subject with name " + name + " not found"));
     }
 
     @Override
+    @Cacheable(value = "electiveSubjectsByProfessionalLineIdCache", key = "#professionalLineId")
     public Page<ElectiveSubjectDTO> getSubjectByProfessionalLineId(Long professionalLineId, Pageable pageable) {
         Page<ElectiveSubject> electiveSubjects = electiveSubjectRepository.findByProfessionalLine(professionalLineId, pageable);
         return electiveSubjects.map(electiveSubjectMapper::entityToDTO);
     }
 
     @Override
+    @Cacheable(value = "electiveSubjectsByAreaIdCache", key = "#subjectId")
     public Page<ElectiveSubjectDTO> getSubjectByAreaId(Long subjectId, Pageable pageable) {
         Page<ElectiveSubject> electiveSubjects = electiveSubjectRepository.findByAreaId(subjectId, pageable);
         return electiveSubjects.map(electiveSubjectMapper::entityToDTO);
     }
 
     @Override
+    @Cacheable(value = "allElectiveSubjectsCache")
     public Page<ElectiveSubjectDTO> getSubjectAll(Pageable pageable) {
         return electiveSubjectRepository.findAll(pageable).map(electiveSubjectMapper::entityToDTO);
     }
@@ -114,8 +121,11 @@ public class ElectiveSubjectServiceImpl implements ElectiveSubjectService {
 
     private void handleElectiveSubjectRelationships(ElectiveSubject subject, ElectiveSubjectInsertDTO electiveSubjectInsertDTO) {
         getAndSetCareer(subject, electiveSubjectInsertDTO.getCareerId());
-        getAndSetArea(subject, electiveSubjectInsertDTO.getAreaId());
-        getAndSetProfessionalLine(subject, electiveSubjectInsertDTO.getProfessionalLineId());
+        // Only Architecture have area and professional Line
+        if (Objects.equals(subject.getCareer().getName(), "Architecture")) {
+            getAndSetArea(subject, electiveSubjectInsertDTO.getAreaId());
+            getAndSetProfessionalLine(subject, electiveSubjectInsertDTO.getProfessionalLineId());
+        }
     }
 
     private void getAndSetCareer(ElectiveSubject subject, Long careerId) {

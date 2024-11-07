@@ -16,6 +16,7 @@ import microservice.subject_service.Service.AreaService;
 import microservice.subject_service.Service.ElectiveSubjectService;
 import microservice.subject_service.Service.OrdinarySubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
@@ -45,6 +46,7 @@ public class AreaServiceImpl implements AreaService {
     }
 
     @Override
+    @Cacheable(value = "areaByIdCache", key = "#areaId")
     public Result<AreaDTO> getAreaById(Long areaId) {
         Optional<Area> optionalArea = areaRepository.findById(areaId);
         return optionalArea.map(area -> Result.success(areaMapper.entityToDTO(area)))
@@ -52,6 +54,7 @@ public class AreaServiceImpl implements AreaService {
     }
 
     @Override
+    @Cacheable(value = "areaWithSubjectsCache", key = "#areaId")
     public AreaWithRelationsDTO getAreaByIdWithSubjects(Long areaId, Pageable pageable) {
         Area area = areaRepository.findById(areaId)
                 .orElseThrow(() -> new EntityNotFoundException("Area with ID " + areaId + " not found"));
@@ -61,6 +64,7 @@ public class AreaServiceImpl implements AreaService {
     }
 
     @Override
+    @Cacheable(value = "areaByNameCache", key = "#name")
     public Result<AreaDTO> getAreaByName(String name) {
         Optional<Area> optionalArea = areaRepository.findByName(name);
         return optionalArea.map(area -> Result.success(areaMapper.entityToDTO(area)))
@@ -68,6 +72,7 @@ public class AreaServiceImpl implements AreaService {
     }
 
     @Override
+    @Cacheable(value = "allAreasCache")
     public List<AreaDTO> getAllAreas() {
         List<Area> areas = areaRepository.findAll();
         return areas.stream().map(areaMapper::entityToDTO).toList();

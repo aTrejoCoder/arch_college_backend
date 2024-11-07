@@ -27,7 +27,6 @@ public class ElectiveSubjectInsertDTO {
     @Positive(message = "career_id can't be negative")
     private Long careerId;
 
-
     @JsonProperty("professional_line_id")
     @NotNull(message = "professional_line_id can't be null")
     @Positive(message = "professional_line_id can't be negative")

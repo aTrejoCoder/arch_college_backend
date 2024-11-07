@@ -8,6 +8,7 @@ import microservice.subject_service.Mappers.CareerMapper;
 import microservice.subject_service.Model.Career;
 import microservice.subject_service.Repository.CareerRepository;
 import microservice.subject_service.Service.CareerService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 
@@ -29,17 +30,19 @@ public class CareerServiceImpl implements CareerService {
     }
 
     @Override
+    @Cacheable(value = "careerByIdCache", key = "#careerId")
     public Result<CareerDTO> getCareerById(Long careerId) {
         Optional<Career> optionalCareer = careerRepository.findById(careerId);
-        return optionalCareer.map(career ->  Result.success(careerMapper.entityToDTO(career)))
+        return optionalCareer.map(career -> Result.success(careerMapper.entityToDTO(career)))
                 .orElseGet(() -> Result.error("Career with ID " + careerId + " not found"));
     }
 
     @Override
+    @Cacheable(value = "careerWithSubjectsCache", key = "#careerId")
     public Result<CareerDTO> getCareerByIdWithSubjects(Long careerId) {
         Optional<Career> optionalCareer = careerRepository.findById(careerId);
         if (optionalCareer.isEmpty()) {
-            return  Result.error("Career with ID " + careerId + " not found");
+            return Result.error("Career with ID " + careerId + " not found");
         }
         Career career = optionalCareer.get();
 
@@ -47,17 +50,18 @@ public class CareerServiceImpl implements CareerService {
     }
 
     @Override
+    @Cacheable(value = "careerByNameCache", key = "#name")
     public Result<CareerDTO> getCareerByName(String name) {
         Optional<Career> optionalCareer = careerRepository.findByName(name);
-        return optionalCareer.map(career ->  Result.success(careerMapper.entityToDTO(career)))
+        return optionalCareer.map(career -> Result.success(careerMapper.entityToDTO(career)))
                 .orElseGet(() -> Result.error("Career with name " + name + " not found"));
     }
 
     @Override
+    @Cacheable(value = "allCareersCache")
     public List<CareerDTO> getAllCareers() {
         return careerRepository.findAll().stream().map(careerMapper::entityToDTO).toList();
     }
-
     @Override
     public void createCareer(CareerInsertDTO careerInsertDTO) {
         Career career = careerMapper.insertDtoToEntity(careerInsertDTO);
