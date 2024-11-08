@@ -1,4 +1,4 @@
-package microservice.schedule_service.Models;
+package microservice.schedule_service.Utils;
 
 public enum WEEKDAY {
     MONDAY,

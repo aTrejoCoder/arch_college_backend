@@ -3,6 +3,8 @@ package microservice.schedule_service.Models;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import microservice.schedule_service.Utils.TimeRange;
+import microservice.schedule_service.Utils.WEEKDAY;
 
 import java.time.LocalTime;
 import java.util.List;

@@ -13,8 +13,8 @@ public class OpenApiConfig {
     public OpenAPI studentServiceOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("student Service API")
-                        .description("student Microservice that handles all employee Requests")
+                        .title("schedule Service API")
+                        .description("schedule Microservice that handles all schedule data")
                         .version("1.0")
                         .contact(new Contact()
                                 .name("Codmind")

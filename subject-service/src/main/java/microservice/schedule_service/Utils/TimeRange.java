@@ -1,6 +1,4 @@
-package microservice.schedule_service.Models;
-
-import lombok.Getter;
+package microservice.schedule_service.Utils;
 
 import java.time.LocalTime;
 import java.time.Duration;

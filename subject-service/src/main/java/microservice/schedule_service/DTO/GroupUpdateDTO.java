@@ -7,9 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.schedule_service.Models.Schedule;
-import microservice.schedule_service.Models.TimeRange;
-import microservice.schedule_service.Models.WEEKDAY;
+import microservice.schedule_service.Utils.WEEKDAY;
 
 import java.util.List;
 

@@ -16,10 +16,10 @@ public class CacheConfig {
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
-                "studentById",
-                "studentsByAccountNumber",
-                "studentsByLastname",
-                "studentByAccountNumber"
+                "groupById",
+                "groupCurrentByKey",
+                "currentGroupsBySubjectId",
+                "currentGroupsByTeacherId"
         );        cacheManager.setCaffeine(Caffeine.newBuilder()
                 .maximumSize(100)
                 .expireAfterAccess(1, TimeUnit.DAYS));

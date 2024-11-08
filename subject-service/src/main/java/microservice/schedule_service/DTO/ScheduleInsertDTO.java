@@ -6,7 +6,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.schedule_service.Models.WEEKDAY;
+import microservice.schedule_service.Utils.WEEKDAY;
 
 import java.time.LocalTime;
 

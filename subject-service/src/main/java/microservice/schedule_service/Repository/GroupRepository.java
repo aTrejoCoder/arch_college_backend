@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
-        Optional<Group> findByKey(String key);
+        Optional<Group> findByKeyAndSemester(String key,  String semester);
         List<Group> findByOrdinarySubjectId(Long subjectId);
         List<Group> findByElectiveSubjectId(Long subjectId);
-        List<Group> findByClassroom(String classroom);
-        List<Group> findByTeacherId(Long subjectId);
+        List<Group> findByClassroomAndSemester(String classroom,  String semester);
+        List<Group> findByTeacherIdAndSemester(Long subjectId, String semester);
 
 }
