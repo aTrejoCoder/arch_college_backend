@@ -121,6 +121,16 @@ public class ResponseWrapper<T> {
         );
     }
 
+    public static <T> ResponseWrapper<T> notFound(String msg) {
+        return new ResponseWrapper<>(
+                false,
+                null,
+                msg,
+                HttpStatus.NOT_FOUND.value(),
+                LocalDateTime.now()
+        );
+    }
+
 
     public static <T> ResponseWrapper<T> badRequest(String message) {
         return new ResponseWrapper<>(
