@@ -89,7 +89,7 @@ public class GradeController {
             @ApiResponse(responseCode = "200", description = "Grade successfully deleted"),
             @ApiResponse(responseCode = "404", description = "Grade not found")
     })
-    public ResponseEntity<ResponseWrapper<GradeDTO>> deleteGradeById(@PathVariable Long gradeId) {
+    public ResponseEntity<ResponseWrapper<GradeDTO>> softDeleteGradeById(@PathVariable Long gradeId) {
         gradeService.deleteGradeById(gradeId);
         return ResponseEntity.ok(ResponseWrapper.ok(null, "Grade successfully deleted"));
     }
