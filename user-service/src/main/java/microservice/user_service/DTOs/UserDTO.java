@@ -30,5 +30,5 @@ public class UserDTO {
     @JsonProperty("teacher_id")
     private Integer teacherId;
 
-    private Set<Role> roles;
+    private Set<RoleDTO> roles;
 }
