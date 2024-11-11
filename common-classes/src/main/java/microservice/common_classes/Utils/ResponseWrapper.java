@@ -34,7 +34,7 @@ public class ResponseWrapper<T> {
     @Schema(description = "Timestamp of the response", example = "2024-09-15T10:30:00")
     private LocalDateTime timestamp;
 
-    public static <T> ResponseWrapper<T> found(String entity, String parameter, Object parameterValue, T data) {
+    public static <T> ResponseWrapper<T> found(T data, String entity, String parameter, Object parameterValue) {
         String message = entity + " with " + parameter + " " + parameterValue + " successfully fetched";
         return new ResponseWrapper<>(
                 true,
@@ -45,7 +45,7 @@ public class ResponseWrapper<T> {
         );
     }
 
-    public static <T> ResponseWrapper<T> found(String entity, T data) {
+    public static <T> ResponseWrapper<T> found(T data ,String entity) {
         String message = entity + " successfully fetched";
         return new ResponseWrapper<>(
                 true,
@@ -55,7 +55,6 @@ public class ResponseWrapper<T> {
                 LocalDateTime.now()
         );
     }
-
 
     public static <T> ResponseWrapper<T> ok(T data, String message) {
         return new ResponseWrapper<>(
