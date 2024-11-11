@@ -8,4 +8,4 @@ spring:
     config:
       server:
         native:
-            search-locations: file:${CONFIG_PATH:./arch_college_backend/config-data}
+            search-locations: file:${CONFIG_PATH:}/arch_college_backend/config-data
