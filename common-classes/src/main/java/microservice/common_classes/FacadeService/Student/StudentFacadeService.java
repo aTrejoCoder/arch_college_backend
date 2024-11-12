@@ -6,5 +6,9 @@ import java.util.concurrent.CompletableFuture;
 
 public interface StudentFacadeService {
     CompletableFuture<Boolean> validateExisitingStudent(Long studentId);
+    CompletableFuture<Boolean> validateExisitingStudent(String accountNumber);
     CompletableFuture<StudentDTO> getStudentById(Long studentId);
+    CompletableFuture<StudentDTO> getStudentByAccountNumber(String accountNumber);
+
+
 }

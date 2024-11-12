@@ -68,6 +68,10 @@ public class JWTSecurity {
         return claims.get("userId", Long.class);
     }
 
+    public String getUserName(Claims claims) {
+        return claims.get("username", String.class);
+    }
+
     public Result<Claims> validateToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
@@ -111,6 +115,14 @@ public class JWTSecurity {
             return Result.error(claimsResult.getErrorMessage());
         }
         return Result.success(getUserId(claimsResult.getData()));
+    }
+
+    public Result<String> getUsernameFromToken(HttpServletRequest request) {
+        Result<Claims> claimsResult = getClaimsFromToken(request);
+        if (!claimsResult.isSuccess()) {
+            return Result.error(claimsResult.getErrorMessage());
+        }
+        return Result.success(getUserName(claimsResult.getData()));
     }
 
     public Result<List<String>> getRolesFromToken(HttpServletRequest request) {

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Teacher.TeacherDTO;
 import microservice.common_classes.Utils.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,9 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-@Service
+@Service("teacherFacadeServiceImpl")
 @Slf4j
+@Primary
 public class TeacherFacadeServiceImpl implements TeacherFacadeService {
 
     private final RestTemplate restTemplate;
@@ -29,10 +31,26 @@ public class TeacherFacadeServiceImpl implements TeacherFacadeService {
         this.teacherServiceUrlProvider = teacherServiceUrlProvider;
     }
 
-
     @Override
     public CompletableFuture<Boolean> validateExisitingTeacher(Long teacherId) {
-        String teacherUrl = teacherServiceUrlProvider.get() + "/v1/drugstore/teachers/" + teacherId + "/validate";
+        String teacherUrl = teacherServiceUrlProvider.get() + "/v1/api/teachers/" + teacherId + "/validate";
+
+        return CompletableFuture.supplyAsync(() -> {
+            ResponseEntity<Boolean> responseEntity = restTemplate.exchange(
+                    teacherUrl,
+                    HttpMethod.GET,
+                    null,
+                    Boolean.class
+            );
+
+            return Objects.requireNonNull(responseEntity.getBody());
+        });
+    }
+
+    @Override
+    @Async("taskExecutor")
+    public CompletableFuture<Boolean> validateExisitingTeacher(String accountNumber) {
+        String teacherUrl = teacherServiceUrlProvider.get() + "/v1/api/teachers/accountNumber/" + accountNumber + "/validate";
 
         return CompletableFuture.supplyAsync(() -> {
             ResponseEntity<Boolean> responseEntity = restTemplate.exchange(
@@ -50,7 +68,7 @@ public class TeacherFacadeServiceImpl implements TeacherFacadeService {
     @Override
     @Async("taskExecutor")
     public CompletableFuture<TeacherDTO> getTeacherById(Long teacherId) {
-        String teacherUrl = teacherServiceUrlProvider.get() + "/v1/drugstore/teachers/" + teacherId;
+        String teacherUrl = teacherServiceUrlProvider.get() + "/v1/api/teachers/" + teacherId;
 
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -69,6 +87,33 @@ public class TeacherFacadeServiceImpl implements TeacherFacadeService {
                 return null;
             } catch (Exception e) {
                 log.error("Error fetching teacher with ID {}: {}", teacherId, e.getMessage());
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Override
+    @Async("taskExecutor")
+    public CompletableFuture<TeacherDTO> getTeacherByAccountNumber(String accountNumber) {
+        String teacherUrl = teacherServiceUrlProvider.get() + "/v1/api/teachers/by-accountNumber/" + accountNumber;
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                ResponseEntity<ResponseWrapper<TeacherDTO>> responseEntity = restTemplate.exchange(
+                        teacherUrl,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<ResponseWrapper<TeacherDTO>>() {}
+                );
+
+                log.info("Teacher with account number: {} successfully fetched", accountNumber);
+
+                return Objects.requireNonNull(responseEntity.getBody()).getData();
+            } catch (EntityNotFoundException e) {
+                log.warn("Teacher with account number {} not found: {}", accountNumber, e.getMessage());
+                return null;
+            } catch (Exception e) {
+                log.error("Error fetching teacher with account number {}: {}", accountNumber, e.getMessage());
                 throw new RuntimeException(e);
             }
         });

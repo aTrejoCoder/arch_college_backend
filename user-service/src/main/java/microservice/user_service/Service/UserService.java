@@ -1,13 +1,13 @@
 package microservice.user_service.Service;
 
-import microservice.user_service.DTOs.SignupDTO;
-import microservice.user_service.DTOs.UserDTO;
-import microservice.user_service.Model.Role;
+import microservice.common_classes.DTOs.User.ProfileDTO;
+import microservice.common_classes.DTOs.User.SignupDTO;
+import microservice.common_classes.DTOs.User.UserDTO;
 
-import java.util.List;
 
 public interface UserService {
-    UserDTO createUser(SignupDTO signupDTO, Long studentId, String roleName);
+    UserDTO createUser(SignupDTO signupDTO, String roleName);
     UserDTO getUserById(Long userId);
-
+    void addMemberRelationAsync(String username);
+    ProfileDTO getProfileDataByUsername(String username);
 }

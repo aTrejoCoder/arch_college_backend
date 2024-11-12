@@ -34,6 +34,6 @@ public class TeacherFacadeServiceConfig {
     @Qualifier("teacherFacadeService")
     public TeacherFacadeService TeacherFacadeService(RestTemplate restTemplate,
                                                      @Qualifier("teacherServiceUrlProvider") Supplier<String> teacherServiceUrlProvider) {
-        return new StudentFacadeServiceImpl(restTemplate, teacherServiceUrlProvider);
+        return new TeacherFacadeServiceImpl(restTemplate, teacherServiceUrlProvider);
     }
 }

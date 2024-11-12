@@ -16,8 +16,8 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-@Service
 @Slf4j
+@Service
 public class StudentFacadeServiceImpl implements StudentFacadeService {
 
     private final RestTemplate restTemplate;
@@ -31,8 +31,26 @@ public class StudentFacadeServiceImpl implements StudentFacadeService {
 
 
     @Override
+    @Async("taskExecutor")
     public CompletableFuture<Boolean> validateExisitingStudent(Long studentId) {
-        String studentUrl = studentServiceUrlProvider.get() + "/v1/drugstore/students/" + studentId + "/validate";
+        String studentUrl = studentServiceUrlProvider.get() + "/v1/api/students/validate/" + studentId ;
+
+        return CompletableFuture.supplyAsync(() -> {
+            ResponseEntity<Boolean> responseEntity = restTemplate.exchange(
+                    studentUrl,
+                    HttpMethod.GET,
+                    null,
+                    Boolean.class
+            );
+
+            return Objects.requireNonNull(responseEntity.getBody());
+        });
+    }
+
+    @Override
+    @Async("taskExecutor")
+    public CompletableFuture<Boolean> validateExisitingStudent(String accountNumber) {
+        String studentUrl = studentServiceUrlProvider.get() + "/v1/api/students/validate/accountNumber/" + accountNumber  ;
 
         return CompletableFuture.supplyAsync(() -> {
             ResponseEntity<Boolean> responseEntity = restTemplate.exchange(
@@ -50,7 +68,7 @@ public class StudentFacadeServiceImpl implements StudentFacadeService {
     @Override
     @Async("taskExecutor")
     public CompletableFuture<StudentDTO> getStudentById(Long studentId) {
-        String studentUrl = studentServiceUrlProvider.get() + "/v1/drugstore/students/" + studentId;
+        String studentUrl = studentServiceUrlProvider.get() + "/v1/api/students/" + studentId;
 
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -69,6 +87,33 @@ public class StudentFacadeServiceImpl implements StudentFacadeService {
                 return null;
             } catch (Exception e) {
                 log.error("Error fetching student with ID {}: {}", studentId, e.getMessage());
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Override
+    @Async("taskExecutor")
+    public CompletableFuture<StudentDTO> getStudentByAccountNumber(String accountNumber) {
+        String studentUrl = studentServiceUrlProvider.get() + "/v1/api/students/by-accountNumber/" + accountNumber;
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                ResponseEntity<ResponseWrapper<StudentDTO>> responseEntity = restTemplate.exchange(
+                        studentUrl,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<ResponseWrapper<StudentDTO>>() {}
+                );
+
+                log.info("Student with accountNumber: {} successfully fetched", accountNumber);
+
+                return Objects.requireNonNull(responseEntity.getBody()).getData();
+            } catch (EntityNotFoundException e) {
+                log.warn("Student with accountNumber {} not found: {}", accountNumber, e.getMessage());
+                return null;
+            } catch (Exception e) {
+                log.error("Error fetching student with accountNumber {}: {}", accountNumber, e.getMessage());
                 throw new RuntimeException(e);
             }
         });
