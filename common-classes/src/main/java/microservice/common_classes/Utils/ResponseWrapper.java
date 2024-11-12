@@ -45,7 +45,7 @@ public class ResponseWrapper<T> {
         );
     }
 
-    public static <T> ResponseWrapper<T> found(T data, String entity) {
+    public static <T> ResponseWrapper<T> found(T data ,String entity) {
         String message = entity + " successfully fetched";
         return new ResponseWrapper<>(
                 true,
@@ -55,7 +55,6 @@ public class ResponseWrapper<T> {
                 LocalDateTime.now()
         );
     }
-
 
     public static <T> ResponseWrapper<T> ok(T data, String message) {
         return new ResponseWrapper<>(
@@ -122,7 +121,7 @@ public class ResponseWrapper<T> {
         );
     }
 
-    public static <T> ResponseWrapper<T> deleted( String entity) {
+    public static <T> ResponseWrapper<T> deleted(String entity) {
         String deleteMessage = entity + " successfully deleted";
         return new ResponseWrapper<>(
                 true,
@@ -154,11 +153,11 @@ public class ResponseWrapper<T> {
         );
     }
 
-    public static <T> ResponseWrapper<T> notFound(String message) {
+    public static <T> ResponseWrapper<T> notFound(String notFoundMessage) {
         return new ResponseWrapper<>(
                 false,
                 null,
-                message,
+                notFoundMessage,
                 HttpStatus.NOT_FOUND.value(),
                 LocalDateTime.now()
         );
