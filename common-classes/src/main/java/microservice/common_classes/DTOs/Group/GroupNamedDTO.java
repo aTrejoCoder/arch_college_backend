@@ -22,7 +22,7 @@ public class GroupNamedDTO {
     private int spots;
 
     @JsonProperty("schedule")
-    private List<ScheduleInsertDTO> schedule;
+    private List<ScheduleDTO> schedule;
 
     @JsonProperty("classroom")
     private String classroom;

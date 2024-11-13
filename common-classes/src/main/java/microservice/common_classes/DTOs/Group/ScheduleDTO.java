@@ -12,7 +12,7 @@ import java.time.LocalTime;
 
 @Data
 @NoArgsConstructor
-public class ScheduleInsertDTO {
+public class ScheduleDTO {
         @Enumerated(EnumType.STRING)
         @NotNull(message = "day can't be null")
         private WEEKDAY day;

@@ -11,9 +11,8 @@ public interface GroupService {
     List<GroupDTO> getCurrentGroupsByTeacherId(Long subjectId);
 
     GroupDTO createGroup(GroupInsertDTO groupInsertDTO, GroupRelationshipsDTO groupRelationshipsDTO);
-    void updateGroup(GroupUpdateDTO groupUpdateDTO);
+    GroupDTO updateGroup(GroupUpdateDTO groupUpdateDTO, GroupRelationshipsDTO groupRelationshipsDTO);
     void deleteCurrentGroupByKey(String key);
-    Result<Void> validateGroupSchedule(String classroom, List<ScheduleInsertDTO> schedules);
-    Result<GroupRelationshipsDTO> getGroupRelationshipsData(GroupInsertDTO groupInsertDTO);
+
 
 }

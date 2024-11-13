@@ -11,6 +11,6 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
         List<Group> findByOrdinarySubjectId(Long subjectId);
         List<Group> findByElectiveSubjectId(Long subjectId);
         List<Group> findByClassroomAndSchoolPeriod(String classroom, String schoolPeriod);
-        List<Group> findByTeacherIdAndSchoolPeriod(Long subjectId, String schoolPeriod);
+        List<Group> findByTeacherIdAndSchoolPeriod(Long teacherId, String schoolPeriod);
 
 }

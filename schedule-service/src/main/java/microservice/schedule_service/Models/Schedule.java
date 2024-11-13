@@ -39,4 +39,10 @@ public class Schedule {
         this.startTime = timeRange.start();
         this.endTime = timeRange.end();
     }
+
+    public Schedule(WEEKDAY day, LocalTime startTime, LocalTime endTime) {
+        this.day = day;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }

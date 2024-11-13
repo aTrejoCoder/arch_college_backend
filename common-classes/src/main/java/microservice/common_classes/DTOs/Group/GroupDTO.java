@@ -1,7 +1,6 @@
 package microservice.common_classes.DTOs.Group;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -35,7 +34,7 @@ public class GroupDTO {
     private int spots;
 
     @JsonProperty("schedule")
-    private List<ScheduleInsertDTO> schedule;
+    private List<ScheduleDTO> schedule;
 
     @JsonProperty("classroom")
     private String classroom;

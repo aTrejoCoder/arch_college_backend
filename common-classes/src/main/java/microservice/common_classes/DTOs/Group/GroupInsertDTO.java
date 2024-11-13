@@ -10,7 +10,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class GroupInsertDTO {
-
     @JsonProperty("ordinary_subject_id")
     private Long ordinarySubjectId;
 
@@ -31,7 +30,7 @@ public class GroupInsertDTO {
 
     @JsonProperty("schedule")
     @NotNull(message = "schedule can't be null")
-    private List<ScheduleInsertDTO> schedule;
+    private List<ScheduleDTO> schedule;
 
     @JsonProperty("classroom")
     @NotNull(message = "classroom can't be null")

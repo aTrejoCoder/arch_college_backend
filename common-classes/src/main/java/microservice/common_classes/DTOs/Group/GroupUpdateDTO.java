@@ -6,12 +6,15 @@ import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import microservice.common_classes.Utils.Schedule.WEEKDAY;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class GroupUpdateDTO {
     @JsonProperty("group_id")
@@ -19,29 +22,17 @@ public class GroupUpdateDTO {
     @Positive(message = "group_id can't be negative")
     private Long group_id;
 
-    @JsonProperty("subject_id")
-    @NotNull(message = "subject_id can't be null")
-    @Positive(message = "subject_id can't be negative")
-    private Long subjectId;
-
     @JsonProperty("teacher_id")
-    @NotNull(message = "teacher_id can't be null")
-    @Positive(message = "teacher_id can't be negative")
     private Long teacherId;
 
-    @JsonProperty("spots")
-    @NotNull(message = "spots can't be null")
-    @Positive(message = "spots can't be negative")
-    private int spots;
+    @JsonProperty("clear_teacher")
+    private boolean removeTeacher = false;
 
-    @JsonProperty("day")
-    @Enumerated(EnumType.STRING)
-    @NotNull(message = "day can't be null")
-    private WEEKDAY day;
+    @JsonProperty("spots")
+    private int spotsToAdd = 0;
 
     @JsonProperty("schedule")
-    @NotNull(message = "schedule can't be null")
-    private List<ScheduleInsertDTO> schedule;
+    private List<ScheduleDTO> schedule;
 
     @JsonProperty("classroom")
     private String classroom;

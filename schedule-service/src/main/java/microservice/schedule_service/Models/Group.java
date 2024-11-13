@@ -45,7 +45,7 @@ public class Group {
     @Column(name = "classroom")
     private String classroom;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "group_schedule",
             joinColumns = @JoinColumn(name = "group_id"),
@@ -63,6 +63,11 @@ public class Group {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public void clearTeacher() {
+        this.setTeacherName("");
+        this.setTeacherId(null);
     }
 
     @PreUpdate

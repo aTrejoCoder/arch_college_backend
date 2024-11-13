@@ -7,6 +7,7 @@ import microservice.common_classes.DTOs.Group.GroupUpdateDTO;
 import microservice.schedule_service.Models.Group;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface GroupMapper {
@@ -19,14 +20,16 @@ public interface GroupMapper {
     @Mapping(target = "teacherName", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "schedule", ignore = true)
     Group insertDtoToEntity(GroupInsertDTO groupInsertDTO);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    Group updateDtoToEntity(GroupUpdateDTO groupUpdateDTO);
-
+    @Mapping(target = "key", ignore = true)
+    @Mapping(target = "schoolPeriod", ignore = true)
+    void updateDto(@MappingTarget Group group,  GroupInsertDTO groupInsertDTO);
 
     GroupDTO entityToDTO(Group group);
+
     GroupNamedDTO entityToNamedDTO(Group group);
 }
