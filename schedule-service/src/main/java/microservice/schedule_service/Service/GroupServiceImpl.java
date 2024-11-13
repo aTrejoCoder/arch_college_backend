@@ -3,12 +3,12 @@ package microservice.schedule_service.Service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import microservice.common_classes.DTOs.Group.*;
+import microservice.common_classes.Utils.GroupStatus;
 import microservice.common_classes.Utils.Result;
 import microservice.common_classes.Utils.Schedule.SemesterData;
 import microservice.schedule_service.Repository.GroupRepository;
 import microservice.schedule_service.Mapppers.GroupMapper;
 import microservice.schedule_service.Models.Group;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +21,7 @@ import org.springframework.cache.annotation.Cacheable;
 public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
     private final GroupMapper groupMapper;
-    private final ExternalRelationshipService relationshipService;
+    private final ExternalEntitiesService relationshipService;
     private final ScheduleService scheduleService;
     private final KeyGenerationService keyGenerationService;
 
@@ -31,7 +31,7 @@ public class GroupServiceImpl implements GroupService {
     @Autowired
     public GroupServiceImpl(GroupRepository groupRepository,
                             GroupMapper groupMapper,
-                            ExternalRelationshipService relationshipService,
+                            ExternalEntitiesService relationshipService,
                             ScheduleService scheduleService,
                             KeyGenerationService keyGenerationService) {
         this.groupRepository = groupRepository;
@@ -96,14 +96,49 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public GroupDTO updateGroup(GroupUpdateDTO groupUpdateDTO, GroupRelationshipsDTO groupRelationshipsDTO) {
+    public GroupDTO updateGroupSchedule(GroupScheduleUpdateDTO groupUpdateDTO) {
         Group group = groupRepository.findById(groupUpdateDTO.getGroup_id()).orElseThrow(() -> new EntityNotFoundException("Group with Id " + groupUpdateDTO.getGroup_id() + " not found"));
+        group.setClassroom(groupUpdateDTO.getClassroom());
+        group.setSchedule(scheduleService.mapScheduleDTOToEntity(groupUpdateDTO.getSchedule()));
 
-        handleExternalGroupRelationships(group, groupRelationshipsDTO);
+        groupRepository.saveAndFlush(group);
+        return groupMapper.entityToDTO(group);
+    }
 
-        if (groupUpdateDTO.isRemoveTeacher()) {
-            group.clearTeacher();
-        }
+    @Override
+    public GroupDTO updateGroupTeacher(GroupScheduleUpdateDTO groupUpdateDTO) {
+        return null;
+    }
+
+    @Override
+    public GroupDTO updateGroupStatus(GroupStatus groupStatus, String groupKey) {
+        Group group = groupRepository.findByKeyAndSchoolPeriod(groupKey, currentSemester)
+                .orElseThrow(() -> new EntityNotFoundException("Group with Key " + groupKey + " not found"));
+
+        group.setGroupStatus(groupStatus);
+
+        groupRepository.saveAndFlush(group);
+        return groupMapper.entityToDTO(group);
+    }
+
+    @Override
+    public GroupDTO addSpots(String key, int spotsToAdd) {
+        Group group = groupRepository.findByKeyAndSchoolPeriod(key, currentSemester)
+                .orElseThrow(() -> new EntityNotFoundException("Group with Key " + key + " not found"));
+
+        group.increaseSpots(spotsToAdd);
+
+        groupRepository.saveAndFlush(group);
+
+        return groupMapper.entityToDTO(group);
+    }
+
+    @Override
+    public GroupDTO clearGroupTeacher(String groupKey) {
+        Group group = groupRepository.findByKeyAndSchoolPeriod(groupKey, currentSemester)
+                .orElseThrow(() -> new EntityNotFoundException("Group with Key " + groupKey + " not found"));
+
+        group.clearTeacher();
 
         groupRepository.saveAndFlush(group);
 
@@ -130,5 +165,14 @@ public class GroupServiceImpl implements GroupService {
         }
 
     }
+
+    public Result<Void> validateSpotIncrease(int spotsToAdd) {
+        if (spotsToAdd > 10) {
+            return Result.error("spots can't increase can't be above 10 ");
+        } else {
+            return Result.success();
+        }
+    }
+
 }
 

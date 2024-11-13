@@ -12,7 +12,7 @@
             <option value="$PROJECT_DIR$/common-classes" />
             <option value="$PROJECT_DIR$/config-server" />
             <option value="$PROJECT_DIR$/eureka-server" />
-            <option value="$PROJECT_DIR$/subject-service" />
+            <option value="$PROJECT_DIR$/schedule-service" />
           </set>
         </option>
       </GradleProjectSettings>

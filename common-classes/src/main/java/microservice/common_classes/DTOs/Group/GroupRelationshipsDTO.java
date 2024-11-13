@@ -19,8 +19,22 @@ public class GroupRelationshipsDTO {
         this.ordinarySubjectDTO = ordinarySubjectDTO;
     }
 
+    public GroupRelationshipsDTO(OrdinarySubjectDTO ordinarySubjectDTO) {
+        this.ordinarySubjectDTO = ordinarySubjectDTO;
+    }
+
     public GroupRelationshipsDTO(TeacherDTO teacherDTO, ElectiveSubjectDTO electiveSubjectDTO) {
         this.teacherDTO = teacherDTO;
         this.electiveSubjectDTO = electiveSubjectDTO;
     }
+
+    public GroupRelationshipsDTO(TeacherDTO teacherDTO) {
+        this.teacherDTO = teacherDTO;
+    }
+
+
+    public GroupRelationshipsDTO(ElectiveSubjectDTO electiveSubjectDTO) {
+        this.electiveSubjectDTO = electiveSubjectDTO;
+    }
+
 }

@@ -3,8 +3,7 @@ package microservice.schedule_service.Models;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.common_classes.DTOs.Group.GroupRelationshipsDTO;
-import microservice.common_classes.Utils.Schedule.SemesterData;
+import microservice.common_classes.Utils.GroupStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,11 +32,15 @@ public class Group {
     @Column(name = "teacher_name")
     private String teacherName;
 
-    @Column(name = "key")
+    @Column(name = "key", nullable = false)
     private String key;
 
-    @Column(name = "spots", nullable = false)
+    @Column(name = "spots")
     private int spots;
+
+    @Column(name = "group_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private GroupStatus groupStatus;
 
     @Column(name = "schoolPeriod", nullable = false)
     private String schoolPeriod;
@@ -59,6 +62,7 @@ public class Group {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -68,6 +72,10 @@ public class Group {
     public void clearTeacher() {
         this.setTeacherName("");
         this.setTeacherId(null);
+    }
+
+    public void increaseSpots(int spotsToAdd) {
+        this.spots += spotsToAdd;
     }
 
     @PreUpdate

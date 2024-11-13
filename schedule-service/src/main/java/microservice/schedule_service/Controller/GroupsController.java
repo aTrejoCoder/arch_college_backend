@@ -4,10 +4,10 @@ import jakarta.validation.Valid;
 import microservice.common_classes.DTOs.Group.GroupDTO;
 import microservice.common_classes.DTOs.Group.GroupInsertDTO;
 import microservice.common_classes.DTOs.Group.GroupRelationshipsDTO;
-import microservice.common_classes.DTOs.Group.GroupUpdateDTO;
+import microservice.common_classes.DTOs.Group.GroupScheduleUpdateDTO;
 import microservice.common_classes.Utils.ResponseWrapper;
 import microservice.common_classes.Utils.Result;
-import microservice.schedule_service.Service.ExternalDataValidationService;
+import microservice.schedule_service.Service.ExternalEntitiesService;
 import microservice.schedule_service.Service.GroupService;
 import microservice.schedule_service.Service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +34,15 @@ public class GroupsController {
 
     private final GroupService groupService;
     private final ScheduleService scheduleService;
-    private final ExternalDataValidationService externalDataValidationService;
+    private final ExternalEntitiesService externalDataService;
 
     @Autowired
-    public GroupsController(GroupService groupService, ScheduleService scheduleService,
-                            ExternalDataValidationService externalDataValidationService) {
+    public GroupsController(GroupService groupService,
+                            ScheduleService scheduleService,
+                            ExternalEntitiesService externalDataService) {
         this.groupService = groupService;
         this.scheduleService = scheduleService;
-        this.externalDataValidationService = externalDataValidationService;
+        this.externalDataService = externalDataService;
     }
 
     @Operation(summary = "Get Group by ID", description = "Retrieve a group by its unique identifier")
@@ -89,7 +90,7 @@ public class GroupsController {
     @ApiResponse(responseCode = "409", description = "Conflict in group schedule")
     @PostMapping
     public ResponseEntity<ResponseWrapper<GroupDTO>> createGroup(@Valid @RequestBody GroupInsertDTO groupInsertDTO) {
-        Result<GroupRelationshipsDTO> relationshipsResult = externalDataValidationService.validateAndGetRelationships(groupInsertDTO);
+        Result<GroupRelationshipsDTO> relationshipsResult = externalDataService.validateAndGetRelationships(groupInsertDTO);
         if (!relationshipsResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(relationshipsResult.getErrorMessage()));
         }
@@ -111,7 +112,6 @@ public class GroupsController {
         }
 
         GroupDTO group = groupService.createGroup(groupInsertDTO, relationshipsResult.getData());
-
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseWrapper.created(group,"Group"));
     }
 
@@ -119,26 +119,48 @@ public class GroupsController {
     @Operation(summary = "Update Group", description = "Update an existing group with specified details")
     @ApiResponse(responseCode = "200", description = "Group updated successfully")
     @ApiResponse(responseCode = "409", description = "Conflict in group schedule")
-    @PutMapping
-    public ResponseEntity<ResponseWrapper<Void>> updateGroup(@Valid @RequestBody GroupUpdateDTO groupUpdateDTO) {
-        // Creation: Group ID = Null || Update: Group ID = Not Null
-        CompletableFuture<Result<Void>> classroomScheduleResultFuture = scheduleService.validateClassroomSchedule(groupUpdateDTO.getClassroom(), groupUpdateDTO.getSchedule(), groupUpdateDTO.getGroup_id());
-        CompletableFuture<Result<Void>> teacherScheduleResultFuture = scheduleService.validateTeacherSchedule(groupUpdateDTO.getTeacherId(), groupUpdateDTO.getSchedule(), groupUpdateDTO.getGroup_id());
-
-        CompletableFuture.allOf(classroomScheduleResultFuture, teacherScheduleResultFuture);
-        Result<Void> teacherScheduleResult = classroomScheduleResultFuture.join();
-        Result<Void> teacherResult = teacherScheduleResultFuture.join();
-
+    @PutMapping("/update-schedule")
+    public ResponseEntity<ResponseWrapper<GroupDTO>> updateGroupSchedule(@Valid @RequestBody GroupScheduleUpdateDTO groupScheduleUpdateDTO) {
+        Result<Void> teacherResult = scheduleService.validateClassroomSchedule(groupScheduleUpdateDTO.getClassroom(), groupScheduleUpdateDTO.getSchedule(), groupScheduleUpdateDTO.getGroup_id()).join();
         if (!teacherResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseWrapper.conflict(teacherResult.getErrorMessage()));
         }
 
-        if (!teacherScheduleResult.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseWrapper.conflict(teacherResult.getErrorMessage()));
+        GroupDTO groupDTO = groupService.updateGroupSchedule(groupScheduleUpdateDTO);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.updated(groupDTO,"Group"));
+    }
+
+
+    @PatchMapping("/{key}/add_spots/{spotsToAdd}")
+    public ResponseEntity<ResponseWrapper<GroupDTO>> increaseGroupSpotsByKey(@Valid @PathVariable String key, @PathVariable int spotsToAdd) {
+        Result<GroupDTO> groupResult = groupService.getGroupCurrentByKey(key);
+        if (!groupResult.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound(groupResult.getErrorMessage()));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.updated("Group"));
+        Result<Void> validationResult = groupService.validateSpotIncrease(spotsToAdd);
+        if (!validationResult.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(validationResult.getErrorMessage()));
+        }
+
+        GroupDTO groupDTO = groupService.addSpots(key, spotsToAdd);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.ok(groupDTO,"Spots Successfully increased"));
     }
+
+    @PatchMapping("/{key}/remove-teacher")
+    public ResponseEntity<ResponseWrapper<GroupDTO>> removeGroupTeacher(@Valid @PathVariable String key) {
+        Result<GroupDTO> groupResult = groupService.getGroupCurrentByKey(key);
+        if (!groupResult.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound(groupResult.getErrorMessage()));
+        }
+
+        GroupDTO groupDTO = groupService.clearGroupTeacher(key);
+
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.ok(groupDTO,"Spots Successfully increased"));
+    }
+
 
     @Operation(summary = "Delete Group by Key", description = "Delete an existing group by its key")
     @ApiResponse(responseCode = "200", description = "Group deleted successfully")

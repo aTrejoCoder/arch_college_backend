@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import microservice.common_classes.Utils.GroupStatus;
 
 import java.util.List;
 
@@ -15,6 +16,10 @@ public class GroupInsertDTO {
 
     @JsonProperty("elective_subject_id")
     private Long electiveSubjectId;
+
+    @JsonProperty("group_status")
+    @NotNull(message = "group_status can't be null")
+    private GroupStatus groupStatus;
 
     @JsonProperty("teacher_id")
     @NotNull(message = "teacher_id can't be null")

@@ -3,7 +3,6 @@ package microservice.schedule_service.Mapppers;
 import microservice.common_classes.DTOs.Group.GroupDTO;
 import microservice.common_classes.DTOs.Group.GroupInsertDTO;
 import microservice.common_classes.DTOs.Group.GroupNamedDTO;
-import microservice.common_classes.DTOs.Group.GroupUpdateDTO;
 import microservice.schedule_service.Models.Group;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

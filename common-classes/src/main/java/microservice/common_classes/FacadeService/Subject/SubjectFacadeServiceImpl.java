@@ -3,7 +3,6 @@ package microservice.common_classes.FacadeService.Subject;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Subject.OrdinarySubjectDTO;
-import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
 import microservice.common_classes.Utils.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;

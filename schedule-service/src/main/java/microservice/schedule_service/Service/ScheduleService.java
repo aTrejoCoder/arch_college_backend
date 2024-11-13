@@ -37,6 +37,10 @@ public class ScheduleService {
      */
     @Async("taskExecutor")
     public CompletableFuture<Result<Void>> validateClassroomSchedule(String classroom, List<ScheduleDTO> schedules, Long groupId) {
+        if (classroom == null || schedules == null) {
+            return CompletableFuture.completedFuture(Result.success());
+        }
+
         return CompletableFuture.supplyAsync(() -> {
             List<Group> existingGroups = groupRepository.findByClassroomAndSchoolPeriod(classroom, currentSemester)
                     .stream()
@@ -58,6 +62,10 @@ public class ScheduleService {
     */
     @Async("taskExecutor")
     public CompletableFuture<Result<Void>> validateTeacherSchedule(Long teacherId, List<ScheduleDTO> schedules, Long groupId) {
+        if (teacherId == null || schedules == null) {
+            return CompletableFuture.completedFuture(Result.success());
+        }
+
         return CompletableFuture.supplyAsync(() -> {
             List<Group> existingGroups = groupRepository.findByTeacherIdAndSchoolPeriod(teacherId, currentSemester)
                     .stream()

@@ -20,4 +20,5 @@ public class ElectiveSubjectDTO {
 
     @JsonProperty("professional_line_id")
     private Long professionalLineId;
+
 }

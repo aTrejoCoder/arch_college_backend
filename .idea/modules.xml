@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/subject-service/arch_college_backend.subject-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/subject-service/arch_college_backend.subject-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/common-classes/arch_college_backend.common-classes.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common-classes/arch_college_backend.common-classes.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/schedule-service/arch_college_backend.schedule-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/schedule-service/arch_college_backend.schedule-service.main.iml" />
     </modules>
   </component>
 </project>
