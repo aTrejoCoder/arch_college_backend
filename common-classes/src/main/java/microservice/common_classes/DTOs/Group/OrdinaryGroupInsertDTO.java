@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import microservice.common_classes.Utils.GroupStatus;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -24,7 +25,7 @@ public class GroupInsertDTO {
     @JsonProperty("teacher_id")
     @NotNull(message = "teacher_id can't be null")
     @Positive(message = "teacher_id can't be negative")
-    private Long teacherId;
+    private Set<Long> teacherIds;
 
     @JsonProperty("spots")
     @NotNull(message = "spots can't be null")
