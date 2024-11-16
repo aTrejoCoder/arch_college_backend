@@ -1,17 +1,12 @@
 package microservice.schedule_service.Service;
 
-import microservice.common_classes.DTOs.Group.GroupDTO;
-import microservice.common_classes.DTOs.Group.GroupInsertDTO;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
 import microservice.common_classes.DTOs.Subject.OrdinarySubjectDTO;
-import microservice.common_classes.FacadeService.Subject.SubjectFacadeService;
 import microservice.schedule_service.Models.Group;
 import microservice.schedule_service.Repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.Subject;
 import java.util.List;
 
 @Service

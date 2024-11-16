@@ -3,8 +3,11 @@ package microservice.common_classes.DTOs.Group;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import microservice.common_classes.DTOs.Teacher.TeacherDTO;
+import microservice.common_classes.DTOs.Teacher.TeacherNameDTO;
 import microservice.common_classes.Utils.GroupStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -12,12 +15,6 @@ import java.util.List;
 public class GroupDTO {
     @JsonProperty("id")
     private Long id;
-
-    @JsonProperty("teacherId")
-    private Long teacherId;
-
-    @JsonProperty("teacher_name")
-    private String teacherName;
 
     @JsonProperty("ordinary_subject_id")
     private Long ordinarySubjectId;
@@ -39,4 +36,6 @@ public class GroupDTO {
 
     @JsonProperty("classroom")
     private String classroom;
+
+    private List<TeacherNameDTO> teacherDTOS = new ArrayList<>();
 }

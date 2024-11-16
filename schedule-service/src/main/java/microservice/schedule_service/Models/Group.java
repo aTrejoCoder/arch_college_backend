@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import microservice.common_classes.Utils.GroupStatus;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,12 +26,6 @@ public class Group {
 
     @Column(name = "subject_name")
     private String subjectName;
-
-    @Column(name = "teacherId")
-    private Long teacherId;
-
-    @Column(name = "teacher_name")
-    private String teacherName;
 
     @Column(name = "key", nullable = false)
     private String key;
@@ -54,7 +49,15 @@ public class Group {
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "schedule_id")
     )
-    private List<Schedule> schedule;
+    private List<Schedule> schedule = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "group_teacher",
+            joinColumns = @JoinColumn(name = "group_id"),
+            inverseJoinColumns = @JoinColumn(name = "teacher_id")
+    )
+    private List<Teacher> teachers = new ArrayList<>();
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -62,6 +65,13 @@ public class Group {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    public void addTeachers(List<Teacher> teachers) {
+            this.teachers.addAll(teachers);
+    }
+
+    public void removeTeacher(Teacher teacher) {
+        this.getTeachers().remove(teacher);
+    }
 
     @PrePersist
     protected void onCreate() {
@@ -69,11 +79,7 @@ public class Group {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void clearTeacher() {
-        this.setTeacherName("");
-        this.setTeacherId(null);
-    }
-
+    
     public void increaseSpots(int spotsToAdd) {
         this.spots += spotsToAdd;
     }

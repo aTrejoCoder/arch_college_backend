@@ -6,24 +6,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import microservice.common_classes.Utils.GroupStatus;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Data
 @NoArgsConstructor
-public class OrdinaryGroupInsertDTO {
-    @JsonProperty("ordinary_subject_id")
-    private Long ordinarySubjectId;
+public class ElectiveGroupInsertDTO {
+    @JsonProperty("elective_subject_id")
+    @NotNull(message = "elective_subject_id can't be null")
+    @Positive(message = "elective_subject_id can't be negative")
+    private Long electiveSubjectId;
 
     @JsonProperty("group_status")
     @NotNull(message = "group_status can't be null")
     private GroupStatus groupStatus;
 
     @JsonProperty("teacher_id")
-    @NotNull(message = "teacher_id can't be null")
-    @Positive(message = "teacher_id can't be negative")
-    private Set<Long> teacherIds = new HashSet<>();
+    private Long teacherId;
 
     @JsonProperty("spots")
     @NotNull(message = "spots can't be null")

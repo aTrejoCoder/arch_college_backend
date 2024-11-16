@@ -2,13 +2,19 @@ package microservice.schedule_service.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Group.*;
+import microservice.common_classes.DTOs.Teacher.TeacherNameDTO;
+import microservice.schedule_service.Mapppers.TeacherMapper;
+import microservice.schedule_service.Models.GroupRelationshipsDTO;
+import microservice.schedule_service.Models.Teacher;
 import microservice.common_classes.Utils.GroupStatus;
 import microservice.common_classes.Utils.Result;
 import microservice.common_classes.Utils.Schedule.SemesterData;
 import microservice.schedule_service.Repository.GroupRepository;
 import microservice.schedule_service.Mapppers.GroupMapper;
 import microservice.schedule_service.Models.Group;
+import microservice.schedule_service.Repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +24,15 @@ import java.util.Optional;
 import org.springframework.cache.annotation.Cacheable;
 
 @Service
+@Slf4j
 public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
     private final GroupMapper groupMapper;
-    private final ExternalEntitiesService relationshipService;
+    private final ExternalRelationsService relationshipService;
     private final ScheduleService scheduleService;
     private final KeyGenerationService keyGenerationService;
+    private final TeacherMapper teacherMapper;
+    private final TeacherRepository teacherRepository;
 
     private final String currentSemester = SemesterData.getCurrentSemester();
 
@@ -31,14 +40,17 @@ public class GroupServiceImpl implements GroupService {
     @Autowired
     public GroupServiceImpl(GroupRepository groupRepository,
                             GroupMapper groupMapper,
-                            ExternalEntitiesService relationshipService,
+                            ExternalRelationsService relationshipService,
                             ScheduleService scheduleService,
-                            KeyGenerationService keyGenerationService) {
+                            KeyGenerationService keyGenerationService,
+                            TeacherMapper teacherMapper, TeacherRepository teacherRepository) {
         this.groupRepository = groupRepository;
         this.groupMapper = groupMapper;
         this.relationshipService = relationshipService;
         this.scheduleService = scheduleService;
         this.keyGenerationService = keyGenerationService;
+        this.teacherMapper = teacherMapper;
+        this.teacherRepository = teacherRepository;
     }
 
 
@@ -46,7 +58,7 @@ public class GroupServiceImpl implements GroupService {
     @Cacheable(value = "groupById", key = "#groupId")
     public Result<GroupDTO> getGroupById(Long groupId) {
         Optional<Group> optionalGroup = groupRepository.findById(groupId);
-        return optionalGroup.map(group -> Result.success(groupMapper.entityToDTO(group)))
+        return optionalGroup.map(group -> Result.success(mapEntityToDTO(group)))
                 .orElseGet(() -> Result.error("Group with Id " + groupId + " not found"));
     }
 
@@ -54,8 +66,18 @@ public class GroupServiceImpl implements GroupService {
     @Cacheable(value = "groupCurrentByKey", key = "#key")
     public Result<GroupDTO> getGroupCurrentByKey(String key) {
         Optional<Group> optionalGroup = groupRepository.findByKeyAndSchoolPeriod(key, currentSemester);
-        return optionalGroup.map(group -> Result.success(groupMapper.entityToDTO(group)))
+        return optionalGroup.map(group -> Result.success(mapEntityToDTO(group)))
                 .orElseGet(() -> Result.error("Group with Key " + key + " not found"));
+    }
+
+    @Override
+    public List<GroupDTO> getCurrentGroupsByClassroom(String classroom) {
+        return null;
+    }
+
+    @Override
+    public List<GroupDTO> getCurrentGroupsByClassroomPrefix(char buildingLetter) {
+        return List.of();
     }
 
     @Override
@@ -75,10 +97,25 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @Transactional
-    public GroupDTO createGroup(GroupInsertDTO groupInsertDTO, GroupRelationshipsDTO groupRelationshipsDTO) {
-        Group group = groupMapper.insertDtoToEntity(groupInsertDTO);
+    public GroupDTO createGroup(OrdinaryGroupInsertDTO ordinaryGroupInsertDTO, GroupRelationshipsDTO groupRelationshipsDTO) {
+        Group group = groupMapper.insertDtoToEntity(ordinaryGroupInsertDTO);
         group.setSchoolPeriod(currentSemester);
-        group.setSchedule(scheduleService.mapScheduleDTOToEntity(groupInsertDTO.getSchedule()));
+        group.setSchedule(scheduleService.mapScheduleDTOToEntity(ordinaryGroupInsertDTO.getSchedule()));
+        group.setKey(keyGenerationService.generateOrdinaryKey(group,groupRelationshipsDTO.getOrdinarySubjectDTO()));
+
+        handleExternalGroupRelationships(group, groupRelationshipsDTO);
+
+        groupRepository.saveAndFlush(group);
+
+        return mapEntityToDTO(group);
+    }
+
+    @Override
+    @Transactional
+    public GroupDTO createGroup(ElectiveGroupInsertDTO electiveGroupInsertDTO, GroupRelationshipsDTO groupRelationshipsDTO) {
+        Group group = groupMapper.insertDtoToEntity(electiveGroupInsertDTO);
+        group.setSchedule(scheduleService.mapScheduleDTOToEntity(electiveGroupInsertDTO.getSchedule()));
+        group.setSchoolPeriod(currentSemester);
 
         if (groupRelationshipsDTO.getOrdinarySubjectDTO() != null) {
             group.setKey(keyGenerationService.generateOrdinaryKey(group,groupRelationshipsDTO.getOrdinarySubjectDTO()));
@@ -92,7 +129,7 @@ public class GroupServiceImpl implements GroupService {
 
         groupRepository.saveAndFlush(group);
 
-        return groupMapper.entityToDTO(group);
+        return mapEntityToDTO(group);
     }
 
     @Override
@@ -101,8 +138,9 @@ public class GroupServiceImpl implements GroupService {
         group.setClassroom(groupUpdateDTO.getClassroom());
         group.setSchedule(scheduleService.mapScheduleDTOToEntity(groupUpdateDTO.getSchedule()));
 
+
         groupRepository.saveAndFlush(group);
-        return groupMapper.entityToDTO(group);
+        return mapEntityToDTO(group);
     }
 
     @Override
@@ -118,7 +156,7 @@ public class GroupServiceImpl implements GroupService {
         group.setGroupStatus(groupStatus);
 
         groupRepository.saveAndFlush(group);
-        return groupMapper.entityToDTO(group);
+        return mapEntityToDTO(group);
     }
 
     @Override
@@ -130,19 +168,24 @@ public class GroupServiceImpl implements GroupService {
 
         groupRepository.saveAndFlush(group);
 
-        return groupMapper.entityToDTO(group);
+        return mapEntityToDTO(group);
     }
 
     @Override
-    public GroupDTO clearGroupTeacher(String groupKey) {
+    public GroupDTO removeTeacher(String groupKey, Long teacherId) {
         Group group = groupRepository.findByKeyAndSchoolPeriod(groupKey, currentSemester)
                 .orElseThrow(() -> new EntityNotFoundException("Group with Key " + groupKey + " not found"));
 
-        group.clearTeacher();
+        Optional<Teacher> optionalTeacher = group.getTeachers().stream().filter(teacher ->  teacher.getTeacherId().equals(teacherId)).findAny();
+        if (optionalTeacher.isEmpty()) {
+            throw  new EntityNotFoundException("Teacher Not Found in group");
+        }
+
+        group.removeTeacher(optionalTeacher.get());
 
         groupRepository.saveAndFlush(group);
 
-        return groupMapper.entityToDTO(group);
+        return mapEntityToDTO(group);
     }
 
     @Override
@@ -156,15 +199,16 @@ public class GroupServiceImpl implements GroupService {
     }
 
     private void handleExternalGroupRelationships(Group group, GroupRelationshipsDTO groupRelationshipsDTO){
-        if (groupRelationshipsDTO.getTeacherDTO() != null) {
-            relationshipService.addTeacher(group, groupRelationshipsDTO);
-        }
+        relationshipService.addRelationshipSubject(group, groupRelationshipsDTO);
 
-        if (groupRelationshipsDTO.getElectiveSubjectDTO() != null || groupRelationshipsDTO.getOrdinarySubjectDTO() == null) {
-            relationshipService.addRelationshipSubject(group, groupRelationshipsDTO);
-        }
+        List<Teacher> teachers = groupRelationshipsDTO.getTeacherDTOS().stream()
+                .map(teacherDTO -> teacherRepository.findById(teacherDTO.getTeacherId())
+                        .orElseThrow(() -> new IllegalArgumentException("Teacher not found: " + teacherDTO.getTeacherId())))
+                .toList();
 
+        group.addTeachers(teachers);
     }
+
 
     public Result<Void> validateSpotIncrease(int spotsToAdd) {
         if (spotsToAdd > 10) {
@@ -173,6 +217,17 @@ public class GroupServiceImpl implements GroupService {
             return Result.success();
         }
     }
+
+
+    private GroupDTO mapEntityToDTO(Group group) {
+        GroupDTO groupDTO = groupMapper.entityToDTO(group);
+
+        List<TeacherNameDTO> teachers = teacherMapper.teachersToDTOs(group.getTeachers());
+        groupDTO.setTeacherDTOS(teachers);
+
+        return groupDTO;
+    }
+
 
 }
 

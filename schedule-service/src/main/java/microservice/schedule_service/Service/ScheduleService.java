@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 @Service
 public class ScheduleService {
 
@@ -24,17 +24,12 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final String currentSemester = SemesterData.getCurrentSemester();
 
-
     @Autowired
-    public ScheduleService(GroupRepository groupRepository,
-                           ScheduleRepository scheduleRepository) {
+    public ScheduleService(GroupRepository groupRepository, ScheduleRepository scheduleRepository) {
         this.groupRepository = groupRepository;
         this.scheduleRepository = scheduleRepository;
     }
 
-    /*
-    If group is not null is an update operation if not it's for creation
-     */
     @Async("taskExecutor")
     public CompletableFuture<Result<Void>> validateClassroomSchedule(String classroom, List<ScheduleDTO> schedules, Long groupId) {
         if (classroom == null || schedules == null) {
@@ -57,9 +52,6 @@ public class ScheduleService {
         });
     }
 
-    /*
-   If group is not null is an update operation if not it's for creation
-    */
     @Async("taskExecutor")
     public CompletableFuture<Result<Void>> validateTeacherSchedule(Long teacherId, List<ScheduleDTO> schedules, Long groupId) {
         if (teacherId == null || schedules == null) {
@@ -74,12 +66,38 @@ public class ScheduleService {
 
             for (ScheduleDTO newSchedule : schedules) {
                 if (hasScheduleConflict(newSchedule, existingGroups)) {
-                    return Result.error("Schedule conflict detected: The teacher is already assigned to another group at the same time.");
+                    return Result.error("Schedule conflict detected: The teacher with ID " + teacherId + " already assigned to another group at the same time.");
                 }
             }
 
             return Result.success();
         });
+    }
+
+    @Async("taskExecutor")
+    public CompletableFuture<Result<Void>> validateTeachersSchedule(Set<Long> teacherIds, List<ScheduleDTO> schedules, Long groupId) {
+        if (teacherIds.isEmpty() || schedules == null) {
+            return CompletableFuture.completedFuture(Result.success());
+        }
+
+        return CompletableFuture.allOf(
+                teacherIds.stream()
+                        .map(teacherId -> validateTeacherSchedule(teacherId, schedules, groupId))
+                        .toArray(CompletableFuture[]::new)
+        ).thenApply(v -> {
+            for (Long teacherId : teacherIds) {
+                Result<Void> result = validateTeacherScheduleResult(teacherId, schedules, groupId);
+                if (!result.isSuccess()) {
+                    return Result.error(result.getErrorMessage());
+                }
+            }
+            return Result.success();
+        });
+    }
+
+    private Result<Void> validateTeacherScheduleResult(Long teacherId, List<ScheduleDTO> schedules, Long groupId) {
+        CompletableFuture<Result<Void>> future = validateTeacherSchedule(teacherId, schedules, groupId);
+        return future.join();
     }
 
     private boolean hasScheduleConflict(ScheduleDTO newSchedule, List<Group> existingGroups) {
@@ -92,7 +110,7 @@ public class ScheduleService {
     }
 
     private boolean isConflictWithGroupSchedule(ScheduleDTO newSchedule, List<Schedule> existingSchedules) {
-        for (var existingSchedule : existingSchedules) {
+        for (Schedule existingSchedule : existingSchedules) {
             if (isSameDay(newSchedule, existingSchedule) && isTimeOverlapping(newSchedule, existingSchedule)) {
                 return true;
             }

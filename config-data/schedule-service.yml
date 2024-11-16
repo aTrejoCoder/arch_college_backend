@@ -8,15 +8,15 @@ spring:
         url: http://localhost:8081
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/architecture_college_db
+    url: jdbc:postgresql://localhost:5432/architecture_college_schedule_db
     username: alexistrejo
     password: vladilena
     driver-class-name: org.postgresql.Driver
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    #hibernate:
-    #  ddl-auto: update
+    hibernate:
+     ddl-auto: update
 
   cloud:
     netflix:
