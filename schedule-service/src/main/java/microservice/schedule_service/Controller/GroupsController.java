@@ -122,7 +122,7 @@ public class GroupsController {
         }
 
         if (!teacherScheduleResult.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseWrapper.conflict(teacherResult.getErrorMessage()));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseWrapper.conflict(teacherScheduleResult.getErrorMessage()));
         }
 
         GroupDTO group = groupService.createGroup(ordinaryGroupInsertDTO, relationshipsResult.getData());

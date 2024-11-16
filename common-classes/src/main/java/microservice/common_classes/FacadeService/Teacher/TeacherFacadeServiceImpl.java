@@ -8,8 +8,7 @@ import microservice.common_classes.Utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -97,11 +96,11 @@ public class TeacherFacadeServiceImpl implements TeacherFacadeService {
 
     @Override
     public CompletableFuture<Result<List<TeacherDTO>>> getTeachersById(Set<Long> teacherIdSet) {
-        StringBuilder teacherParams = new StringBuilder("?teacherId=" + teacherIdSet.toArray()[0]);
+        StringBuilder teacherParams = new StringBuilder("?teacherIds=" + teacherIdSet.toArray()[0]);
 
         if (teacherIdSet.size() > 1) {
             for (Long teacherId : teacherIdSet) {
-                teacherParams.append(",").append(teacherIdSet);
+                teacherParams.append(",").append(teacherId);
             }
         }
 
@@ -109,16 +108,28 @@ public class TeacherFacadeServiceImpl implements TeacherFacadeService {
 
         return CompletableFuture.supplyAsync(() -> {
             try {
-                ResponseEntity<ResponseWrapper<Result<List<TeacherDTO>>>> responseEntity = restTemplate.exchange(
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+                HttpEntity<String> httpEntity = new HttpEntity<>(null, headers);
+
+
+                ResponseEntity<ResponseWrapper<List<TeacherDTO>>> responseEntity = restTemplate.exchange(
                         teacherUrl,
                         HttpMethod.GET,
-                        null,
-                        new ParameterizedTypeReference<ResponseWrapper<Result<List<TeacherDTO>>>>() {}
+                        httpEntity,
+                        new ParameterizedTypeReference<ResponseWrapper<List<TeacherDTO>>>() {}
                 );
 
                 log.info("getTeachersById -> Teacher with IDs: {} successfully fetched", teacherIdSet);
 
-                return Objects.requireNonNull(responseEntity.getBody()).getData();
+                if (!Objects.requireNonNull(responseEntity.getBody()).isSuccess()) {
+                    return Result.error(responseEntity.getBody().getMessage());
+                } else {
+                    return Result.success( responseEntity.getBody().getData());
+                }
+
+
             } catch (Exception e) {
                 log.error("getTeachersById -> Error fetching teacher with IDs {}: {}", teacherIdSet, e.getMessage());
                 throw new RuntimeException(e);

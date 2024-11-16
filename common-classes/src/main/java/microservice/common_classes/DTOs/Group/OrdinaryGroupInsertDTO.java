@@ -22,7 +22,6 @@ public class OrdinaryGroupInsertDTO {
 
     @JsonProperty("teacher_id")
     @NotNull(message = "teacher_id can't be null")
-    @Positive(message = "teacher_id can't be negative")
     private Set<Long> teacherIds = new HashSet<>();
 
     @JsonProperty("spots")
