@@ -15,11 +15,17 @@ public class GroupEnrollment {
     @Column(name = "group_id", nullable = false)
     private Long groupId;
 
-    @Column(name = "subject_id", nullable = false)
-    private Long subject_id;
+    @Column(name = "ordinary_subject_id", nullable = false)
+    private Long ordinarySubjectId;
 
-    @Column(name = "student_id", nullable = false)
-    private Long studentId;
+    @Column(name = "elective_subject_id", nullable = false)
+    private Long electiveSubjectId;
+
+    @Column(name = "student_account_number", nullable = false)
+    private String studentAccountNumber;
+
+    @Column(name = "subject_credits", nullable = false)
+    private int subjectCredits;
 
     @Column(name = "enrollment_date", nullable = false)
     private LocalDateTime enrollmentDate;

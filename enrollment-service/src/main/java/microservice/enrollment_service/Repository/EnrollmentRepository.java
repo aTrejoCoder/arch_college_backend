@@ -10,8 +10,7 @@ import java.util.List;
 
 
 public interface EnrollmentRepository extends JpaRepository<GroupEnrollment, Long> {
-    List<GroupEnrollment> findByStudentIdAndEnrollmentPeriod(Long studentId, String enrollmentPeriod);
-
+    List<GroupEnrollment> findByStudentAccountNumberAndEnrollmentPeriod(String accountNumber, String enrollmentPeriod);
 
     @Modifying
     @Query("UPDATE GroupEnrollment e SET e.isActive = false WHERE e.enrollmentDate < :expirationDate AND e.isActive = true")

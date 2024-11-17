@@ -16,8 +16,8 @@ public class EnrollmentInsertDTO {
     @Positive(message = "group_id cant' be negative")
     private Long groupId;
 
-    @JsonProperty("student_id")
-    @NotNull(message = "student_id can't be null")
-    @Positive(message = "student_id cant' be negative")
-    private Long studentId;
+    @JsonProperty("student_account_number")
+    @NotNull(message = "student_account_number can't be null")
+    @Positive(message = "student_account_number cant' be negative")
+    private String studentAccountNumber;
 }

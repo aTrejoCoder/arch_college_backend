@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Schedule.SemesterData;
 import microservice.enrollment_service.DTOs.EnrollmentDTO;
 import microservice.enrollment_service.DTOs.EnrollmentInsertDTO;
 import microservice.enrollment_service.Mappers.EnrollmentMapper;
@@ -24,6 +25,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     private final EnrollmentRepository enrollmentRepository;
     private final EnrollmentMapper enrollmentMapper;
+    private final String schoolPeriod = SemesterData.getCurrentSemester();
 
     @Autowired
     public EnrollmentServiceImpl(EnrollmentRepository enrollmentRepository,
@@ -43,9 +45,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
 
     @Override
-    @Cacheable(value = "enrollmentsByStudentId", key = "#studentId")
-    public List<EnrollmentDTO> getEnrollmentByStudentId(Long studentId) {
-        List<GroupEnrollment> currentEnrollments = enrollmentRepository.findByStudentIdAndEnrollmentPeriod(studentId, "2024-2");
+    @Cacheable(value = "enrollmentByAccountNumber", key = "#studentAccountNumber")
+    public List<EnrollmentDTO> getEnrollmentsByAccountNumber(String studentAccountNumber) {
+        List<GroupEnrollment> currentEnrollments = enrollmentRepository.findByStudentAccountNumberAndEnrollmentPeriod(studentAccountNumber, schoolPeriod);
         return currentEnrollments.stream()
                 .map(enrollmentMapper::entityToDTO)
                 .toList();
@@ -53,11 +55,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
 
     @Override
-    public EnrollmentDTO createEnrollment(EnrollmentInsertDTO enrollmentInsertDTO) {
+    public void createEnrollment(EnrollmentInsertDTO enrollmentInsertDTO) {
         GroupEnrollment groupEnrollment = enrollmentMapper.insertDtoToEntity(enrollmentInsertDTO);
         enrollmentRepository.save(groupEnrollment);
-
-        return enrollmentMapper.entityToDTO(groupEnrollment);
     }
 
     @Override

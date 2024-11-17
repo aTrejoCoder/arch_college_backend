@@ -8,7 +8,10 @@ import microservice.common_classes.Utils.ResponseWrapper;
 import microservice.common_classes.Utils.Result;
 import microservice.enrollment_service.DTOs.EnrollmentDTO;
 import microservice.enrollment_service.DTOs.EnrollmentInsertDTO;
+import microservice.enrollment_service.DTOs.EnrollmentRelationshipDTO;
+import microservice.enrollment_service.Service.EnrollmentRelationshipService;
 import microservice.enrollment_service.Service.EnrollmentService;
+import microservice.enrollment_service.Service.EnrollmentValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +24,16 @@ import org.springframework.web.bind.annotation.*;
 public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
+    private final EnrollmentRelationshipService enrollmentRelationshipService;
+    private final EnrollmentValidationService enrollmentValidationService;
 
     @Autowired
-    public EnrollmentController(EnrollmentService enrollmentService) {
+    public EnrollmentController(EnrollmentService enrollmentService,
+                                EnrollmentRelationshipService enrollmentRelationshipService,
+                                EnrollmentValidationService enrollmentValidationService) {
         this.enrollmentService = enrollmentService;
+        this.enrollmentRelationshipService = enrollmentRelationshipService;
+        this.enrollmentValidationService = enrollmentValidationService;
     }
 
     @GetMapping("/{enrollmentId}")
@@ -50,8 +59,24 @@ public class EnrollmentController {
     })
     @PostMapping
     public ResponseEntity<ResponseWrapper<EnrollmentDTO>> createSubjectEnrollment(@Valid @RequestBody EnrollmentInsertDTO enrollmentInsertDTO) {
-        EnrollmentDTO enrollmentDTO = enrollmentService.createEnrollment(enrollmentInsertDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseWrapper.ok(enrollmentDTO, "GroupEnrollment successfully created"));
+        Result<EnrollmentRelationshipDTO> relationshipsResult = enrollmentRelationshipService.validateAndGetRelationships(enrollmentInsertDTO);
+        if (!relationshipsResult.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(relationshipsResult.getErrorMessage()));
+        }
+
+        Result<Void> validationResult = enrollmentValidationService.validateEnrollment(enrollmentInsertDTO, relationshipsResult.getData());
+        if (!validationResult.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseWrapper.conflict(relationshipsResult.getErrorMessage()));
+        }
+
+        Result<Void> spotResult = enrollmentRelationshipService.takeSpot(enrollmentInsertDTO.getGroupId());
+        if (!spotResult.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(spotResult.getErrorMessage()));
+        }
+
+        enrollmentService.createEnrollment(enrollmentInsertDTO);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseWrapper.created("Group Enrollment successfully created"));
     }
 
     @DeleteMapping("/{enrollmentId}")
