@@ -2,6 +2,10 @@ spring:
   application:
     name: grade-service
 
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/arch_college_mongodb
+
   boot:
     admin:
       client:
@@ -48,4 +52,4 @@ springdoc:
     packages-to-scan: microservice.grade_service
 
 server:
-  port: 8087
+  port: 8088

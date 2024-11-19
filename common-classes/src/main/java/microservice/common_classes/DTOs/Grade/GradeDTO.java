@@ -1,10 +1,12 @@
-package microservice.grade_service.DTOs;
+package microservice.common_classes.DTOs.Grade;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.grade_service.Model.GradeStatus;
+import microservice.common_classes.Utils.GradeStatus;
 
 @Data
 @NoArgsConstructor
@@ -24,6 +26,9 @@ public class GradeDTO {
 
     @JsonProperty("elective_subject_id")
     private Long electiveSubjectId;
+
+    @JsonProperty("professional_line_id")
+    private Long professionalLineId;
 
     @JsonProperty("student_id")
     private Long studentId;

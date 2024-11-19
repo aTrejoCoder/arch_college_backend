@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import microservice.grade_service.Utils.GradeStatus;
 
 import java.time.LocalDateTime;
 
@@ -29,8 +30,8 @@ public class Grade {
     @Column(name = "elective_subject_id", nullable = false)
     private Long electiveSubjectId;
 
-    @Column(name = "student_id", nullable = false)
-    private Long studentId;
+    @Column(name = "student_account_number", nullable = false)
+    private String studentAccountNumber;
 
     @Column(name = "group_id", nullable = false)
     private Long groupId;

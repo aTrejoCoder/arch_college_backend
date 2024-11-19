@@ -6,9 +6,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import microservice.common_classes.Utils.ResponseWrapper;
 import microservice.common_classes.Utils.Result;
-import microservice.grade_service.DTOs.GradeDTO;
+import microservice.grade_service.DTOs.GradeRelationshipsDTO;
+import microservice.grade_service.DTOs.GradeWithRelationsDTO;
 import microservice.grade_service.DTOs.GradeInsertDTO;
+import microservice.grade_service.Service.GradeRelationshipService;
 import microservice.grade_service.Service.GradeService;
+import microservice.grade_service.Service.GradeValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +24,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/api/grades")
 public class GradeController {
-
+    private final GradeRelationshipService gradeRelationshipService;
     private final GradeService gradeService;
+    private final GradeValidationService gradeValidationService;
 
     @Autowired
-    public GradeController(GradeService gradeService) {
+    public GradeController(GradeRelationshipService gradeRelationshipService,
+                           GradeService gradeService,
+                           GradeValidationService gradeValidationService) {
+        this.gradeRelationshipService = gradeRelationshipService;
         this.gradeService = gradeService;
+        this.gradeValidationService = gradeValidationService;
     }
 
     @GetMapping("/{gradeId}")
@@ -35,8 +43,8 @@ public class GradeController {
             @ApiResponse(responseCode = "200", description = "Grade data successfully fetched"),
             @ApiResponse(responseCode = "404", description = "Grade not found")
     })
-    public ResponseEntity<ResponseWrapper<GradeDTO>> getGradeById(@PathVariable Long gradeId) {
-        Result<GradeDTO> gradeResult = gradeService.getGradeById(gradeId);
+    public ResponseEntity<ResponseWrapper<GradeWithRelationsDTO>> getGradeById(@PathVariable Long gradeId) {
+        Result<GradeWithRelationsDTO> gradeResult = gradeService.getGradeById(gradeId);
         if (!gradeResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound(gradeResult.getErrorMessage()));
         }
@@ -51,15 +59,15 @@ public class GradeController {
             @ApiResponse(responseCode = "400", description = "Invalid input data")
     })
     @PostMapping
-    public ResponseEntity<ResponseWrapper<GradeDTO>> initSchooledGrade(@Valid @RequestBody GradeInsertDTO gradeInsertDTO) {
-        Result<Void> creation = gradeService.validateGradeCreation(gradeInsertDTO);
-        if (!creation.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(creation.getErrorMessage()));
-        }
-
-        Result<Void> relationshipResult = gradeService.validateGradeRelationships(gradeInsertDTO);
+    public ResponseEntity<ResponseWrapper<GradeWithRelationsDTO>> initSchooledGrade(@Valid @RequestBody GradeInsertDTO gradeInsertDTO) {
+        Result<GradeRelationshipsDTO> relationshipResult = gradeRelationshipService.validateGradeRelationship(gradeInsertDTO);
         if (!relationshipResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(relationshipResult.getErrorMessage()));
+        }
+
+        Result<Void> creationResult = gradeValidationService.validateGradeCreation(gradeInsertDTO);
+        if (!creationResult.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(creationResult.getErrorMessage()));
         }
 
         gradeService.initGrade(gradeInsertDTO);
@@ -73,8 +81,8 @@ public class GradeController {
             @ApiResponse(responseCode = "400", description = "Grade not able to be authorized")
     })
     @PutMapping("{gradeId}/authorize")
-    public ResponseEntity<ResponseWrapper<GradeDTO>> authorizeGrade(@PathVariable Long gradeId) {
-        Result<Void> gradeResult = gradeService.authorizeGradeById(gradeId);
+    public ResponseEntity<ResponseWrapper<GradeWithRelationsDTO>> authorizeGrade(@PathVariable Long gradeId) {
+        Result<Void> gradeResult = gradeValidationService.authorizeGradeById(gradeId);
         if (!gradeResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(gradeResult.getErrorMessage()));
         }
@@ -89,7 +97,7 @@ public class GradeController {
             @ApiResponse(responseCode = "200", description = "Grade successfully deleted"),
             @ApiResponse(responseCode = "404", description = "Grade not found")
     })
-    public ResponseEntity<ResponseWrapper<GradeDTO>> softDeleteGradeById(@PathVariable Long gradeId) {
+    public ResponseEntity<ResponseWrapper<GradeWithRelationsDTO>> softDeleteGradeById(@PathVariable Long gradeId) {
         gradeService.deleteGradeById(gradeId);
         return ResponseEntity.ok(ResponseWrapper.ok(null, "Grade successfully deleted"));
     }
@@ -100,9 +108,9 @@ public class GradeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Grade data successfully fetched"),
     })
-    public ResponseEntity<ResponseWrapper<List<GradeDTO>>> getGradesByStudentId(@PathVariable Long studentId) {
-        List<GradeDTO> grades = gradeService.getAllGradeByStudent(studentId);
-        return ResponseEntity.ok(ResponseWrapper.found("Student", "Student ID", studentId, grades));
+    public ResponseEntity<ResponseWrapper<List<GradeWithRelationsDTO>>> getGradesByStudentAccountNumber(@PathVariable String accountNumber) {
+        List<GradeWithRelationsDTO> grades = gradeService.getAllGradeByStudentAccountNumber(accountNumber);
+        return ResponseEntity.ok(ResponseWrapper.found("Student", "Student Account Number", accountNumber, grades));
     }
 
 
@@ -111,8 +119,8 @@ public class GradeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Grade data successfully fetched"),
     })
-    public ResponseEntity<ResponseWrapper<List<GradeDTO>>> getGradesById(@PathVariable Long studentId, String schoolPeriod) {
-        List<GradeDTO> grades = gradeService.getGradesByStudentAndSchoolPeriod(studentId, schoolPeriod);
-        return ResponseEntity.ok(ResponseWrapper.found("Student", "Student ID", studentId, grades));
+    public ResponseEntity<ResponseWrapper<List<GradeWithRelationsDTO>>> getGradesById(@PathVariable String accountNumber, String schoolPeriod) {
+        List<GradeWithRelationsDTO> grades = gradeService.getGradesByStudentAccountNumberAndSchoolPeriod(accountNumber, schoolPeriod);
+        return ResponseEntity.ok(ResponseWrapper.found("Student", "Student Account Number", accountNumber, grades));
     }
 }

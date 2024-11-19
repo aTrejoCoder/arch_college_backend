@@ -1,16 +1,15 @@
 package microservice.grade_service.DTOs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.grade_service.Model.GradeStatus;
+import microservice.grade_service.Utils.GradeStatus;
+import org.checkerframework.checker.units.qual.N;
 
 @Data
 @NoArgsConstructor
@@ -35,8 +34,8 @@ public class GradeInsertDTO {
     @JsonProperty("elective_subject_id")
     private Long electiveSubjectId;
 
-    @JsonProperty("student_id")
-    @NotNull(message = "student_id can't be null")
-    @Positive(message = "student_id cant' be negative")
-    private Long studentId;
+    @JsonProperty("student_account_number")
+    @NotNull(message = "student_account_number can't be null")
+    @NotBlank(message = "student_account_number cant' be empty")
+    private String studentAccountNumber;
 }

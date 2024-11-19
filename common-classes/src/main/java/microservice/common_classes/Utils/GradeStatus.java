@@ -1,4 +1,4 @@
-package microservice.grade_service.Model;
+package microservice.common_classes.Utils;
 
 public enum GradeStatus {
     NORMAL_PENDING,
@@ -10,6 +10,5 @@ public enum GradeStatus {
 
     public boolean isPendingStatus() {
         return this == NORMAL_PENDING || this == DID_NOT_PRESENT_PENDING || this == ACCREDITED_PENDING;
-
     }
 }

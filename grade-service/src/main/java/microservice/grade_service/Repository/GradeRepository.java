@@ -7,8 +7,7 @@ import java.util.List;
 
 
 public interface GradeRepository extends JpaRepository<Grade, Long> {
-    List<Grade> findByStudentId(Long studentId);
-    List<Grade> findByStudentIdAndSchoolPeriod(Long studentId, String schoolPeriod);
-    List<Grade> findByStudentIdAndOrdinarySubjectId(Long studentId, Long ordinarySubjectId);
-    List<Grade> findByStudentIdAndElectiveSubjectId(Long studentId, Long electiveSubjectId);
+    List<Grade> findByStudentAccountNumber(String accountNumber);
+    List<Grade> findByStudentAccountNumberAndOrdinarySubjectId(String accountNumber, Long ordinarySubjectId);
+    List<Grade> findByStudentAccountNumberAndElectiveSubjectId(String accountNumber, Long electiveSubjectId);
 }
