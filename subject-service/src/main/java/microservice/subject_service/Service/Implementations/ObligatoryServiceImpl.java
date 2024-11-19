@@ -2,6 +2,7 @@ package microservice.subject_service.Service.Implementations;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectInsertDTO;
 import microservice.common_classes.Utils.Result;
@@ -13,6 +14,7 @@ import microservice.subject_service.Repository.AreaRepository;
 import microservice.subject_service.Repository.CareerRepository;
 import microservice.subject_service.Repository.ObligatorySubjectRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 import microservice.subject_service.Service.SubjectService;
@@ -29,16 +31,19 @@ public class ObligatoryServiceImpl implements SubjectService<ObligatorySubjectDT
     private final ObligatorySubjectMapper obligatorySubjectMapper;
     private final CareerRepository careerRepository;
     private final AreaRepository areaRepository;
+    private final KeyGenerationService keyGenerationService;
 
     @Autowired
     public ObligatoryServiceImpl(ObligatorySubjectRepository obligatorySubjectRepository,
-                               ObligatorySubjectMapper obligatorySubjectMapper,
-                               CareerRepository careerRepository,
-                               AreaRepository areaRepository) {
+                                 ObligatorySubjectMapper obligatorySubjectMapper,
+                                 CareerRepository careerRepository,
+                                 AreaRepository areaRepository,
+                                 KeyGenerationService keyGenerationService) {
         this.obligatorySubjectRepository = obligatorySubjectRepository;
         this.obligatorySubjectMapper = obligatorySubjectMapper;
         this.careerRepository = careerRepository;
         this.areaRepository = areaRepository;
+        this.keyGenerationService = keyGenerationService;
     }
 
     @Override
@@ -86,6 +91,16 @@ public class ObligatoryServiceImpl implements SubjectService<ObligatorySubjectDT
     }
 
     @Override
+    public List<ObligatorySubjectDTO> getSubjectsByFilter(Long filterId, String filterType) {
+        return switch (filterType) {
+            case "career" -> obligatorySubjectRepository.findByCareerId(filterId).stream()
+                    .map(obligatorySubjectMapper::entityToDTO)
+                    .toList();
+            default -> throw new IllegalArgumentException("Invalid filter type: " + filterType);
+        };
+    }
+
+    @Override
     @Transactional
     public void createSubject(ObligatorySubjectInsertDTO obligatorySubjectInsertDTO) {
         ObligatorySubject obligatorySubject = obligatorySubjectMapper.insertDtoToEntity(obligatorySubjectInsertDTO);
@@ -93,7 +108,9 @@ public class ObligatoryServiceImpl implements SubjectService<ObligatorySubjectDT
         handleObligatorySubjectRelationships(obligatorySubject, obligatorySubjectInsertDTO);
 
         obligatorySubjectRepository.saveAndFlush(obligatorySubject);
-        obligatorySubject.setKey(generateSubjectKey(obligatorySubject));
+
+        String key = keyGenerationService.generateSubjectKey(obligatorySubject);
+        obligatorySubject.setKey(key);
 
         obligatorySubjectRepository.save(obligatorySubject);
     }
@@ -112,20 +129,6 @@ public class ObligatoryServiceImpl implements SubjectService<ObligatorySubjectDT
             throw new EntityNotFoundException("Subject with ID" + subjectId + " not found");
         }
         obligatorySubjectRepository.deleteById(subjectId);
-    }
-
-    /*
-    Key for Obligatory Subjects will have 4 numbers --> example : 1203
-     (1) means the id of career (architecture careers can't grow above 10, there just 4 in current system and can't get deleted)
-     (2) means the number of the semester that the subject belongs (10 semester subject will be considered as 0)
-     (03) means the number of subject from some semester
-     */
-    private String generateSubjectKey(ObligatorySubject subject) {
-        int careerIdLastDigit = Math.toIntExact(subject.getCareer().getId());
-        int semesterNumber = subject.getSemester() <= 9 ? subject.getSemester() : 0;
-        int subjectSequence = obligatorySubjectRepository.findBySemester(subject.getSemester()).size();
-
-        return String.format("%d%d%02d", careerIdLastDigit, semesterNumber, subjectSequence);
     }
 
     private void handleObligatorySubjectRelationships(ObligatorySubject subject, ObligatorySubjectInsertDTO obligatorySubjectInsertDTO) {

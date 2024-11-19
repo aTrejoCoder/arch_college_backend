@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -28,18 +29,21 @@ public class ElectiveSubjectServiceImpl implements SubjectService<ElectiveSubjec
     private final AreaRepository areaRepository;
     private final CareerRepository careerRepository;
     private final ProfessionalLineRepository professionalLineRepository;
+    private final KeyGenerationService keyGenerationService;
 
     @Autowired
     public ElectiveSubjectServiceImpl(ElectiveSubjectRepository electiveSubjectRepository,
                                       ElectiveSubjectMapper electiveSubjectMapper,
                                       AreaRepository areaRepository,
                                       CareerRepository careerRepository,
-                                      ProfessionalLineRepository professionalLineRepository) {
+                                      ProfessionalLineRepository professionalLineRepository,
+                                      KeyGenerationService keyGenerationService) {
         this.electiveSubjectRepository = electiveSubjectRepository;
         this.electiveSubjectMapper = electiveSubjectMapper;
         this.areaRepository = areaRepository;
         this.careerRepository = careerRepository;
         this.professionalLineRepository = professionalLineRepository;
+        this.keyGenerationService = keyGenerationService;
     }
 
     @Override
@@ -79,13 +83,25 @@ public class ElectiveSubjectServiceImpl implements SubjectService<ElectiveSubjec
     }
 
     @Override
+    public List<ElectiveSubjectDTO> getSubjectsByFilter(Long filterId, String filterType) {
+            return switch (filterType) {
+                case "career" -> electiveSubjectRepository.findByCareerId(filterId).stream()
+                        .map(electiveSubjectMapper::entityToDTO)
+                        .toList();
+                default -> throw new IllegalArgumentException("Invalid filter type: " + filterType);
+            };
+    }
+
+    @Override
     public void createSubject(ElectiveSubjectInsertDTO electiveSubjectInsertDTO) {
         ElectiveSubject electiveSubject = electiveSubjectMapper.insertDtoToEntity(electiveSubjectInsertDTO);
 
         handleElectiveSubjectRelationships(electiveSubject, electiveSubjectInsertDTO);
         electiveSubjectRepository.saveAndFlush(electiveSubject);
 
-        electiveSubject.setKey(generateSubjectKey(electiveSubject));
+        String key = keyGenerationService.generateSubjectKey(electiveSubject);
+        electiveSubject.setKey(key);
+
         electiveSubjectRepository.save(electiveSubject);
     }
 
@@ -103,18 +119,6 @@ public class ElectiveSubjectServiceImpl implements SubjectService<ElectiveSubjec
         electiveSubjectRepository.deleteById(subjectId);
     }
 
-
-    /*
-    Key for Elective Subjects will have 4 numbers --> example : 151
-    (1) means the ID from professional line id
-    (50) means the number of subject from professional line
- */
-    private String generateSubjectKey(ElectiveSubject subject) {
-        int professionalLineIdLastDigit = Math.toIntExact(subject.getProfessionalLine().getId());
-        int subjectSequence = electiveSubjectRepository.countByProfessionalLineId(subject.getProfessionalLine().getId()) + 1;
-
-        return String.format("%d%02d", professionalLineIdLastDigit, subjectSequence);
-    }
 
     private void handleElectiveSubjectRelationships(ElectiveSubject subject, ElectiveSubjectInsertDTO electiveSubjectInsertDTO) {
         getAndSetCareer(subject, electiveSubjectInsertDTO.getCareerId());

@@ -3,6 +3,7 @@ package microservice.subject_service.Controller;
 import jakarta.validation.Valid;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectInsertDTO;
+import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
 import microservice.common_classes.Utils.Result;
 import microservice.subject_service.Service.SubjectService;
@@ -19,6 +20,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/api/subjects/electives")
@@ -92,6 +95,13 @@ public class ElectiveSubjectController {
         Pageable pageable = PageRequest.of(page, size);
         Page<ElectiveSubjectDTO> professionalLines = subjectService.getAllSubjectsPageable(pageable);
         return ResponseEntity.ok(ResponseWrapper.found("Elective Subjects", professionalLines));
+    }
+
+    @GetMapping("/by-career/{careerId}")
+    public ResponseEntity<ResponseWrapper<List<ElectiveSubjectDTO>>> getAllElectiveSubjectByCareer(@PathVariable Long careerId) {
+        List<ElectiveSubjectDTO> ordinarySubjectDTOS = subjectService.getSubjectsByFilter(careerId, "career");
+
+        return ResponseEntity.ok(ResponseWrapper.found("Elective Subject", "career Id", careerId, ordinarySubjectDTOS));
     }
 
     @Operation(summary = "Create Elective Subject", description = "Creates a new elective subject")

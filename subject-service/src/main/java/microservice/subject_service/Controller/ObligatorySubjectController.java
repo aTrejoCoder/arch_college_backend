@@ -22,6 +22,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/api/subjects/obligatory")
 public class ObligatorySubjectController {
@@ -69,7 +71,7 @@ public class ObligatorySubjectController {
         if (semester_number > 10) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest("10th semester is the last semester"));
         }
-        
+
         Pageable pageable = PageRequest.of(page, size);
         Page<ObligatorySubjectDTO> ordinarySubjectDTOS = subjectService.getSubjectsByFilterPageable(semester_number, "semester",pageable);
 
@@ -128,5 +130,13 @@ public class ObligatorySubjectController {
     public ResponseEntity<ResponseWrapper<Void>> deleteObligatorySubjectById(@PathVariable Long subjectId) {
         subjectService.deleteSubject(subjectId);
         return ResponseEntity.ok(ResponseWrapper.deleted("Obligatory Subject"));
+    }
+
+
+    @GetMapping("/by-career/{careerId}")
+    public ResponseEntity<ResponseWrapper<List<ObligatorySubjectDTO>>> getAllObligatorySubjectByCareer(@PathVariable Long careerId) {
+        List<ObligatorySubjectDTO> ordinarySubjectDTOS = subjectService.getSubjectsByFilter(careerId, "career");
+
+        return ResponseEntity.ok(ResponseWrapper.found("Obligatory Subject", "career Id", careerId, ordinarySubjectDTOS));
     }
 }

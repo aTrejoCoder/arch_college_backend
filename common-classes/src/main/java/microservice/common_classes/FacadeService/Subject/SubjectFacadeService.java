@@ -15,6 +15,6 @@ public interface SubjectFacadeService {
     CompletableFuture<ElectiveSubjectDTO> getElectiveSubjectById(Long subjectId);
 
     CompletableFuture<List<ObligatorySubjectDTO>> getObligatorySubjectsByCareer(String careerKey);
-    CompletableFuture<List<ElectiveSubjectDTO>> getElectiveSubjectsByCareer(String careerKey);
+    CompletableFuture<List<ElectiveSubjectDTO>> getElectiveSubjectsByCareer(Long careerId);
 
 }

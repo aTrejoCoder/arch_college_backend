@@ -8,6 +8,7 @@ import microservice.subject_service.Mappers.CareerMapper;
 import microservice.subject_service.Model.Career;
 import microservice.subject_service.Repository.CareerRepository;
 import microservice.subject_service.Service.CareerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class CareerServiceImpl implements CareerService {
     private final CareerMapper careerMapper;
     private final KeyGenerationService keyGenerationService;
 
+    @Autowired
     public CareerServiceImpl(CareerRepository careerRepository,
                              CareerMapper careerMapper,
                              KeyGenerationService keyGenerationService) {

@@ -92,13 +92,54 @@ public class SubjectFacadeServiceImpl implements SubjectFacadeService {
     }
 
     @Override
-    public CompletableFuture<List<ObligatorySubjectDTO>> getObligatorySubjectsByCareer(String careerKey) {
-        return null;
+    public CompletableFuture<List<ObligatorySubjectDTO>> getObligatorySubjectsByCareer(String careerId) {
+        String subjectUrl = subjectServiceUrlProvider.get() + "/v1/api/subjects/electives/by-career/" + careerId;
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                ResponseEntity<ResponseWrapper<List<ObligatorySubjectDTO>>> responseEntity = restTemplate.exchange(
+                        subjectUrl,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<ResponseWrapper<List<ObligatorySubjectDTO>>>() {}
+                );
+
+                log.info("getObligatorySubjectsByCareer -> ElectiveSubject with Career ID: {} successfully fetched", careerId);
+
+                return Objects.requireNonNull(responseEntity.getBody()).getData();
+            } catch (EntityNotFoundException e) {
+                log.warn("getObligatorySubjectsByCareer -> ElectiveSubject with Career ID {} not found: {}", careerId, e.getMessage());
+                return null;
+            } catch (Exception e) {
+                log.error("getObligatorySubjectsByCareer -> Error fetching subject with Career ID {}: {}", careerId, e.getMessage());
+                throw new RuntimeException(e);
+            }
+        });
     }
+
 
     @Override
-    public CompletableFuture<List<ElectiveSubjectDTO>> getElectiveSubjectsByCareer(String careerKey) {
-        return null;
-    }
+    public CompletableFuture<List<ElectiveSubjectDTO>> getElectiveSubjectsByCareer(Long careerId) {
+        String subjectUrl = subjectServiceUrlProvider.get() + "/v1/api/subjects/electives/by-career/" + careerId;
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                ResponseEntity<ResponseWrapper<List<ElectiveSubjectDTO>>> responseEntity = restTemplate.exchange(
+                        subjectUrl,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<ResponseWrapper<List<ElectiveSubjectDTO>>>() {
+                        }
+                );
 
+                log.info("getElectiveSubjectsByCareer -> ElectiveSubject with Career ID: {} successfully fetched", careerId);
+
+                return Objects.requireNonNull(responseEntity.getBody()).getData();
+            } catch (EntityNotFoundException e) {
+                log.warn("getElectiveSubjectsByCareer -> ElectiveSubject with Career ID {} not found: {}", careerId, e.getMessage());
+                return null;
+            } catch (Exception e) {
+                log.error("getElectiveSubjectsByCareer -> Error fetching subject with Career ID {}: {}", careerId, e.getMessage());
+                throw new RuntimeException(e);
+            }
+        });
+    }
 }
