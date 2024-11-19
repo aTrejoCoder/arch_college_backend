@@ -1,5 +1,6 @@
 package microservice.subject_service.Model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,21 +12,38 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Subject {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "career_id", nullable = false)
-    private Career career;
+public abstract class Subject {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "key")
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "key", unique = true)
     private String key;
 
-    @Column(name = "name",  nullable = false)
-    private String name;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "area_id", nullable = false)
     private Area area;
 
-    @Column(name = "subject_program_url")
-    private String subjectProgramUrl;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "career_id", nullable = false)
+    private Career career;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

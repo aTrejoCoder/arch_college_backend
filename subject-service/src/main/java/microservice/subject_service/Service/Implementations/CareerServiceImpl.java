@@ -1,9 +1,9 @@
 package microservice.subject_service.Service.Implementations;
 
 import jakarta.persistence.EntityNotFoundException;
+import microservice.common_classes.DTOs.Carrer.CareerDTO;
+import microservice.common_classes.DTOs.Carrer.CareerInsertDTO;
 import microservice.common_classes.Utils.Result;
-import microservice.subject_service.DTOs.Career.CareerDTO;
-import microservice.subject_service.DTOs.Career.CareerInsertDTO;
 import microservice.subject_service.Mappers.CareerMapper;
 import microservice.subject_service.Model.Career;
 import microservice.subject_service.Repository.CareerRepository;
@@ -19,14 +19,14 @@ import java.util.Optional;
 public class CareerServiceImpl implements CareerService {
     private final CareerRepository careerRepository;
     private final CareerMapper careerMapper;
-    private final CareerDomainService careerDomainService;
+    private final KeyGenerationService keyGenerationService;
 
     public CareerServiceImpl(CareerRepository careerRepository,
                              CareerMapper careerMapper,
-                             CareerDomainService careerDomainService) {
+                             KeyGenerationService keyGenerationService) {
         this.careerRepository = careerRepository;
         this.careerMapper = careerMapper;
-        this.careerDomainService = careerDomainService;
+        this.keyGenerationService = keyGenerationService;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class CareerServiceImpl implements CareerService {
     @Override
     public void createCareer(CareerInsertDTO careerInsertDTO) {
         Career career = careerMapper.insertDtoToEntity(careerInsertDTO);
-        career.setKey(careerDomainService.generateKey(career));
+        career.setKey(keyGenerationService.generateCareerKey(career));
 
         careerRepository.save(career);
     }

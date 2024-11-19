@@ -13,8 +13,12 @@ public interface ElectiveSubjectRepository extends JpaRepository<ElectiveSubject
     Optional<ElectiveSubject> findByName(String name);
     Page<ElectiveSubject> findByProfessionalLine(Long professionalLineId, Pageable pageable);
     Page<ElectiveSubject> findByAreaId(Long areaId, Pageable pageable);
+    Page<ElectiveSubject> findByCareerId(Long careerId, Pageable pageable);
+
+    List<ElectiveSubject> findByCareerId(Long careerId);
 
     @Query("SELECT COUNT(es) FROM ElectiveSubject es WHERE es.professionalLine.id = ?1")
     int countByProfessionalLineId(Long professionalLineId);
+
     Page<ElectiveSubject> findAll(Pageable pageable);
 }

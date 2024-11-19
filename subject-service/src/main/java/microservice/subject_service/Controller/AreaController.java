@@ -2,11 +2,12 @@ package microservice.subject_service.Controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import microservice.common_classes.Utils.ResponseWrapper;
+import microservice.common_classes.DTOs.Area.AreaDTO;
+import microservice.common_classes.DTOs.Area.AreaInsertDTO;
+import microservice.common_classes.DTOs.Area.AreaWithRelationsDTO;
+import microservice.common_classes.Utils.Response.ResponseWrapper;
 import microservice.common_classes.Utils.Result;
-import microservice.subject_service.DTOs.Area.AreaDTO;
-import microservice.subject_service.DTOs.Area.AreaInsertDTO;
-import microservice.subject_service.DTOs.Area.AreaWithRelationsDTO;
+
 import microservice.subject_service.Service.AreaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;

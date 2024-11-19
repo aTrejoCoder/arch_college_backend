@@ -1,8 +1,8 @@
 package microservice.subject_service.Mappers;
 
-import microservice.subject_service.DTOs.Area.AreaDTO;
-import microservice.subject_service.DTOs.Area.AreaInsertDTO;
-import microservice.subject_service.DTOs.Area.AreaWithRelationsDTO;
+import microservice.common_classes.DTOs.Area.AreaDTO;
+import microservice.common_classes.DTOs.Area.AreaInsertDTO;
+import microservice.common_classes.DTOs.Area.AreaWithRelationsDTO;
 import microservice.subject_service.Model.Area;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

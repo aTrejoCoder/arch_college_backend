@@ -1,7 +1,7 @@
 package microservice.subject_service.Mappers;
 
-import microservice.subject_service.DTOs.Subject.ElectiveSubjectDTO;
-import microservice.subject_service.DTOs.Subject.ElectiveSubjectInsertDTO;
+import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
+import microservice.common_classes.DTOs.Subject.ElectiveSubjectInsertDTO;
 import microservice.subject_service.Model.ElectiveSubject;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,5 +18,6 @@ public interface ElectiveSubjectMapper {
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
     ElectiveSubject updateDtoToEntity(ElectiveSubjectInsertDTO electiveSubjectInsertDTO, Long electiveSubjectId);
 
+    @Mapping(target = "areaId", source = "area.id")
     ElectiveSubjectDTO entityToDTO(ElectiveSubject electiveSubject);
 }

@@ -1,10 +1,10 @@
 package microservice.subject_service.Controller;
 
 import jakarta.validation.Valid;
-import microservice.common_classes.Utils.ResponseWrapper;
+import microservice.common_classes.DTOs.ProfessionalLine.ProfessionalLineDTO;
+import microservice.common_classes.DTOs.ProfessionalLine.ProfessionalLineInsertDTO;
+import microservice.common_classes.Utils.Response.ResponseWrapper;
 import microservice.common_classes.Utils.Result;
-import microservice.subject_service.DTOs.ProfessionalLine.ProfessionalLineDTO;
-import microservice.subject_service.DTOs.ProfessionalLine.ProfessionalLineInsertDTO;
 import microservice.subject_service.Service.ProfessionalLineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,9 +16,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/v1/api/professional_lines")

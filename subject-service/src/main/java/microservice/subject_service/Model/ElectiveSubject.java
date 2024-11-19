@@ -15,9 +15,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "elective_subject")
 public class ElectiveSubject extends Subject {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "professional_line_id")

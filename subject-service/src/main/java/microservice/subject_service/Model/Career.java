@@ -40,14 +40,20 @@ public class Career {
     @Column(name = "semester_duration")
     private String semesterDuration;
 
-    @Column(name = "total_credits", nullable = false)
-    private int totalCredits;
+    @Column(name = "total_career_credits", nullable = false)
+    private int totalCareerCredits;
+
+    @Column(name = "total_obligatory_credits", nullable = false)
+    private int totalObligatoryCredits;
+
+    @Column(name = "total_elective_credits", nullable = false)
+    private int totalElectiveCredits;
 
     @Column(name = "career_director_id", nullable = false)
     private Long careerDirectorId;
 
     @OneToMany(mappedBy = "career", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<OrdinarySubject> ordinarySubjects;
+    private List<ObligatorySubject> obligatorySubjects;
 
     @OneToMany(mappedBy = "career", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ElectiveSubject> electiveSubjects;

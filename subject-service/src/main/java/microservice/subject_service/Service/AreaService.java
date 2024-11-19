@@ -1,9 +1,9 @@
 package microservice.subject_service.Service;
 
+import microservice.common_classes.DTOs.Area.AreaDTO;
+import microservice.common_classes.DTOs.Area.AreaInsertDTO;
+import microservice.common_classes.DTOs.Area.AreaWithRelationsDTO;
 import microservice.common_classes.Utils.Result;
-import microservice.subject_service.DTOs.Area.AreaDTO;
-import microservice.subject_service.DTOs.Area.AreaInsertDTO;
-import microservice.subject_service.DTOs.Area.AreaWithRelationsDTO;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

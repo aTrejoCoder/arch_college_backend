@@ -1,10 +1,10 @@
 package microservice.subject_service.Controller;
 
 import jakarta.validation.Valid;
-import microservice.common_classes.Utils.ResponseWrapper;
+import microservice.common_classes.DTOs.Carrer.CareerDTO;
+import microservice.common_classes.DTOs.Carrer.CareerInsertDTO;
+import microservice.common_classes.Utils.Response.ResponseWrapper;
 import microservice.common_classes.Utils.Result;
-import microservice.subject_service.DTOs.Career.CareerDTO;
-import microservice.subject_service.DTOs.Career.CareerInsertDTO;
 import microservice.subject_service.Service.CareerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

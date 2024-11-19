@@ -2,19 +2,20 @@ package microservice.subject_service.Service.Implementations;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import microservice.common_classes.DTOs.Area.AreaDTO;
+import microservice.common_classes.DTOs.Area.AreaInsertDTO;
+import microservice.common_classes.DTOs.Area.AreaWithRelationsDTO;
+import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
+import microservice.common_classes.DTOs.Subject.ElectiveSubjectInsertDTO;
+import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
+import microservice.common_classes.DTOs.Subject.ObligatorySubjectInsertDTO;
 import microservice.common_classes.Utils.Result;
-import microservice.subject_service.DTOs.Area.AreaDTO;
-import microservice.subject_service.DTOs.Area.AreaInsertDTO;
-import microservice.subject_service.DTOs.Area.AreaWithRelationsDTO;
-import microservice.subject_service.DTOs.Subject.ElectiveSubjectDTO;
-import microservice.subject_service.DTOs.Subject.OrdinarySubjectDTO;
 import microservice.subject_service.Mappers.AreaMapper;
 import microservice.subject_service.Model.Area;
 
 import microservice.subject_service.Repository.AreaRepository;
 import microservice.subject_service.Service.AreaService;
-import microservice.subject_service.Service.ElectiveSubjectService;
-import microservice.subject_service.Service.OrdinarySubjectService;
+import microservice.subject_service.Service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -25,20 +26,19 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @Service
 public class AreaServiceImpl implements AreaService {
     private final AreaRepository areaRepository;
     private final AreaMapper areaMapper;
-    private final OrdinarySubjectService ordinarySubjectService;
-    private final ElectiveSubjectService electiveSubjectService;
+    private final SubjectService<ObligatorySubjectDTO, ObligatorySubjectInsertDTO> ordinarySubjectService;
+    private final SubjectService<ElectiveSubjectDTO, ElectiveSubjectInsertDTO> electiveSubjectService;
 
     @Autowired
     public AreaServiceImpl(AreaRepository areaRepository,
                            AreaMapper areaMapper,
-                           OrdinarySubjectService ordinarySubjectService,
-                           ElectiveSubjectService electiveSubjectService) {
+                           SubjectService<ObligatorySubjectDTO, ObligatorySubjectInsertDTO> ordinarySubjectService,
+                           SubjectService<ElectiveSubjectDTO, ElectiveSubjectInsertDTO> electiveSubjectService) {
         this.areaRepository = areaRepository;
         this.areaMapper = areaMapper;
         this.ordinarySubjectService = ordinarySubjectService;
@@ -106,10 +106,10 @@ public class AreaServiceImpl implements AreaService {
 
     @Async("TaskExecutor")
     private CompletableFuture<AreaWithRelationsDTO> fetchSubjectsAsync(AreaWithRelationsDTO areaWithRelationsDTO, Long areaId, Pageable pageable) {
-        CompletableFuture<Page<OrdinarySubjectDTO>> ordinarySubjectDTOS =
-                CompletableFuture.supplyAsync(() -> ordinarySubjectService.getSubjectByAreaId(areaId, pageable));
+        CompletableFuture<Page<ObligatorySubjectDTO>> ordinarySubjectDTOS =
+                CompletableFuture.supplyAsync(() -> ordinarySubjectService.getSubjectsByFilterPageable(areaId, "area", pageable));
         CompletableFuture<Page<ElectiveSubjectDTO>> electiveSubjectDTOS =
-                CompletableFuture.supplyAsync(() -> electiveSubjectService.getSubjectByAreaId(areaId, pageable));
+                CompletableFuture.supplyAsync(() -> electiveSubjectService.getSubjectsByFilterPageable(areaId, "area", pageable));
 
         return CompletableFuture.allOf(ordinarySubjectDTOS, electiveSubjectDTOS)
                 .thenApply(v -> {

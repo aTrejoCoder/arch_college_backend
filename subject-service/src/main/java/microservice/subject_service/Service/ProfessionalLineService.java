@@ -1,8 +1,8 @@
 package microservice.subject_service.Service;
 
+import microservice.common_classes.DTOs.ProfessionalLine.ProfessionalLineDTO;
+import microservice.common_classes.DTOs.ProfessionalLine.ProfessionalLineInsertDTO;
 import microservice.common_classes.Utils.Result;
-import microservice.subject_service.DTOs.ProfessionalLine.ProfessionalLineDTO;
-import microservice.subject_service.DTOs.ProfessionalLine.ProfessionalLineInsertDTO;
 
 import java.util.List;
 

@@ -1,19 +1,16 @@
 package microservice.subject_service.Service.Implementations;
 
 import jakarta.persistence.EntityNotFoundException;
+import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
+import microservice.common_classes.DTOs.Subject.ElectiveSubjectInsertDTO;
 import microservice.common_classes.Utils.Result;
-import microservice.subject_service.DTOs.Subject.ElectiveSubjectDTO;
-import microservice.subject_service.DTOs.Subject.ElectiveSubjectInsertDTO;
 import microservice.subject_service.Mappers.ElectiveSubjectMapper;
-import microservice.subject_service.Model.Area;
-import microservice.subject_service.Model.Career;
-import microservice.subject_service.Model.ElectiveSubject;
-import microservice.subject_service.Model.ProfessionalLine;
+import microservice.subject_service.Model.*;
 import microservice.subject_service.Repository.AreaRepository;
 import microservice.subject_service.Repository.CareerRepository;
 import microservice.subject_service.Repository.ElectiveSubjectRepository;
 import microservice.subject_service.Repository.ProfessionalLineRepository;
-import microservice.subject_service.Service.ElectiveSubjectService;
+import microservice.subject_service.Service.SubjectService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class ElectiveSubjectServiceImpl implements ElectiveSubjectService {
+public class ElectiveSubjectServiceImpl implements SubjectService<ElectiveSubjectDTO, ElectiveSubjectInsertDTO> {
 
     private final ElectiveSubjectRepository electiveSubjectRepository;
     private final ElectiveSubjectMapper electiveSubjectMapper;
@@ -62,27 +59,27 @@ public class ElectiveSubjectServiceImpl implements ElectiveSubjectService {
     }
 
     @Override
-    @Cacheable(value = "electiveSubjectsByProfessionalLineIdCache", key = "#professionalLineId")
-    public Page<ElectiveSubjectDTO> getSubjectByProfessionalLineId(Long professionalLineId, Pageable pageable) {
-        Page<ElectiveSubject> electiveSubjects = electiveSubjectRepository.findByProfessionalLine(professionalLineId, pageable);
-        return electiveSubjects.map(electiveSubjectMapper::entityToDTO);
-    }
-
-    @Override
-    @Cacheable(value = "electiveSubjectsByAreaIdCache", key = "#subjectId")
-    public Page<ElectiveSubjectDTO> getSubjectByAreaId(Long subjectId, Pageable pageable) {
-        Page<ElectiveSubject> electiveSubjects = electiveSubjectRepository.findByAreaId(subjectId, pageable);
-        return electiveSubjects.map(electiveSubjectMapper::entityToDTO);
+    @Cacheable(value = "electiveSubjectsByFilterCache", key = "#filterId + '_' + #filterType")
+    public Page<ElectiveSubjectDTO> getSubjectsByFilterPageable(Long filterId, String filterType, Pageable pageable) {
+        return switch (filterType) {
+            case "professionalLine" -> electiveSubjectRepository.findByProfessionalLine(filterId, pageable)
+                    .map(electiveSubjectMapper::entityToDTO);
+            case "area" -> electiveSubjectRepository.findByAreaId(filterId, pageable)
+                    .map(electiveSubjectMapper::entityToDTO);
+            case "career" -> electiveSubjectRepository.findByCareerId(filterId, pageable)
+                    .map(electiveSubjectMapper::entityToDTO);
+            default -> throw new IllegalArgumentException("Invalid filter type: " + filterType);
+        };
     }
 
     @Override
     @Cacheable(value = "allElectiveSubjectsCache")
-    public Page<ElectiveSubjectDTO> getSubjectAll(Pageable pageable) {
+    public Page<ElectiveSubjectDTO> getAllSubjectsPageable(Pageable pageable) {
         return electiveSubjectRepository.findAll(pageable).map(electiveSubjectMapper::entityToDTO);
     }
 
     @Override
-    public void createElectiveSubject(ElectiveSubjectInsertDTO electiveSubjectInsertDTO) {
+    public void createSubject(ElectiveSubjectInsertDTO electiveSubjectInsertDTO) {
         ElectiveSubject electiveSubject = electiveSubjectMapper.insertDtoToEntity(electiveSubjectInsertDTO);
 
         handleElectiveSubjectRelationships(electiveSubject, electiveSubjectInsertDTO);
@@ -93,13 +90,13 @@ public class ElectiveSubjectServiceImpl implements ElectiveSubjectService {
     }
 
     @Override
-    public void updateElectiveSubject(ElectiveSubjectInsertDTO electiveSubjectInsertDTO, Long subjectId) {
+    public void updateSubject(ElectiveSubjectInsertDTO electiveSubjectInsertDTO, Long subjectId) {
         ElectiveSubject electiveSubject = electiveSubjectMapper.updateDtoToEntity(electiveSubjectInsertDTO, subjectId);
         electiveSubjectRepository.save(electiveSubject);
     }
 
     @Override
-    public void deleteElectiveSubject(Long subjectId) {
+    public void deleteSubject(Long subjectId) {
         if (!electiveSubjectRepository.existsById(subjectId)) {
             throw new EntityNotFoundException("Subject with ID" + subjectId + " not found");
         }

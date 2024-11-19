@@ -25,7 +25,7 @@ public class Area {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "area", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<OrdinarySubject> ordinarySubjects;
+    private List<ObligatorySubject> obligatorySubjects;
 
     @OneToMany(mappedBy = "area", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ElectiveSubject> electiveSubjects;

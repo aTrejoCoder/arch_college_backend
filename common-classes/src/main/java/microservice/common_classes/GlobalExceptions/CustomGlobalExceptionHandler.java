@@ -1,11 +1,9 @@
 package microservice.common_classes.GlobalExceptions;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;
-import javassist.NotFoundException;
-import microservice.common_classes.Utils.ResponseWrapper;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 
+import microservice.common_classes.Utils.Response.ResponseWrapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

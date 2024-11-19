@@ -1,11 +1,11 @@
 package microservice.subject_service.Controller;
 
 import jakarta.validation.Valid;
-import microservice.common_classes.Utils.ResponseWrapper;
+import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
+import microservice.common_classes.DTOs.Subject.ElectiveSubjectInsertDTO;
+import microservice.common_classes.Utils.Response.ResponseWrapper;
 import microservice.common_classes.Utils.Result;
-import microservice.subject_service.DTOs.Subject.ElectiveSubjectDTO;
-import microservice.subject_service.DTOs.Subject.ElectiveSubjectInsertDTO;
-import microservice.subject_service.Service.ElectiveSubjectService;
+import microservice.subject_service.Service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,9 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,11 +24,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RequestMapping("/v1/api/subjects/electives")
 public class ElectiveSubjectController {
 
-    private final ElectiveSubjectService electiveSubjectService;
+    private final SubjectService<ElectiveSubjectDTO ,ElectiveSubjectInsertDTO> subjectService;
 
     @Autowired
-    public ElectiveSubjectController(ElectiveSubjectService electiveSubjectService) {
-        this.electiveSubjectService = electiveSubjectService;
+    public ElectiveSubjectController(SubjectService<ElectiveSubjectDTO ,ElectiveSubjectInsertDTO> subjectService) {
+        this.subjectService = subjectService;
     }
 
     @Operation(summary = "Get Elective Subject by ID", description = "Fetches an elective subject by its ID")
@@ -40,7 +38,7 @@ public class ElectiveSubjectController {
     })
     @GetMapping("/{subjectId}")
     public ResponseEntity<ResponseWrapper<ElectiveSubjectDTO>> getElectiveSubjectById(@PathVariable Long subjectId) {
-        Result<ElectiveSubjectDTO> areaResult = electiveSubjectService.getSubjectById(subjectId);
+        Result<ElectiveSubjectDTO> areaResult = subjectService.getSubjectById(subjectId);
         if (!areaResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound("Elective Subject", "ID", subjectId));
         }
@@ -55,7 +53,7 @@ public class ElectiveSubjectController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ElectiveSubjectDTO> electiveSubjectDTOS = electiveSubjectService.getSubjectByAreaId(areaId, pageable);
+        Page<ElectiveSubjectDTO> electiveSubjectDTOS = subjectService.getSubjectsByFilterPageable(areaId, "area", pageable);
         return ResponseEntity.ok(ResponseWrapper.found("Elective Subject", "Area ID", areaId, electiveSubjectDTOS));
     }
 
@@ -67,7 +65,7 @@ public class ElectiveSubjectController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ElectiveSubjectDTO> electiveSubjectDTOS = electiveSubjectService.getSubjectByProfessionalLineId(professionalLineId, pageable);
+        Page<ElectiveSubjectDTO> electiveSubjectDTOS = subjectService.getSubjectsByFilterPageable(professionalLineId, "professional line", pageable);
         return ResponseEntity.ok(ResponseWrapper.found("Elective Subject", "Professional Line ID", professionalLineId, electiveSubjectDTOS));
     }
 
@@ -78,7 +76,7 @@ public class ElectiveSubjectController {
     })
     @GetMapping("/name/{name}")
     public ResponseEntity<ResponseWrapper<ElectiveSubjectDTO>> getElectiveSubjectByName(@PathVariable String name) {
-        Result<ElectiveSubjectDTO> areaResult = electiveSubjectService.getSubjectByName(name);
+        Result<ElectiveSubjectDTO> areaResult = subjectService.getSubjectByName(name);
         if (!areaResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound("ElectiveSubject", "name", name));
         }
@@ -92,7 +90,7 @@ public class ElectiveSubjectController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ElectiveSubjectDTO> professionalLines = electiveSubjectService.getSubjectAll(pageable);
+        Page<ElectiveSubjectDTO> professionalLines = subjectService.getAllSubjectsPageable(pageable);
         return ResponseEntity.ok(ResponseWrapper.found("Elective Subjects", professionalLines));
     }
 
@@ -100,7 +98,7 @@ public class ElectiveSubjectController {
     @ApiResponse(responseCode = "201", description = "Elective Subject created", content = @Content)
     @PostMapping
     public ResponseEntity<ResponseWrapper<Void>> createElectiveSubject(@Valid @RequestBody ElectiveSubjectInsertDTO areaInsertDTO) {
-        electiveSubjectService.createElectiveSubject(areaInsertDTO);
+        subjectService.createSubject(areaInsertDTO);
         return ResponseEntity.ok(ResponseWrapper.created(null,"Elective Subject"));
     }
 
@@ -110,10 +108,9 @@ public class ElectiveSubjectController {
             @ApiResponse(responseCode = "404", description = "Elective Subject not found", content = @Content)
     })
     @PutMapping("/{subjectId}")
-    public ResponseEntity<ResponseWrapper<Void>> updateElectiveSubject(
-            @Valid @RequestBody ElectiveSubjectInsertDTO areaInsertDTO,
-            @PathVariable Long subjectId) {
-        electiveSubjectService.updateElectiveSubject(areaInsertDTO, subjectId);
+    public ResponseEntity<ResponseWrapper<Void>> updateElectiveSubject(@Valid @RequestBody ElectiveSubjectInsertDTO electiveInsertDTO,
+                                                                       @PathVariable Long subjectId) {
+        subjectService.updateSubject(electiveInsertDTO, subjectId);
         return ResponseEntity.ok(ResponseWrapper.updated(null,"Elective Subject"));
     }
 
@@ -124,7 +121,7 @@ public class ElectiveSubjectController {
     })
     @DeleteMapping("/{subjectId}")
     public ResponseEntity<ResponseWrapper<Void>> deleteElectiveSubjectById(@PathVariable Long subjectId) {
-        electiveSubjectService.deleteElectiveSubject(subjectId);
+        subjectService.deleteSubject(subjectId);
         return ResponseEntity.ok(ResponseWrapper.deleted(null,"Elective Subject"));
     }
 }
