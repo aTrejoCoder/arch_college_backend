@@ -1,9 +1,11 @@
 package microservice.student_service.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import microservice.common_classes.DTOs.Student.StudentDTO;
+import microservice.common_classes.DTOs.Student.StudentInsertDTO;
+import microservice.common_classes.Utils.ProfessionalLineModality;
 import microservice.common_classes.Utils.Result;
-import microservice.student_service.DTOs.StudentDTO;
-import microservice.student_service.DTOs.StudentInsertDTO;
+import microservice.common_classes.Utils.Schedule.SemesterData;
 import microservice.student_service.Mappers.StudentMapper;
 import microservice.student_service.Model.Student;
 import microservice.student_service.Repository.StudentRepository;
@@ -22,15 +24,16 @@ public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
     private final StudentMapper studentMapper;
-    private final StudentDomainService studentDomainService;
+    private final AccountNumberGenerationService accountNumberGenerationService;
+    private final String currentGenerationIncome =  SemesterData.getCurrentSemester();
 
     @Autowired
     public StudentServiceImpl(StudentRepository studentRepository,
                               StudentMapper studentMapper,
-                              StudentDomainService studentDomainService) {
+                              AccountNumberGenerationService accountNumberGenerationService) {
         this.studentRepository = studentRepository;
         this.studentMapper = studentMapper;
-        this.studentDomainService = studentDomainService;
+        this.accountNumberGenerationService = accountNumberGenerationService;
     }
 
     @Override
@@ -74,11 +77,10 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public void createStudent(StudentInsertDTO studentInsertDTO) {
         Student student = studentMapper.insertDtoToEntity(studentInsertDTO);
-        String accountNumber = studentDomainService.generateStudentAccountNumber(student);
-        String incomeGeneration = studentDomainService.calculateIncomeGeneration(student.getCreatedAt()); // CreatedAt already set it on mappers
+        String accountNumber = accountNumberGenerationService.generateStudentAccountNumber(student);
 
-        student.initializeAcademicValues(accountNumber, incomeGeneration);
-        studentRepository.saveAndFlush(student);
+        student.initializeAcademicValues(accountNumber, currentGenerationIncome);
+        studentRepository.save(student);
     }
 
     @Override
@@ -87,6 +89,29 @@ public class StudentServiceImpl implements StudentService {
                 .orElseThrow(() -> new EntityNotFoundException("Entity with ID " + studentId + " not found"));
 
         studentMapper.updatePersonalData(student, studentInsertDTO);
+        studentRepository.save(student);
+    }
+
+    public void setProfessionalLineData(String accountNumber, Long professionalLineId, ProfessionalLineModality professionalLineModality) {
+        Student student = studentRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new EntityNotFoundException("Entity with Account Number " + accountNumber + " not found"));
+
+        if (student.getSemestersCompleted() < 6) {
+            throw  new RuntimeException("Student not able to set professional line data");
+        }
+
+        student.setProfessionalLineId(professionalLineId);
+        student.setProfessionalLineModality(professionalLineModality);
+
+        studentRepository.save(student);
+    }
+
+    public void increaseSemestersCursed(String accountNumber) {
+        Student student = studentRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new EntityNotFoundException("Entity with Account Number " + accountNumber + " not found"));
+
+        student.increaseSemesterCompleted();
+
         studentRepository.save(student);
     }
 

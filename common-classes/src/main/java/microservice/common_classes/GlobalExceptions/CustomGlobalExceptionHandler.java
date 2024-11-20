@@ -1,8 +1,10 @@
 package microservice.common_classes.GlobalExceptions;
 
-import javassist.NotFoundException;
-import microservice.common_classes.Utils.ResponseWrapper;
+import jakarta.persistence.EntityNotFoundException;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+
+import microservice.common_classes.Utils.Response.ResponseWrapper;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -59,8 +61,8 @@ public class CustomGlobalExceptionHandler {
     }
 
     /* Not Found Exception */
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ResponseWrapper<String>> entityNotFound(NotFoundException ex) {
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ResponseWrapper<String>> entityNotFound(EntityNotFoundException ex) {
         ResponseWrapper<String> response = new ResponseWrapper<>(
                 false,
                 null,
@@ -68,6 +70,18 @@ public class CustomGlobalExceptionHandler {
                 HttpStatus.NOT_FOUND.value(),
                 LocalDateTime.now());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    // SQL Conflict
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ResponseWrapper<String>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        ResponseWrapper<String> response = new ResponseWrapper<>(
+                false,
+                null,
+                "Unique constraint violation: " + ex.getRootCause().getMessage(),
+                HttpStatus.CONFLICT.value(),
+                LocalDateTime.now());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
     /* Generic Exception */

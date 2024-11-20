@@ -8,7 +8,7 @@ spring:
         url: http://localhost:8081
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/architecture_college_students_db
+    url: jdbc:postgresql://localhost:5432/architecture_college_db
     username: alexistrejo
     password: vladilena
     driver-class-name: org.postgresql.Driver

@@ -4,10 +4,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import microservice.common_classes.Utils.ResponseWrapper;
+import microservice.common_classes.DTOs.Student.StudentDTO;
+import microservice.common_classes.DTOs.Student.StudentInsertDTO;
+import microservice.common_classes.Utils.ProfessionalLineModality;
+import microservice.common_classes.Utils.Response.ResponseWrapper;
 import microservice.common_classes.Utils.Result;
-import microservice.student_service.DTOs.StudentDTO;
-import microservice.student_service.DTOs.StudentInsertDTO;
+import microservice.student_service.Service.StudentRelationService;
 import microservice.student_service.Service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,10 +24,13 @@ import org.springframework.web.bind.annotation.*;
 public class StudentController {
 
     private final StudentService studentService;
+    private final StudentRelationService studentRelationService;
 
     @Autowired
-    public StudentController(StudentService studentService) {
+    public StudentController(StudentService studentService,
+                             StudentRelationService studentRelationService) {
         this.studentService = studentService;
+        this.studentRelationService = studentRelationService;
     }
 
     @GetMapping("/{studentId}")
@@ -85,9 +90,18 @@ public class StudentController {
     })
     @PostMapping
     public ResponseEntity<ResponseWrapper<Void>> createStudent(@Valid @RequestBody StudentInsertDTO studentInsertDTO) {
+        Result<Void> careerResult = studentRelationService.validateExistingCareerId(studentInsertDTO.getCareerId());
+        if (!careerResult.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(careerResult.getErrorMessage()));
+        }
+
         studentService.createStudent(studentInsertDTO);
-        return ResponseEntity.ok(ResponseWrapper.ok(null, "Student successfully created"));
+
+        // Create Academic History
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseWrapper.created("Student successfully created"));
     }
+
 
     @Operation(summary = "Update student data", description = "Updates the personal data of an existing student.")
     @ApiResponses(value = {
@@ -118,5 +132,19 @@ public class StudentController {
     @GetMapping("/validate/{studentId}")
     public boolean validateExistingStudentById(@PathVariable Long studentId) {
         return studentService.validateExistingStudent(studentId);
+    }
+
+    @PatchMapping("/{studentAccount}/set-professionalLine/{professionalLineId}/modality/{professionalLineModality}")
+    public ResponseEntity<Void> setProfessionalLineData(@Valid @PathVariable String studentAccount,
+                                                        @PathVariable ProfessionalLineModality professionalLineModality,
+                                                        @PathVariable Long professionalLineId) {
+        studentService.setProfessionalLineData(studentAccount, professionalLineId, professionalLineModality);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{studentAccount}/increase-semester-completed")
+    public ResponseEntity<Void> increaseSemesterCompleted(@Valid @PathVariable String studentAccount) {
+        studentService.increaseSemestersCursed(studentAccount);
+        return ResponseEntity.ok().build();
     }
 }

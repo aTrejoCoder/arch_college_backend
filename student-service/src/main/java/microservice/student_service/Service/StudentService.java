@@ -1,8 +1,9 @@
 package microservice.student_service.Service;
 
+import microservice.common_classes.DTOs.Student.StudentDTO;
+import microservice.common_classes.DTOs.Student.StudentInsertDTO;
+import microservice.common_classes.Utils.ProfessionalLineModality;
 import microservice.common_classes.Utils.Result;
-import microservice.student_service.DTOs.StudentDTO;
-import microservice.student_service.DTOs.StudentInsertDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,6 +12,9 @@ public interface StudentService {
     Page<StudentDTO> getAllStudentsSortedByLastname(Pageable pageable, String sortDirection);
     Page<StudentDTO> getAllStudentsSortedByAccountNumber(Pageable pageable, String sortDirection);
     Result<StudentDTO> getStudentByAccountNumber(String accountNumber);
+
+    void increaseSemestersCursed(String accountNumber);
+    void setProfessionalLineData(String accountNumber, Long professionalLineId, ProfessionalLineModality professionalLineModality);
 
     void createStudent(StudentInsertDTO studentInsertDTO);
     void updateStudent(StudentInsertDTO studentInsertDTO,  Long studentId);

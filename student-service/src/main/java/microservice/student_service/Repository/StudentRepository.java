@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
-    @Query("SELECT s.studentId FROM Student s ORDER BY s.studentId DESC")
+    @Query("SELECT s.id FROM Student s ORDER BY s.id DESC")
     Optional<Long> findLastId();
 
     Optional<Student> findByAccountNumber(String accountNumber);

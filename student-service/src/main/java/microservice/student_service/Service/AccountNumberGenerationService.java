@@ -9,14 +9,14 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-public class StudentDomainService {
+public class AccountNumberGenerationService {
 
     private static final int FIRST_GENERATION_YEAR = 2024;
     private static final int FIRST_GENERATION_NUMBER = 1;
     private final StudentRepository studentRepository;
 
     @Autowired
-    public StudentDomainService(StudentRepository studentRepository) {
+    public AccountNumberGenerationService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
@@ -68,17 +68,6 @@ public class StudentDomainService {
         return sum % 10;
     }
 
-    public String calculateIncomeGeneration(LocalDateTime createdAt) {
-        if (createdAt == null) {
-            throw new IllegalArgumentException("Created date cannot be null");
-        }
-
-        int requestedYear = createdAt.getYear();
-        validateYear(requestedYear);
-
-        int generationNumber = calculateGenerationNumber(requestedYear);
-        return requestedYear + "-" + String.format("%02d", generationNumber);
-    }
 
     private void validateYear(int requestedYear) {
         if (requestedYear < FIRST_GENERATION_YEAR) {
