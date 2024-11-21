@@ -6,12 +6,12 @@ import microservice.common_classes.DTOs.User.SignupDTO;
 import microservice.common_classes.DTOs.User.UserDTO;
 import microservice.common_classes.FacadeService.Student.StudentFacadeService;
 import microservice.common_classes.FacadeService.Teacher.TeacherFacadeService;
+import microservice.common_classes.JWT.JWTSecurity;
 import microservice.common_classes.Utils.Result;
 import microservice.user_service.Mappers.UserMapper;
-import microservice.user_service.Middleware.JWTSecurity;
 import microservice.user_service.Model.User;
 import microservice.user_service.Repository.UserRepository;
-import microservice.user_service.Middleware.PasswordUtil;
+import microservice.user_service.Utils.PasswordUtil;
 import microservice.user_service.Utils.AccountNumberValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -90,7 +90,6 @@ public class AuthServiceImpl implements  AuthService {
             return validateTeacher(accountNumber);
         }
     }
-
 
     @Override
     @Async("taskExecutor")

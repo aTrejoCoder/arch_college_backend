@@ -45,7 +45,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseWrapper.conflict(credentialsResult.getErrorMessage()));
         }
 
-        UserDTO userDTO = userService.createUser(signupDTO, "student");
+        UserDTO userDTO = userService.createUser(signupDTO, "STUDENT");
 
         userService.addMemberRelationAsync(userDTO.getUsername());
 
@@ -72,7 +72,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseWrapper.conflict(validationResult.getErrorMessage()));
         }
 
-        UserDTO userDTO = userService.createUser(signupDTO, "teacher");
+        UserDTO userDTO = userService.createUser(signupDTO, "TEACHER");
         userService.addMemberRelationAsync(userDTO.getUsername());
 
         String jwtToken = authService.getJWTToken(userDTO);

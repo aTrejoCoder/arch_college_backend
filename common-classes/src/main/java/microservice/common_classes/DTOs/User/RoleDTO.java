@@ -9,10 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 public class RoleDTO {
-
-    @JsonProperty("id")
-    private Long id;
-
     @JsonProperty("name")
     private String name;
 }

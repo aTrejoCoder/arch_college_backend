@@ -2,11 +2,10 @@ package microservice.user_service.Controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.DTOs.User.ProfileDTO;
+import microservice.common_classes.JWT.JWTSecurity;
 import microservice.common_classes.Utils.ResponseWrapper;
 import microservice.common_classes.Utils.Result;
-import microservice.user_service.Middleware.JWTSecurity;
 import microservice.user_service.Service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

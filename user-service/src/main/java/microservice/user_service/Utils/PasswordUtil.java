@@ -1,4 +1,4 @@
-package microservice.user_service.Middleware;
+package microservice.user_service.Utils;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

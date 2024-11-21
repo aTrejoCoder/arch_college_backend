@@ -1,13 +1,20 @@
-package microservice.user_service.Middleware;
+package microservice.common_classes.JWT;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
 import microservice.common_classes.Utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -23,7 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class JWTSecurity {
+public class JWTSecurity extends OncePerRequestFilter {
 
     private final SecretKey secretKey;
 
@@ -31,6 +38,41 @@ public class JWTSecurity {
     public JWTSecurity(@Value("${jwt.secret.key}") String secretKey) {
         this.secretKey = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
     }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        String token = extractToken(request);
+        String requestURI = request.getRequestURI();
+
+        if (requestURI.startsWith("/v1/api/public/")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        if (token != null && validateToken(token).isSuccess()) {
+            Result<Claims> claimsResult = validateToken(token);
+            if (claimsResult.isSuccess()) {
+                Claims claims = claimsResult.getData();
+
+                String username = getAccountNumber(claims);
+                List<String> roles = getRoles(claims);
+
+                List<GrantedAuthority> authorities = roles.stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(username, null, authorities);
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        }
+
+        chain.doFilter(request, response);
+    }
+
+
+
 
     private String extractToken(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
@@ -68,7 +110,7 @@ public class JWTSecurity {
         return claims.get("userId", Long.class);
     }
 
-    public String getUserName(Claims claims) {
+    public String getAccountNumber(Claims claims) {
         return claims.get("username", String.class);
     }
 
@@ -122,7 +164,7 @@ public class JWTSecurity {
         if (!claimsResult.isSuccess()) {
             return Result.error(claimsResult.getErrorMessage());
         }
-        return Result.success(getUserName(claimsResult.getData()));
+        return Result.success(getAccountNumber(claimsResult.getData()));
     }
 
     public Result<List<String>> getRolesFromToken(HttpServletRequest request) {

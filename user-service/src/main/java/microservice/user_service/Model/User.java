@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -55,18 +56,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
-
-    private User(UserBuilder builder) {
-        this.email = builder.email;
-        this.phoneNumber = builder.phoneNumber;
-        this.username = builder.username;
-        this.password = builder.password;
-        this.studentId = builder.studentId;
-        this.teacherId = builder.teacherId;
-        this.joinedAt = builder.joinedAt;
-        this.lastLogin = builder.lastLogin;
-        this.updatedAt = builder.updatedAt;
-    }
 
 }
 

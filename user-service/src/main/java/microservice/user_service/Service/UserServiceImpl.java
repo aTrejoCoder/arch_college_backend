@@ -10,7 +10,7 @@ import microservice.common_classes.DTOs.User.UserDTO;
 import microservice.common_classes.FacadeService.Student.StudentFacadeService;
 import microservice.common_classes.FacadeService.Teacher.TeacherFacadeService;
 import microservice.user_service.Mappers.UserMapper;
-import microservice.user_service.Middleware.PasswordUtil;
+import microservice.user_service.Utils.PasswordUtil;
 import microservice.user_service.Model.Role;
 import microservice.user_service.Model.User;
 import microservice.user_service.Repository.RoleRepository;
