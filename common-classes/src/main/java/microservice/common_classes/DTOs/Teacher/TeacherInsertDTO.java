@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
-import microservice.common_classes.Utils.Title;
+import microservice.common_classes.Utils.Teacher.Title;
 
 import java.time.LocalDateTime;
 

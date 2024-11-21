@@ -9,7 +9,6 @@
         </processorPath>
         <module name="arch_college_backend.common-classes.main" />
         <module name="arch_college_backend.common-classes.test" />
-        <module name="arch_college_backend.student-service.test" />
       </profile>
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />

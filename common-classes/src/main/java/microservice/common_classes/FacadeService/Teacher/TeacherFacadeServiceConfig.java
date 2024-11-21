@@ -1,12 +1,14 @@
 package microservice.common_classes.FacadeService.Teacher;
 
-import microservice.common_classes.FacadeService.Student.StudentFacadeServiceImpl;
+import microservice.common_classes.FacadeService.Teacher.TeacherFacadeService;
+import microservice.common_classes.FacadeService.Teacher.TeacherFacadeServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -32,8 +34,9 @@ public class TeacherFacadeServiceConfig {
 
     @Bean
     @Qualifier("teacherFacadeService")
+    @Primary
     public TeacherFacadeService TeacherFacadeService(RestTemplate restTemplate,
                                                      @Qualifier("teacherServiceUrlProvider") Supplier<String> teacherServiceUrlProvider) {
-        return new StudentFacadeServiceImpl(restTemplate, teacherServiceUrlProvider);
+        return new TeacherFacadeServiceImpl(restTemplate, teacherServiceUrlProvider);
     }
 }

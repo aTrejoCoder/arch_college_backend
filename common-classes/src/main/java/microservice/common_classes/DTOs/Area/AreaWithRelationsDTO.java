@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
-import microservice.common_classes.DTOs.Subject.OrdinarySubjectDTO;
+import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import org.springframework.data.domain.Page;
 
 
@@ -24,12 +24,12 @@ public class AreaWithRelationsDTO {
     @JsonProperty("updated_at")
     private LocalDateTime updatedAt;
 
-    private Page<OrdinarySubjectDTO> ordinarySubjects;
+    private Page<ObligatorySubjectDTO> ordinarySubjects;
 
     private Page<ElectiveSubjectDTO> electiveSubjects;
 
 
-    public void setRelationships(Page<OrdinarySubjectDTO> ordinarySubjects,
+    public void setRelationships(Page<ObligatorySubjectDTO> ordinarySubjects,
                                  Page<ElectiveSubjectDTO> electiveSubjects) {
         this.ordinarySubjects = ordinarySubjects;
         this.electiveSubjects = electiveSubjects;

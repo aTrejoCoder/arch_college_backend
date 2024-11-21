@@ -6,7 +6,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.common_classes.Utils.GradeStatus;
+import microservice.common_classes.Utils.Grades.GradeStatus;
 
 @Data
 @NoArgsConstructor
@@ -26,6 +26,9 @@ public class GradeDTO {
 
     @JsonProperty("elective_subject_id")
     private Long electiveSubjectId;
+
+    @JsonProperty("professional_line_id")
+    private Long professionalLineId;
 
     @JsonProperty("student_id")
     private Long studentId;

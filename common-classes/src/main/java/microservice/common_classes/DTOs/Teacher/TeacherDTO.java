@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.common_classes.Utils.Title;
+import microservice.common_classes.Utils.Teacher.Title;
 
 import java.time.LocalDateTime;
 
