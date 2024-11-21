@@ -32,13 +32,24 @@ public class CareerInsertDTO {
     @NotBlank(message = "semester_duration can't be empty")
     private String semesterDuration;
 
-    @JsonProperty("total_credits")
-    @NotNull(message = "total_credits can't be null")
-    @Positive(message = "total_credits can't be negative")
-    private int totalCredits;
+    @JsonProperty("total_career_credits")
+    @NotNull(message = "total_career_credits can't be null")
+    @Positive(message = "total_career_credits can't be negative")
+    private int totalCareerCredits;
+
+    @JsonProperty("total_obligatory_credits")
+    @NotNull(message = "total_obligatory_credits can't be null")
+    @Positive(message = "total_obligatory_credits can't be negative")
+    private int totalObligatoryCredits;
+
+    @JsonProperty("total_elective_credits")
+    @NotNull(message = "total_elective_credits can't be null")
+    @Positive(message = "total_elective_credits can't be negative")
+    private int totalElectiveCredits;
+
 
     @JsonProperty("career_director_id")
     @NotNull(message = "total_credits can't be null")
     @Positive(message = "total_credits can't be negative")
-    private Long CareerDirectorId;
+    private Long careerDirectorId;
 }

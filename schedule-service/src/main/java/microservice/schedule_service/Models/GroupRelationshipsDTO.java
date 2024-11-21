@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
-import microservice.common_classes.DTOs.Subject.OrdinarySubjectDTO;
+import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import microservice.common_classes.DTOs.Teacher.TeacherDTO;
 
 
@@ -13,10 +13,11 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class GroupRelationshipsDTO {
 
     private List<TeacherDTO> teacherDTOS;
-    private OrdinarySubjectDTO ordinarySubjectDTO;
+    private ObligatorySubjectDTO obligatorySubjectDTO;
     private ElectiveSubjectDTO electiveSubjectDTO;
 
     public GroupRelationshipsDTO(ElectiveSubjectDTO electiveSubjectDTO, TeacherDTO teacherDTO) {
@@ -24,8 +25,8 @@ public class GroupRelationshipsDTO {
         this.electiveSubjectDTO = electiveSubjectDTO;
     }
 
-        public GroupRelationshipsDTO(OrdinarySubjectDTO ordinarySubjectDTO, List<TeacherDTO> teacherDTOS) {
-        this.ordinarySubjectDTO = ordinarySubjectDTO;
+        public GroupRelationshipsDTO(ObligatorySubjectDTO obligatorySubjectDTO, List<TeacherDTO> teacherDTOS) {
+        this.obligatorySubjectDTO = obligatorySubjectDTO;
         this.teacherDTOS = teacherDTOS;
     }
 
@@ -37,32 +38,8 @@ public class GroupRelationshipsDTO {
         this.electiveSubjectDTO = electiveSubjectDTO;
     }
 
-    public GroupRelationshipsDTO(OrdinarySubjectDTO ordinarySubjectDTO) {
-        this.ordinarySubjectDTO = ordinarySubjectDTO;
+    public GroupRelationshipsDTO(ObligatorySubjectDTO obligatorySubjectDTO) {
+        this.obligatorySubjectDTO = obligatorySubjectDTO;
     }
 
-
-    public List<TeacherDTO> getTeacherDTOS() {
-        return teacherDTOS;
-    }
-
-    public void setTeacherDTOS(List<TeacherDTO> teacherDTOS) {
-        this.teacherDTOS = teacherDTOS;
-    }
-
-    public ElectiveSubjectDTO getElectiveSubjectDTO() {
-        return electiveSubjectDTO;
-    }
-
-    public void setElectiveSubjectDTO(ElectiveSubjectDTO electiveSubjectDTO) {
-        this.electiveSubjectDTO = electiveSubjectDTO;
-    }
-
-    public OrdinarySubjectDTO getOrdinarySubjectDTO() {
-        return ordinarySubjectDTO;
-    }
-
-    public void setOrdinarySubjectDTO(OrdinarySubjectDTO ordinarySubjectDTO) {
-        this.ordinarySubjectDTO = ordinarySubjectDTO;
-    }
 }

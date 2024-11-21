@@ -1,4 +1,4 @@
-package microservice.common_classes.Utils;
+package microservice.common_classes.Utils.Response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -45,7 +45,7 @@ public class ResponseWrapper<T> {
         );
     }
 
-    public static <T> ResponseWrapper<T> found(T data ,String entity) {
+    public static <T> ResponseWrapper<T> found(T data, String entity) {
         String message = entity + " successfully fetched";
         return new ResponseWrapper<>(
                 true,
@@ -56,10 +56,21 @@ public class ResponseWrapper<T> {
         );
     }
 
+
     public static <T> ResponseWrapper<T> ok(T data, String message) {
         return new ResponseWrapper<>(
                 true,
                 data,
+                message,
+                HttpStatus.OK.value(),
+                LocalDateTime.now()
+        );
+    }
+
+    public static <T> ResponseWrapper<T> ok(String message) {
+        return new ResponseWrapper<>(
+                true,
+                null,
                 message,
                 HttpStatus.OK.value(),
                 LocalDateTime.now()
@@ -131,6 +142,7 @@ public class ResponseWrapper<T> {
                 LocalDateTime.now()
         );
     }
+
 
     public static <T> ResponseWrapper<T> conflict(String message) {
         return new ResponseWrapper<>(

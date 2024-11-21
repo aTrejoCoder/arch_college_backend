@@ -10,9 +10,10 @@ import java.util.Optional;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
         Optional<Group> findByKeyAndSchoolPeriod(String key, String schoolPeriod);
-        List<Group> findByOrdinarySubjectId(Long subjectId);
+        List<Group> findByObligatorySubjectId(Long subjectId);
         List<Group> findByClassroom(String classroom);
         List<Group> findByElectiveSubjectId(Long subjectId);
+        List<Group> findByIdIn(List<Long> idList);
         List<Group> findByClassroomAndSchoolPeriod(String classroom, String schoolPeriod);
 
         @Query("SELECT g FROM Group g JOIN g.teachers t WHERE t.id = :teacherId AND g.schoolPeriod = :schoolPeriod")

@@ -1,4 +1,4 @@
-package microservice.common_classes.Utils;
+package microservice.common_classes.Utils.Teacher;
 
 import lombok.Getter;
 

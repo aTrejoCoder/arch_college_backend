@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import microservice.common_classes.Utils.GroupStatus;
+import microservice.common_classes.Utils.Group.GroupStatus;
 
 import java.util.List;
 

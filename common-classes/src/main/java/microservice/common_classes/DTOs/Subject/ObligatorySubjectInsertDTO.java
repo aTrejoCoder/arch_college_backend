@@ -2,14 +2,13 @@ package microservice.common_classes.DTOs.Subject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrdinarySubjectInsertDTO {
+public class ObligatorySubjectInsertDTO extends SubjectDTO {
     @JsonProperty("name")
     @NotNull(message = "name can't be null")
     @NotBlank(message = "name can't be empty")

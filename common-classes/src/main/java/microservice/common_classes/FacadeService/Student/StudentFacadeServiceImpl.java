@@ -3,7 +3,8 @@ package microservice.common_classes.FacadeService.Student;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Student.StudentDTO;
-import microservice.common_classes.Utils.ResponseWrapper;
+import microservice.common_classes.Utils.ProfessionalLineModality;
+import microservice.common_classes.Utils.Response.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -17,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 @Slf4j
-@Service
+@Service("StudentFacadeServiceImpl")
 public class StudentFacadeServiceImpl implements StudentFacadeService {
 
     private final RestTemplate restTemplate;
@@ -118,4 +119,50 @@ public class StudentFacadeServiceImpl implements StudentFacadeService {
             }
         });
     }
+
+    @Override
+    @Async("taskExecutor")
+    public CompletableFuture<Void> setProfessionalLineData(String studentAccount, Long professionalLineId, ProfessionalLineModality professionalLineModality) {
+        String studentUrl = studentServiceUrlProvider.get() + "/v1/api/students/" + studentAccount +
+                "/set-professionalLine/" + professionalLineId + "/modality/" + professionalLineModality;
+
+        return CompletableFuture.runAsync(() -> {
+            try {
+                restTemplate.exchange(
+                        studentUrl,
+                        HttpMethod.GET,
+                        null,
+                        Void.class
+                );
+
+                log.info("Professional line data set for student: {}", studentAccount);
+            } catch (Exception e) {
+                log.error("Error setting professional line data for student {}: {}", studentAccount, e.getMessage());
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Override
+    @Async("taskExecutor")
+    public CompletableFuture<Void> increaseSemesterCompleted(String studentAccount) {
+        String studentUrl = studentServiceUrlProvider.get() + "/v1/api/students/" + studentAccount + "/increase-semester-completed";
+
+        return CompletableFuture.runAsync(() -> {
+            try {
+                restTemplate.exchange(
+                        studentUrl,
+                        HttpMethod.GET,
+                        null,
+                        Void.class
+                );
+
+                log.info("Semester incremented for student: {}", studentAccount);
+            } catch (Exception e) {
+                log.error("Error incrementing semester for student {}: {}", studentAccount, e.getMessage());
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
 }

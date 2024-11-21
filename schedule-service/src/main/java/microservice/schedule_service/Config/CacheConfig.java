@@ -18,7 +18,8 @@ public class CacheConfig {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
                 "groupById",
                 "groupCurrentByKey",
-                "currentGroupsBySubjectId",
+                "currentGroupsByObligatorySubjectId",
+                "currentGroupsByElectiveSubjectId",
                 "currentGroupsByTeacherId"
         );        cacheManager.setCaffeine(Caffeine.newBuilder()
                 .maximumSize(100)

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.common_classes.Utils.GroupStatus;
+import microservice.common_classes.Utils.Group.GroupStatus;
 
 import java.util.HashSet;
 import java.util.List;
@@ -24,12 +24,12 @@ public class OrdinaryGroupInsertDTO {
     @NotNull(message = "teacher_id can't be null")
     private Set<Long> teacherIds = new HashSet<>();
 
-    @JsonProperty("spots")
-    @NotNull(message = "spots can't be null")
-    @Positive(message = "spots can't be negative")
-    @Min(value = 20, message = "spots can't be below from 20")
-    @Max(value = 100, message = "spots can't be above from 100")
-    private int spots;
+    @JsonProperty("total_spots")
+    @NotNull(message = "total_spots can't be null")
+    @Positive(message = "total_spots can't be negative")
+    @Min(value = 20, message = "total_spots can't be below from 20")
+    @Max(value = 100, message = "total_spots can't be above from 100")
+    private int totalSpots;
 
     @JsonProperty("schedule")
     @NotNull(message = "schedule can't be null")

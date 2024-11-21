@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.common_classes.Utils.GroupStatus;
+import microservice.common_classes.Utils.Group.GroupStatus;
 
 import java.util.List;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -24,11 +23,11 @@ public class ElectiveGroupInsertDTO {
     @JsonProperty("teacher_id")
     private Long teacherId;
 
-    @JsonProperty("spots")
-    @NotNull(message = "spots can't be null")
-    @Positive(message = "spots can't be negative")
-    @Min(value = 20, message = "spots can't be below from 20")
-    @Max(value = 100, message = "spots can't be above from 100")
+    @JsonProperty("availableSpots")
+    @NotNull(message = "availableSpots can't be null")
+    @Positive(message = "availableSpots can't be negative")
+    @Min(value = 20, message = "availableSpots can't be below from 20")
+    @Max(value = 100, message = "availableSpots can't be above from 100")
     private int spots;
 
     @JsonProperty("schedule")

@@ -3,7 +3,8 @@ package microservice.schedule_service.Models;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.common_classes.Utils.Title;
+import microservice.common_classes.Utils.Teacher.Title;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,4 +32,10 @@ public class Teacher {
             inverseJoinColumns = @JoinColumn(name = "schedule_id", referencedColumnName = "id")
     )
         private List<Schedule> schedules = new ArrayList<>();
+
+    // +John Doe, ARCH
+    public String composeNameWithTitle() {
+        return  "+" + teacherName + "," + teacherTitle.getInitials();
+    }
+
 }

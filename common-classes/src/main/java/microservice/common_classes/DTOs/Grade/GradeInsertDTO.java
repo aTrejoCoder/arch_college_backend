@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.common_classes.Utils.GradeStatus;
+import microservice.common_classes.Utils.Grades.GradeStatus;
 
 @Data
 @NoArgsConstructor

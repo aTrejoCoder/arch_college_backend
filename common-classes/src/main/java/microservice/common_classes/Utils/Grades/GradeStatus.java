@@ -1,4 +1,4 @@
-package microservice.common_classes.Utils;
+package microservice.common_classes.Utils.Grades;
 
 public enum GradeStatus {
     NORMAL_PENDING,

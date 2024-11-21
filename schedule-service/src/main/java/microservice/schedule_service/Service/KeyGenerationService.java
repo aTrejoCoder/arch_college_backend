@@ -1,7 +1,7 @@
 package microservice.schedule_service.Service;
 
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
-import microservice.common_classes.DTOs.Subject.OrdinarySubjectDTO;
+import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import microservice.schedule_service.Models.Group;
 import microservice.schedule_service.Repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,20 +22,20 @@ public class KeyGenerationService {
         this.groupRepository = groupRepository;
     }
 
-    // Ordinary Key example --> 5210
+    // Obligatory Key example --> 5210
     // (5) means a generic number
     // (2) means the number of the semester that the semester that subject belongs
     // (10) means the number of the group from some subject
-    public String generateOrdinaryKey(Group group, OrdinarySubjectDTO ordinarySubjectDTO) {
-        List<Group> ordinaryGroups = groupRepository.findByOrdinarySubjectId(group.getOrdinarySubjectId());
+    public String generateObligatoryKey(Group group, ObligatorySubjectDTO ordinarySubjectDTO) {
+        List<Group> ordinaryGroups = groupRepository.findByObligatorySubjectId(group.getObligatorySubjectId());
 
-        int semesterNumber = ordinarySubjectDTO.getSemesterNumber();
+        int semesterNumber = ordinarySubjectDTO.getSemester();
         int subjectGroupNumber = ordinaryGroups.size() + 1;
 
         return String.format("%s%d%02d", STATIC_NUMBER_ORDINARY_START_KEY, semesterNumber, subjectGroupNumber);
     }
 
-    // Ordinary Key example --> 6102
+    // Obligatory Key example --> 6102
     // (6) means a generic number
     // (10) means the ID of the elective subject
     // (9) means the number of the group from the elective subject

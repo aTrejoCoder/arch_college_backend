@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ElectiveSubjectInsertDTO {
+public class ElectiveSubjectInsertDTO extends SubjectDTO {
     @JsonProperty("name")
     @NotNull(message = "name can't be null")
     @NotBlank(message = "name can't be empty")

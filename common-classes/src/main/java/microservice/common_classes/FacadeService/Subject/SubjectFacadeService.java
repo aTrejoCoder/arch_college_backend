@@ -1,15 +1,25 @@
 package microservice.common_classes.FacadeService.Subject;
 
+import microservice.common_classes.DTOs.Carrer.CareerDTO;
+import microservice.common_classes.DTOs.ProfessionalLine.ProfessionalLineDTO;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
-import microservice.common_classes.DTOs.Subject.OrdinarySubjectDTO;
+import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 
 public interface SubjectFacadeService {
     CompletableFuture<Boolean> validateExistingOrdinarySubject(Long subjectId);
-    CompletableFuture<OrdinarySubjectDTO> getOrdinarySubjectById(Long subjectId);
+    CompletableFuture<ObligatorySubjectDTO> getOrdinarySubjectById(Long subjectId);
+
+    CompletableFuture<CareerDTO> getCareerById(Long careerId);
+    CompletableFuture<ProfessionalLineDTO> getProfessionalLineById(Long professionalLineId);
 
     CompletableFuture<Boolean> validateExistingElectiveSubject(Long subjectId);
     CompletableFuture<ElectiveSubjectDTO> getElectiveSubjectById(Long subjectId);
+
+    CompletableFuture<List<ObligatorySubjectDTO>> getObligatorySubjectsByCareer(String careerKey);
+    CompletableFuture<List<ElectiveSubjectDTO>> getElectiveSubjectsByCareer(Long careerId);
+
 }

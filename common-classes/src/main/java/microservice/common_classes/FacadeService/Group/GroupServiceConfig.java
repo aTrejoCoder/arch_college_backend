@@ -32,7 +32,7 @@ public class GroupServiceConfig {
     @Bean
     @Qualifier("groupFacadeService")
     public GroupFacadeService groupFacadeService(RestTemplate restTemplate,
-                                                 @Qualifier("GroupServiceUrlProvider") Supplier<String> groupServiceUrlProvider) {
+                                                 @Qualifier("groupServiceUrlProvider") Supplier<String> groupServiceUrlProvider) {
         return new GroupFacadeServiceImpl(restTemplate, groupServiceUrlProvider);
     }
 }
