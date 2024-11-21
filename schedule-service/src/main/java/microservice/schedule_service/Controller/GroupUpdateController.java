@@ -85,19 +85,19 @@ public class GroupUpdateController {
     }
 
 
-    @PatchMapping("/{key}/decrease-spot")
-    public ResponseEntity<ResponseWrapper<Void>> decreaseGroupSpotsByKey(@Valid @PathVariable String key) {
-        Result<Void> validationResult = groupSpotsService.decreaseSpot(key);
+    @PatchMapping("/{groupKey}/decrease-spot")
+    public ResponseEntity<ResponseWrapper<Void>> decreaseGroupSpotsByKey(@Valid @PathVariable String groupKey) {
+        Result<Void> validationResult = groupSpotsService.decreaseSpot(groupKey);
         if (!validationResult.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(validationResult.getErrorMessage()));
+            return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.badRequest(validationResult.getErrorMessage()));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.ok("Spot Successfully decrease"));
     }
 
-    @PatchMapping("/{key}/increase-spot")
-    public ResponseEntity<ResponseWrapper<Void>> increaseGroupSpotsByKey(@Valid @PathVariable String key) {
-        groupSpotsService.increaseSpot(key);
+    @PatchMapping("/{groupKey}/increase-spot")
+    public ResponseEntity<ResponseWrapper<Void>> increaseGroupSpotsByKey(@Valid @PathVariable String groupKey) {
+        groupSpotsService.increaseSpot(groupKey);
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.ok("Spot Successfully increased"));
     }

@@ -9,6 +9,8 @@ import java.util.concurrent.CompletableFuture;
 public interface GroupFacadeService {
     CompletableFuture<Boolean> validateExisitingGroup(Long groupId);
     CompletableFuture<GroupDTO> getGroupById(Long groupId);
-    CompletableFuture<Result<Void>> reduceSpot(Long groupId);
+    CompletableFuture<GroupDTO> getCurrentGroupByKey(String groupKey);
+    CompletableFuture<Result<Void>> takeSpot(String groupKey);
+    CompletableFuture<Result<Void>> returnSpot(String groupKey);
     CompletableFuture<Result<List<GroupDTO>>> getGroupsByIds(List<Long> idList);
 }

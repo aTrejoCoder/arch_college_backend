@@ -76,26 +76,79 @@ public class GroupFacadeServiceImpl implements GroupFacadeService {
     }
 
     @Override
-    public CompletableFuture<Result<Void>> reduceSpot(Long groupId) {
-        String groupUrl = groupServiceUrlProvider.get() + "/v1/drugstore/groups/" + groupId;
+    public CompletableFuture<GroupDTO> getCurrentGroupByKey(String groupKey) {
+        String groupUrl = groupServiceUrlProvider.get() + "/v1/drugstore/key/" + groupKey;
 
         return CompletableFuture.supplyAsync(() -> {
             try {
-                ResponseEntity<ResponseWrapper<Result<Void>>> responseEntity = restTemplate.exchange(
+                ResponseEntity<ResponseWrapper<GroupDTO>> responseEntity = restTemplate.exchange(
                         groupUrl,
                         HttpMethod.GET,
                         null,
-                        new ParameterizedTypeReference<ResponseWrapper<Result<Void>>>() {}
+                        new ParameterizedTypeReference<ResponseWrapper<GroupDTO>>() {}
                 );
 
-                log.info("reduceSpot -> Group with ID: {} successfully fetched", groupId);
+                log.info("getCurrentGroupByKey -> Group with Key: {} successfully fetched", groupKey);
 
                 return Objects.requireNonNull(responseEntity.getBody()).getData();
             } catch (EntityNotFoundException e) {
-                log.warn("reduceSpot ->  Group with ID {} not found: {}", groupId, e.getMessage());
+                log.warn("getCurrentGroupByKey -> Group with Key {} not found: {}", groupKey, e.getMessage());
                 return null;
             } catch (Exception e) {
-                log.error("reduceSpot ->  Error fetching group with ID {}: {}", groupId, e.getMessage());
+                log.error("getCurrentGroupByKey -> Error fetching group with Key {}: {}", groupKey, e.getMessage());
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<Result<Void>> takeSpot(String groupKey) {
+        String groupUrl = groupServiceUrlProvider.get() + "/v1/drugstore/groups/" + groupKey + "/reduce-spot";
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                ResponseEntity<ResponseWrapper<Void>> responseEntity = restTemplate.exchange(
+                        groupUrl,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<ResponseWrapper<Void>>() {}
+                );
+
+                 ResponseWrapper<Void> responseWrapper = Objects.requireNonNull(responseEntity.getBody());
+                 if (!responseWrapper.isSuccess()) {
+                     log.info("takeSpot -> Spot for group with Key: {} can't be reduced", groupKey);
+                     return Result.error(responseWrapper.getMessage());
+                 }
+
+                log.info("takeSpot -> Spot for group with Key: {} successfully reduced", groupKey);
+                return Result.success();
+
+
+            } catch (Exception e) {
+                log.error("takeSpot ->  Error fetching reducing spot for group with Key {}: {}", groupKey, e.getMessage());
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<Result<Void>> returnSpot(String groupKey) {
+        String groupUrl = groupServiceUrlProvider.get() + "/v1/drugstore/groups/" + groupKey + "/increase-spot";
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                ResponseEntity<ResponseWrapper<Void>> responseEntity = restTemplate.exchange(
+                        groupUrl,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<ResponseWrapper<Void>>() {}
+                );
+
+                Objects.requireNonNull(responseEntity.getBody());
+
+                return Result.success();
+            } catch (Exception e) {
+                log.error("reduceSpot ->  Error fetching increase spot for group with Key {}: {}", groupKey, e.getMessage());
                 throw new RuntimeException(e);
             }
         });
