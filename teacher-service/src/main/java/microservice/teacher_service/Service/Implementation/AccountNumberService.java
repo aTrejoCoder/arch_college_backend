@@ -1,22 +1,17 @@
-package microservice.teacher_service.Service;
+package microservice.teacher_service.Service.Implementation;
 
 import microservice.teacher_service.Model.Teacher;
 import microservice.teacher_service.Repository.TeacherRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class TeacherDomainService {
-
-    private final TeacherRepository teacherRepository;
+public class AccountNumberService {
 
     @Autowired
-    public TeacherDomainService(TeacherRepository teacherRepository) {
-        this.teacherRepository = teacherRepository;
-    }
+    private TeacherRepository teacherRepository;
 
     /**
      * Generates a unique account number for a teacher.

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import microservice.common_classes.Models.Person;
+import microservice.common_classes.Utils.Teacher.Title;
 
 import java.time.LocalDateTime;
 
@@ -12,13 +13,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "teacher")
 public class Teacher extends Person {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "teacher_id")
-    private Long teacherId;
-
     @Column(name = "title")
-    private Title Title;
+    private Title title;
 
     @Column(name = "account_number")
     private String accountNumber;

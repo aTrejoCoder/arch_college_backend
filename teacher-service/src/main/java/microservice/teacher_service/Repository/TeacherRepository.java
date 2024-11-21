@@ -1,5 +1,6 @@
 package microservice.teacher_service.Repository;
 
+import microservice.common_classes.Utils.Teacher.Title;
 import microservice.teacher_service.Model.Teacher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,14 +9,17 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface TeacherRepository extends JpaRepository<Teacher, Long> {
 
-    @Query("SELECT s.teacherId FROM Teacher s ORDER BY s.teacherId DESC")
+    @Query("SELECT s.id FROM Teacher s ORDER BY s.id DESC")
     Optional<Long> findLastId();
+
+    List<Teacher> findByIdIn(Set<Long> idSet);
 
     Optional<Teacher> findByAccountNumber(String accountNumber);
 
-    Page<Teacher> findByTitle(String title, Pageable pageable);
+    Page<Teacher> findByTitle(Title title, Pageable pageable);
 
 }
