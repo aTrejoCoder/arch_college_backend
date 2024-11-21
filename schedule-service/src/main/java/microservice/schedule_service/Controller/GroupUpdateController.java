@@ -28,8 +28,8 @@ public class GroupUpdateController {
     private final GroupSpotsService groupSpotsService;
     private final GroupFinderService groupFinderService;
 
-    @Operation(summary = "Update Schedule Group", description = "Update an existing group with specified details")
-    @ApiResponse(responseCode = "200", description = "Group updated successfully")
+    @Operation(summary = "Update Schedule Group", description = "Update the schedule of an existing group with specified details")
+    @ApiResponse(responseCode = "200", description = "Group schedule updated successfully")
     @ApiResponse(responseCode = "409", description = "Conflict in group schedule")
     @PatchMapping("/update-schedule")
     public ResponseEntity<ResponseWrapper<GroupDTO>> updateGroupSchedule(@Valid @RequestBody GroupScheduleUpdateDTO groupScheduleUpdateDTO) {
@@ -40,10 +40,13 @@ public class GroupUpdateController {
 
         GroupDTO groupDTO = groupUpdateService.updateGroupSchedule(groupScheduleUpdateDTO);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.updated(groupDTO,"Group"));
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.updated(groupDTO, "Group"));
     }
 
-
+    @Operation(summary = "Add Teacher to Group", description = "Add a teacher to a specific group by its key")
+    @ApiResponse(responseCode = "200", description = "Teacher successfully added to the group")
+    @ApiResponse(responseCode = "404", description = "Group or teacher not found")
+    @ApiResponse(responseCode = "409", description = "Schedule conflict for the teacher")
     @PatchMapping("/{key}/add-teacher/{teacherId}")
     public ResponseEntity<ResponseWrapper<GroupDTO>> addTeacherToGroup(@Valid @PathVariable String key,
                                                                        @PathVariable Long teacherId) {
@@ -64,9 +67,13 @@ public class GroupUpdateController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(addResult.getErrorMessage()));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.ok(addResult.getData(),"Teacher Successfully Added to Group"));
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.ok(addResult.getData(), "Teacher Successfully Added to Group"));
     }
 
+    @Operation(summary = "Increase Group Spots", description = "Increase the number of available spots in a specific group")
+    @ApiResponse(responseCode = "200", description = "Group spots increased successfully")
+    @ApiResponse(responseCode = "404", description = "Group not found")
+    @ApiResponse(responseCode = "400", description = "Invalid spot increase request")
     @PatchMapping("/{key}/add_spots/{spotsToAdd}")
     public ResponseEntity<ResponseWrapper<GroupDTO>> increaseGroupSpotsByKey(@Valid @PathVariable String key, @PathVariable int spotsToAdd) {
         Result<GroupDTO> groupResult = groupFinderService.getGroupCurrentByKey(key);
@@ -81,25 +88,28 @@ public class GroupUpdateController {
 
         GroupDTO groupDTO = groupSpotsService.addSpots(key, spotsToAdd);
 
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.ok(groupDTO,"Spots Successfully increased"));
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.ok(groupDTO, "Spots Successfully increased"));
     }
 
-
+    @Operation(summary = "Decrease Group Spot", description = "Decrease one available spot in a specific group")
+    @ApiResponse(responseCode = "200", description = "Spot decreased successfully")
+    @ApiResponse(responseCode = "400", description = "Invalid spot decrease request")
     @PatchMapping("/{groupKey}/decrease-spot")
     public ResponseEntity<ResponseWrapper<Void>> decreaseGroupSpotsByKey(@Valid @PathVariable String groupKey) {
         Result<Void> validationResult = groupSpotsService.decreaseSpot(groupKey);
         if (!validationResult.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.badRequest(validationResult.getErrorMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(validationResult.getErrorMessage()));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.ok("Spot Successfully decrease"));
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.ok("Spot Successfully decreased"));
     }
 
+    @Operation(summary = "Increase Group Spot", description = "Increase one available spot in a specific group")
+    @ApiResponse(responseCode = "200", description = "Spot increased successfully")
     @PatchMapping("/{groupKey}/increase-spot")
     public ResponseEntity<ResponseWrapper<Void>> increaseGroupSpotsByKey(@Valid @PathVariable String groupKey) {
         groupSpotsService.increaseSpot(groupKey);
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.ok("Spot Successfully increased"));
     }
-
 }
