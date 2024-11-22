@@ -13,6 +13,9 @@
             <option value="$PROJECT_DIR$/config-server" />
             <option value="$PROJECT_DIR$/enrollment-service" />
             <option value="$PROJECT_DIR$/eureka-server" />
+            <option value="$PROJECT_DIR$/grade-service" />
+            <option value="$PROJECT_DIR$/group-service" />
+            <option value="$PROJECT_DIR$/schedule-service" />
             <option value="$PROJECT_DIR$/student-service" />
             <option value="$PROJECT_DIR$/teacher-service" />
           </set>
