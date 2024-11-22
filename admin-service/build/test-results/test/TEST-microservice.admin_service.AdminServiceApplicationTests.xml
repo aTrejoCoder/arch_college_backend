@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="microservice.admin_service.AdminServiceApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-11-16T05:38:32" hostname="Alexiss-MacBook-Air.local" time="0.617">
+<testsuite name="microservice.admin_service.AdminServiceApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-11-21T23:53:41" hostname="Alexiss-MacBook-Air.local" time="0.511">
   <properties/>
-  <testcase name="contextLoads()" classname="microservice.admin_service.AdminServiceApplicationTests" time="0.617"/>
-  <system-out><![CDATA[23:38:30.305 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [microservice.admin_service.AdminServiceApplicationTests]: AdminServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-23:38:30.371 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration microservice.admin_service.AdminServiceApplication for test class microservice.admin_service.AdminServiceApplicationTests
+  <testcase name="contextLoads()" classname="microservice.admin_service.AdminServiceApplicationTests" time="0.511"/>
+  <system-out><![CDATA[17:53:39.182 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [microservice.admin_service.AdminServiceApplicationTests]: AdminServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+17:53:39.243 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration microservice.admin_service.AdminServiceApplication for test class microservice.admin_service.AdminServiceApplicationTests
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -14,15 +14,15 @@
 
  :: Spring Boot ::                (v3.3.2)
 
-2024-11-15T23:38:30.840-06:00  INFO 86690 --- [    Test worker] c.c.c.ConfigServicePropertySourceLocator : Fetching config from server at : http://localhost:8888
-2024-11-15T23:38:31.043-06:00  INFO 86690 --- [    Test worker] c.c.c.ConfigServicePropertySourceLocator : Located environment: name=application, profiles=[default], label=null, version=null, state=null
-2024-11-15T23:38:31.044-06:00  INFO 86690 --- [    Test worker] b.c.PropertySourceBootstrapConfiguration : Located property source: [BootstrapPropertySource {name='bootstrapProperties-configClient'}]
-2024-11-15T23:38:31.055-06:00  INFO 86690 --- [    Test worker] m.a.AdminServiceApplicationTests         : No active profile set, falling back to 1 default profile: "default"
-2024-11-15T23:38:31.610-06:00  INFO 86690 --- [    Test worker] o.s.cloud.context.scope.GenericScope     : BeanFactory id=ac35b6c1-7139-3821-b066-52bf0b1ed48b
-2024-11-15T23:38:31.946-06:00  WARN 86690 --- [    Test worker] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
-2024-11-15T23:38:32.229-06:00  INFO 86690 --- [    Test worker] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
-2024-11-15T23:38:32.365-06:00 ERROR 86690 --- [    Test worker] i.n.r.d.DnsServerAddressStreamProviders  : Unable to load io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider, fallback to system defaults. This may result in incorrect DNS resolutions on MacOS. Check whether you have a dependency on 'io.netty:netty-resolver-dns-native-macos'. Use DEBUG level to see the full stack: java.lang.UnsatisfiedLinkError: failed to load the required native library
-2024-11-15T23:38:32.394-06:00  INFO 86690 --- [    Test worker] m.a.AdminServiceApplicationTests         : Started AdminServiceApplicationTests in 1.938 seconds (process running for 2.641)
+2024-11-21T17:53:39.713-06:00  INFO 79413 --- [    Test worker] c.c.c.ConfigServicePropertySourceLocator : Fetching config from server at : http://localhost:8888
+2024-11-21T17:53:39.830-06:00  INFO 79413 --- [    Test worker] c.c.c.ConfigServicePropertySourceLocator : Located environment: name=application, profiles=[default], label=null, version=null, state=null
+2024-11-21T17:53:39.831-06:00  INFO 79413 --- [    Test worker] b.c.PropertySourceBootstrapConfiguration : Located property source: [BootstrapPropertySource {name='bootstrapProperties-configClient'}]
+2024-11-21T17:53:39.841-06:00  INFO 79413 --- [    Test worker] m.a.AdminServiceApplicationTests         : No active profile set, falling back to 1 default profile: "default"
+2024-11-21T17:53:40.364-06:00  INFO 79413 --- [    Test worker] o.s.cloud.context.scope.GenericScope     : BeanFactory id=ac35b6c1-7139-3821-b066-52bf0b1ed48b
+2024-11-21T17:53:40.688-06:00  WARN 79413 --- [    Test worker] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2024-11-21T17:53:40.969-06:00  INFO 79413 --- [    Test worker] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2024-11-21T17:53:41.109-06:00 ERROR 79413 --- [    Test worker] i.n.r.d.DnsServerAddressStreamProviders  : Unable to load io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider, fallback to system defaults. This may result in incorrect DNS resolutions on MacOS. Check whether you have a dependency on 'io.netty:netty-resolver-dns-native-macos'. Use DEBUG level to see the full stack: java.lang.UnsatisfiedLinkError: failed to load the required native library
+2024-11-21T17:53:41.138-06:00  INFO 79413 --- [    Test worker] m.a.AdminServiceApplicationTests         : Started AdminServiceApplicationTests in 1.811 seconds (process running for 2.585)
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
