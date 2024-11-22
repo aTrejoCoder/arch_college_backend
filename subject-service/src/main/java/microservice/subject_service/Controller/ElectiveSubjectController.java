@@ -45,7 +45,7 @@ public class ElectiveSubjectController {
         if (!areaResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound("Elective Subject", "ID", subjectId));
         }
-        return ResponseEntity.ok(ResponseWrapper.found("Elective Subject", "ID", subjectId, areaResult.getData()));
+        return ResponseEntity.ok(ResponseWrapper.found(areaResult.getData(),"Elective Subject", "ID", subjectId));
     }
 
     @Operation(summary = "Get Elective Subjects by Area ID", description = "Fetches elective subjects by area ID")
@@ -57,7 +57,7 @@ public class ElectiveSubjectController {
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<ElectiveSubjectDTO> electiveSubjectDTOS = subjectService.getSubjectsByFilterPageable(areaId, "area", pageable);
-        return ResponseEntity.ok(ResponseWrapper.found("Elective Subject", "Area ID", areaId, electiveSubjectDTOS));
+        return ResponseEntity.ok(ResponseWrapper.found(electiveSubjectDTOS,"Elective Subject", "Area ID", areaId));
     }
 
     @Operation(summary = "Get Elective Subjects by Professional Line ID", description = "Fetches elective subjects by professional line ID")
@@ -69,7 +69,7 @@ public class ElectiveSubjectController {
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<ElectiveSubjectDTO> electiveSubjectDTOS = subjectService.getSubjectsByFilterPageable(professionalLineId, "professional line", pageable);
-        return ResponseEntity.ok(ResponseWrapper.found("Elective Subject", "Professional Line ID", professionalLineId, electiveSubjectDTOS));
+        return ResponseEntity.ok(ResponseWrapper.found(electiveSubjectDTOS,"Elective Subject", "Professional Line ID", professionalLineId));
     }
 
     @Operation(summary = "Get Elective Subject by Name", description = "Fetches an elective subject by its name")
@@ -83,7 +83,7 @@ public class ElectiveSubjectController {
         if (!areaResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound("ElectiveSubject", "name", name));
         }
-        return ResponseEntity.ok(ResponseWrapper.found("Elective Subject", "name", name, areaResult.getData()));
+        return ResponseEntity.ok(ResponseWrapper.found(areaResult.getData(),"Elective Subject", "name", name));
     }
 
     @Operation(summary = "Get All Elective Subjects", description = "Fetches all elective subjects with pagination")
@@ -94,14 +94,14 @@ public class ElectiveSubjectController {
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<ElectiveSubjectDTO> professionalLines = subjectService.getAllSubjectsPageable(pageable);
-        return ResponseEntity.ok(ResponseWrapper.found("Elective Subjects", professionalLines));
+        return ResponseEntity.ok(ResponseWrapper.found(professionalLines,"Elective Subjects"));
     }
 
     @GetMapping("/by-career/{careerId}")
     public ResponseEntity<ResponseWrapper<List<ElectiveSubjectDTO>>> getAllElectiveSubjectByCareer(@PathVariable Long careerId) {
         List<ElectiveSubjectDTO> ordinarySubjectDTOS = subjectService.getSubjectsByFilter(careerId, "career");
 
-        return ResponseEntity.ok(ResponseWrapper.found("Elective Subject", "career Id", careerId, ordinarySubjectDTOS));
+        return ResponseEntity.ok(ResponseWrapper.found(ordinarySubjectDTOS,"Elective Subject", "career Id", careerId));
     }
 
     @Operation(summary = "Create Elective Subject", description = "Creates a new elective subject")

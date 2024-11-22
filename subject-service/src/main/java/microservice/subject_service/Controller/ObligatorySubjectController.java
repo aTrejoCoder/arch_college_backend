@@ -47,7 +47,7 @@ public class ObligatorySubjectController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound("Obligatory Subject", "ID", subjectId));
         }
 
-        return ResponseEntity.ok(ResponseWrapper.found("Obligatory Subject", "ID", subjectId, areaResult.getData()));
+        return ResponseEntity.ok(ResponseWrapper.found(areaResult.getData(),"Obligatory Subject", "ID", subjectId));
     }
 
     @Operation(summary = "Get Obligatory Subjects by Area ID", description = "Fetches ordinary subjects by area ID")
@@ -59,7 +59,7 @@ public class ObligatorySubjectController {
         Pageable pageable = PageRequest.of(page, size);
         Page<ObligatorySubjectDTO> ordinarySubjectDTOS = subjectService.getSubjectsByFilterPageable(areaId, "area", pageable);
 
-        return ResponseEntity.ok(ResponseWrapper.found("Obligatory Subject", "Area Id", areaId, ordinarySubjectDTOS));
+        return ResponseEntity.ok(ResponseWrapper.found(ordinarySubjectDTOS,"Obligatory Subject", "Area Id", areaId));
     }
 
 
@@ -75,7 +75,7 @@ public class ObligatorySubjectController {
         Pageable pageable = PageRequest.of(page, size);
         Page<ObligatorySubjectDTO> ordinarySubjectDTOS = subjectService.getSubjectsByFilterPageable(semester_number, "semester",pageable);
 
-        return ResponseEntity.ok(ResponseWrapper.found("Obligatory Subject", "semester", semester_number, ordinarySubjectDTOS));
+        return ResponseEntity.ok(ResponseWrapper.found(ordinarySubjectDTOS,"Obligatory Subject", "semester", semester_number));
     }
 
 
@@ -86,7 +86,7 @@ public class ObligatorySubjectController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound("ObligatorySubject", "name", name));
         }
 
-        return ResponseEntity.ok(ResponseWrapper.found("Obligatory Subject", "name", name, areaResult.getData()));
+        return ResponseEntity.ok(ResponseWrapper.found(areaResult.getData(),"Obligatory Subject", "name", name));
     }
 
     @Operation(summary = "Get All Obligatory Subjects", description = "Fetches all ordinary subjects with pagination")
@@ -97,7 +97,7 @@ public class ObligatorySubjectController {
         Pageable pageable = PageRequest.of(page, size);
         Page<ObligatorySubjectDTO> professionalLines = subjectService.getAllSubjectsPageable(pageable);
 
-        return ResponseEntity.ok(ResponseWrapper.found("Obligatory Subjects", professionalLines));
+        return ResponseEntity.ok(ResponseWrapper.found(professionalLines,"Obligatory Subjects"));
     }
 
     @Operation(summary = "Create Obligatory Subject", description = "Creates a new ordinary subject")
@@ -106,7 +106,7 @@ public class ObligatorySubjectController {
     public ResponseEntity<ResponseWrapper<Void>> createObligatorySubject(@Valid @RequestBody ObligatorySubjectInsertDTO areaInsertDTO) {
         subjectService.createSubject(areaInsertDTO);
 
-        return ResponseEntity.ok(ResponseWrapper.created(null,"Obligatory Subject"));
+        return ResponseEntity.ok(ResponseWrapper.created("Obligatory Subject"));
     }
 
     @Operation(summary = "Update Obligatory Subject", description = "Updates an existing ordinary subject by ID")
@@ -137,6 +137,6 @@ public class ObligatorySubjectController {
     public ResponseEntity<ResponseWrapper<List<ObligatorySubjectDTO>>> getAllObligatorySubjectByCareer(@PathVariable Long careerId) {
         List<ObligatorySubjectDTO> ordinarySubjectDTOS = subjectService.getSubjectsByFilter(careerId, "career");
 
-        return ResponseEntity.ok(ResponseWrapper.found("Obligatory Subject", "career Id", careerId, ordinarySubjectDTOS));
+        return ResponseEntity.ok(ResponseWrapper.found(ordinarySubjectDTOS,"Obligatory Subject", "career Id", careerId));
     }
 }

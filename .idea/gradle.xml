@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/group-service" />
             <option value="$PROJECT_DIR$/schedule-service" />
             <option value="$PROJECT_DIR$/student-service" />
+            <option value="$PROJECT_DIR$/subject-service" />
             <option value="$PROJECT_DIR$/teacher-service" />
           </set>
         </option>

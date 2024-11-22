@@ -47,7 +47,7 @@ public class AreaController {
         if (!areaResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound("Area", "ID", areaId));
         }
-        return ResponseEntity.ok(ResponseWrapper.found("Area", "ID", areaId, areaResult.getData()));
+        return ResponseEntity.ok(ResponseWrapper.found(areaResult.getData(),"Area", "ID", areaId));
     }
 
     @Operation(summary = "Get Area by Name", description = "Fetches the area with the specified name")
@@ -61,7 +61,7 @@ public class AreaController {
         if (!areaResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound("Area", "name", name));
         }
-        return ResponseEntity.ok(ResponseWrapper.found("Area", "name", name, areaResult.getData()));
+        return ResponseEntity.ok(ResponseWrapper.found(areaResult.getData(),"Area", "name", name));
     }
 
     @Operation(summary = "Get Area with Subjects by ID", description = "Fetches the area along with its subjects for the specified ID")
@@ -75,7 +75,7 @@ public class AreaController {
             @Parameter(description = "Page size for pagination", example = "10") @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         AreaWithRelationsDTO areas = areaService.getAreaByIdWithSubjects(areaId, pageable);
-        return ResponseEntity.ok(ResponseWrapper.found("Areas", areas));
+        return ResponseEntity.ok(ResponseWrapper.found(areas,"Areas"));
     }
 
     @Operation(summary = "Get All Areas", description = "Fetches all available areas")
@@ -85,7 +85,7 @@ public class AreaController {
         List<AreaDTO> areas = areaService.getAllAreas();
 
         log.info("fetching all areas");
-        return ResponseEntity.ok(ResponseWrapper.found("Areas", areas));
+        return ResponseEntity.ok(ResponseWrapper.found(areas,"Areas"));
     }
 
     @Operation(summary = "Create Area", description = "Creates a new area")
@@ -93,7 +93,7 @@ public class AreaController {
     @PostMapping
     public ResponseEntity<ResponseWrapper<Void>> createArea(@Valid @RequestBody AreaInsertDTO areaInsertDTO) {
         areaService.createArea(areaInsertDTO);
-        return ResponseEntity.ok(ResponseWrapper.created(null, "Area"));
+        return ResponseEntity.ok(ResponseWrapper.created("Area"));
     }
 
     @Operation(summary = "Update Area", description = "Updates the name of an existing area")
@@ -114,6 +114,6 @@ public class AreaController {
     @DeleteMapping("/{areaId}")
     public ResponseEntity<ResponseWrapper<Void>> deleteAreaById(@PathVariable Long areaId) {
         areaService.deleteArea(areaId);
-        return ResponseEntity.ok(ResponseWrapper.deleted(null, "Area"));
+        return ResponseEntity.ok(ResponseWrapper.deleted("Area"));
     }
 }

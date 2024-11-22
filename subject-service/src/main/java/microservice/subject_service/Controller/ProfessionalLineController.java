@@ -40,7 +40,7 @@ public class ProfessionalLineController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound("Professional Line", "ID", professionalLineId));
         }
 
-        return ResponseEntity.ok(ResponseWrapper.found("Professional Line", "ID", professionalLineId, areaResult.getData()));
+        return ResponseEntity.ok(ResponseWrapper.found(areaResult.getData(),"Professional Line", "ID", professionalLineId));
     }
 
     @Operation(summary = "Get Professional Line by Name", description = "Fetches a professional line by name")
@@ -55,7 +55,7 @@ public class ProfessionalLineController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound("Professional Line", "name", name));
         }
 
-        return ResponseEntity.ok(ResponseWrapper.found("Professional Line", "name", name, areaResult.getData()));
+        return ResponseEntity.ok(ResponseWrapper.found(areaResult.getData(),"Professional Line", "name", name));
     }
 
     @Operation(summary = "Get All Professional Lines", description = "Fetches all professional lines")
@@ -64,7 +64,7 @@ public class ProfessionalLineController {
     public ResponseEntity<ResponseWrapper<List<ProfessionalLineDTO>>> getAllProfessionalLines() {
         List<ProfessionalLineDTO> professionalLines = areaService.getAllProfessionalLines();
 
-        return ResponseEntity.ok(ResponseWrapper.found("Professional Lines", professionalLines));
+        return ResponseEntity.ok(ResponseWrapper.found(professionalLines, "Professional Lines"));
     }
 
     @Operation(summary = "Create Professional Line", description = "Creates a new professional line")

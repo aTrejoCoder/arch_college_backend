@@ -3,7 +3,7 @@ package microservice.common_classes.FacadeService.Grade;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Grade.GradeDTO;
-import microservice.common_classes.Utils.ResponseWrapper;
+import microservice.common_classes.Utils.Response.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;

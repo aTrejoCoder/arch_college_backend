@@ -11,6 +11,7 @@
         <module name="arch_college_backend.schedule-service.test" />
         <module name="arch_college_backend.common-classes.main" />
         <module name="arch_college_backend.grade-service.test" />
+        <module name="arch_college_backend.subject-service.test" />
         <module name="arch_college_backend.enrollment-service.test" />
         <module name="arch_college_backend.common-classes.test" />
         <module name="arch_college_backend.student-service.test" />
@@ -26,6 +27,7 @@
         <module name="arch_college_backend.student-service.main" />
         <module name="arch_college_backend.schedule-service.main" />
         <module name="arch_college_backend.teacher-service.main" />
+        <module name="arch_college_backend.subject-service.main" />
       </profile>
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />

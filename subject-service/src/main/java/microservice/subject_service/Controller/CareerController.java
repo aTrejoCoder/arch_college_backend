@@ -42,7 +42,7 @@ public class CareerController {
         if (!careerResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound("Career", "ID", careerId));
         }
-        return ResponseEntity.ok(ResponseWrapper.found("Career", "ID", careerId, careerResult.getData()));
+        return ResponseEntity.ok(ResponseWrapper.found( careerResult.getData(),"Career", "ID", careerId));
     }
 
     @Operation(summary = "Get Career by Name", description = "Fetches the career with the specified name")
@@ -56,7 +56,7 @@ public class CareerController {
         if (!careerResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound("Career", "name", name));
         }
-        return ResponseEntity.ok(ResponseWrapper.found("Career", "name", name, careerResult.getData()));
+        return ResponseEntity.ok(ResponseWrapper.found(careerResult.getData(),"Career", "name", name));
     }
 
     @Operation(summary = "Get All Careers", description = "Fetches all available careers")
@@ -64,7 +64,7 @@ public class CareerController {
     @GetMapping("/all")
     public ResponseEntity<ResponseWrapper<List<CareerDTO>>> getAllCareers() {
         List<CareerDTO> career = careerService.getAllCareers();
-        return ResponseEntity.ok(ResponseWrapper.found("Careers", career));
+        return ResponseEntity.ok(ResponseWrapper.found(career,"Careers"));
     }
 
     @Operation(summary = "Create Career", description = "Creates a new career entry")
