@@ -36,7 +36,7 @@ public class StudentTestRepository {
     public void testCreateStudent() {
         Student student = getTestStudent();
         Student savedStudent = studentRepository.save(student);
-        assertNotNull(savedStudent.getStudentId());
+        assertNotNull(savedStudent.getId());
         assertEquals("John", savedStudent.getFirstName());
     }
 
@@ -44,9 +44,9 @@ public class StudentTestRepository {
     public void testReadStudent() {
         Student student = getTestStudent();
         Student savedStudent = studentRepository.save(student);
-        Student foundStudent = studentRepository.findById(savedStudent.getStudentId()).orElse(null);
+        Student foundStudent = studentRepository.findById(savedStudent.getId()).orElse(null);
         assertNotNull(foundStudent);
-        assertEquals(savedStudent.getStudentId(), foundStudent.getStudentId());
+        assertEquals(savedStudent.getId(), foundStudent.getId());
     }
 
     @Test
@@ -65,9 +65,9 @@ public class StudentTestRepository {
         Student student = getTestStudent();
         Student savedStudent = studentRepository.save(student);
 
-        studentRepository.deleteById(savedStudent.getStudentId());
+        studentRepository.deleteById(savedStudent.getId());
 
-        assertFalse(studentRepository.findById(savedStudent.getStudentId()).isPresent());
+        assertFalse(studentRepository.findById(savedStudent.getId()).isPresent());
     }
 }
 
