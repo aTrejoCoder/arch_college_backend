@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: schedule-service
+
+  boot:
+    admin:
+      client:
+        url: http://localhost:8081
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/architecture_college_schedule_db
+    username: alexistrejo
+    password: vladilena
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+     ddl-auto: update
+
+  cloud:
+    netflix:
+      eureka:
+        client:
+          enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    paths-to-match: /**
+    packages-to-scan: microservice.schedule_service
+
+server:
+  port: 8084
