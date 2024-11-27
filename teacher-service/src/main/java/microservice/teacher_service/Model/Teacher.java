@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Table(name = "teacher")
 public class Teacher extends Person {
     @Column(name = "title")
+    @Enumerated(EnumType.STRING)
     private Title title;
 
     @Column(name = "account_number")

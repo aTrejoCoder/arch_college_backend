@@ -1,6 +1,8 @@
 package microservice.student_service.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.DTOs.Student.StudentInsertDTO;
 import microservice.common_classes.Utils.ProfessionalLineModality;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
@@ -75,12 +78,15 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void createStudent(StudentInsertDTO studentInsertDTO) {
+    @Transactional
+    public StudentDTO createStudent(StudentInsertDTO studentInsertDTO) {
         Student student = studentMapper.insertDtoToEntity(studentInsertDTO);
         String accountNumber = accountNumberGenerationService.generateStudentAccountNumber(student);
 
         student.initializeAcademicValues(accountNumber, currentGenerationIncome);
-        studentRepository.save(student);
+        studentRepository.saveAndFlush(student);
+
+        return studentMapper.entityToDTO(student);
     }
 
     @Override

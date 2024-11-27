@@ -20,8 +20,8 @@ public class OrdinaryGroupInsertDTO {
     @NotNull(message = "group_status can't be null")
     private GroupStatus groupStatus;
 
-    @JsonProperty("teacher_id")
-    @NotNull(message = "teacher_id can't be null")
+    @JsonProperty("teacher_ids")
+    @NotNull(message = "teacher_ids can't be null")
     private Set<Long> teacherIds = new HashSet<>();
 
     @JsonProperty("total_spots")

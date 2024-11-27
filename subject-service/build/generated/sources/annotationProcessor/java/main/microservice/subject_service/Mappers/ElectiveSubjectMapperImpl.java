@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-11-21T21:23:26-0600",
+    date = "2024-11-26T14:25:38-0600",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.9.jar, environment: Java 17.0.11 (Amazon.com Inc.)"
 )
 @Component
@@ -24,6 +24,7 @@ public class ElectiveSubjectMapperImpl implements ElectiveSubjectMapper {
         ElectiveSubject electiveSubject = new ElectiveSubject();
 
         electiveSubject.setName( electiveSubjectInsertDTO.getName() );
+        electiveSubject.setKey( electiveSubjectInsertDTO.getKey() );
 
         electiveSubject.setCreatedAt( java.time.LocalDateTime.now() );
         electiveSubject.setUpdatedAt( java.time.LocalDateTime.now() );
@@ -42,6 +43,7 @@ public class ElectiveSubjectMapperImpl implements ElectiveSubjectMapper {
         if ( electiveSubjectInsertDTO != null ) {
             electiveSubject.setId( electiveSubjectInsertDTO.getId() );
             electiveSubject.setName( electiveSubjectInsertDTO.getName() );
+            electiveSubject.setKey( electiveSubjectInsertDTO.getKey() );
         }
         electiveSubject.setUpdatedAt( java.time.LocalDateTime.now() );
 
@@ -59,6 +61,7 @@ public class ElectiveSubjectMapperImpl implements ElectiveSubjectMapper {
         electiveSubjectDTO.setAreaId( electiveSubjectAreaId( electiveSubject ) );
         electiveSubjectDTO.setId( electiveSubject.getId() );
         electiveSubjectDTO.setName( electiveSubject.getName() );
+        electiveSubjectDTO.setKey( electiveSubject.getKey() );
 
         return electiveSubjectDTO;
     }

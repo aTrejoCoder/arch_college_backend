@@ -1,20 +1,30 @@
 package microservice.student_service.Service;
 
 import microservice.common_classes.DTOs.Carrer.CareerDTO;
+import microservice.common_classes.DTOs.Grade.InitAcademicHistory;
 import microservice.common_classes.DTOs.ProfessionalLine.ProfessionalLineDTO;
+import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.FacadeService.Subject.SubjectFacadeService;
 import microservice.common_classes.Utils.Result;
+import microservice.student_service.messaging.RabbitMQSender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class StudentRelationServiceImpl implements StudentRelationService {
 
     private final SubjectFacadeService subjectFacadeService;
+    private final RabbitMQSender rabbitMQSender;
 
     @Autowired
-    public StudentRelationServiceImpl(SubjectFacadeService subjectFacadeService) {
+    public StudentRelationServiceImpl(@Qualifier("SubjectFacadeServiceImpl") SubjectFacadeService subjectFacadeService,
+                                      RabbitMQSender rabbitMQSender) {
         this.subjectFacadeService = subjectFacadeService;
+        this.rabbitMQSender = rabbitMQSender;
     }
 
     @Override
@@ -35,5 +45,18 @@ public class StudentRelationServiceImpl implements StudentRelationService {
         }
 
         return Result.success();
+    }
+
+
+    @Override
+    @Async("taskExecutor")
+    public void initAcademicHistoryAsync(StudentDTO studentDTO) {
+         CompletableFuture.runAsync(() -> {
+            CareerDTO careerDTO = subjectFacadeService.getCareerById(studentDTO.getCareerId()).join();
+
+            InitAcademicHistory initAcademicHistory = new InitAcademicHistory(studentDTO, careerDTO);
+
+            rabbitMQSender.queueAcademicHistoryInit(initAcademicHistory);
+        });
     }
 }

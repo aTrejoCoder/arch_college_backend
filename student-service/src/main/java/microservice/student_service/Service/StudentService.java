@@ -16,7 +16,7 @@ public interface StudentService {
     void increaseSemestersCursed(String accountNumber);
     void setProfessionalLineData(String accountNumber, Long professionalLineId, ProfessionalLineModality professionalLineModality);
 
-    void createStudent(StudentInsertDTO studentInsertDTO);
+    StudentDTO createStudent(StudentInsertDTO studentInsertDTO);
     void updateStudent(StudentInsertDTO studentInsertDTO,  Long studentId);
     void deleteStudent(Long studentId);
 

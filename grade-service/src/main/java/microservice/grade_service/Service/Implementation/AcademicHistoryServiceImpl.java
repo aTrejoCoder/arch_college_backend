@@ -2,9 +2,11 @@ package microservice.grade_service.Service.Implementation;
 
 import jakarta.persistence.EntityNotFoundException;
 import microservice.common_classes.DTOs.Carrer.CareerDTO;
+import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.DTOs.Student.StudentExtendedDTO;
 import microservice.common_classes.DTOs.Subject.OrdinarySubjectDTO;
 import microservice.common_classes.Utils.Result;
+import microservice.grade_service.Mappers.GradeMapper;
 import microservice.grade_service.Model.AcademicHistory;
 import microservice.grade_service.Model.Grade;
 import microservice.grade_service.Model.GradeNamed;
@@ -21,10 +23,13 @@ import java.util.Optional;
 public class AcademicHistoryServiceImpl implements AcademicHistoryService {
 
     private final AcademicHistoryRepository academicHistoryRepository;
+    private final GradeMapper gradeMapper;
 
     @Autowired
-    public AcademicHistoryServiceImpl(AcademicHistoryRepository academicHistoryRepository) {
+    public AcademicHistoryServiceImpl(AcademicHistoryRepository academicHistoryRepository,
+                                      GradeMapper gradeMapper) {
         this.academicHistoryRepository = academicHistoryRepository;
+        this.gradeMapper = gradeMapper;
     }
 
     public Result<Void> validateAcademicHistoryInit(String accountNumber) {
@@ -50,18 +55,18 @@ public class AcademicHistoryServiceImpl implements AcademicHistoryService {
 
 
     @Override
-    public void initAcademicHistory(StudentExtendedDTO studentExtendedDTO, CareerDTO careerDTO) {
+    public void initAcademicHistory(StudentDTO studentDTO, CareerDTO careerDTO) {
 
         AcademicHistory academicHistory = AcademicHistory.builder()
                 .careerKey(careerDTO.getKey())
                 .careerName(careerDTO.getName())
-                .studentAccountNumber(studentExtendedDTO.getAccountNumber())
-                .incomeGeneration(studentExtendedDTO.getIncomeGeneration())
-                .studentName(studentExtendedDTO.getFirstName() + " " + studentExtendedDTO.getLastName())
+                .studentAccountNumber(studentDTO.getAccountNumber())
+                .incomeGeneration(studentDTO.getIncomeGeneration())
+                .studentName(studentDTO.getFirstName() + " " + studentDTO.getLastName())
                 .academicAverAge(0.00)
                 .build();
 
-        academicHistory.initCreditAdvance(careerDTO.getObligatoryCredits(), careerDTO.getElectiveCredits());
+        academicHistory.initCreditAdvance(careerDTO.getTotalObligatoryCredits(), careerDTO.getTotalElectiveCredits());
 
         academicHistoryRepository.save(academicHistory);
     }
@@ -76,10 +81,6 @@ public class AcademicHistoryServiceImpl implements AcademicHistoryService {
         return optionalAcademicHistory.get();
     }
 
-    private GradeNamed mapGradeToGradesNamed(Grade grade) {
-        return new GradeNamed();
-    }
-
     private void sortGradeNameList(List<GradeNamed> grades) {
         grades.sort(Comparator.comparingInt(GradeNamed::getSubjectKey));
     }
@@ -91,10 +92,18 @@ public class AcademicHistoryServiceImpl implements AcademicHistoryService {
     }
 
     private void addGrade(Grade grade, List<GradeNamed> studentGrades) {
-        GradeNamed gradeNamed = mapGradeToGradesNamed(grade);
+        GradeNamed gradeNamed = gradeMapper.entityToNamedDTO(grade);
 
         studentGrades.add(gradeNamed);
 
         sortGradeNameList(studentGrades);
+    }
+
+    @Override
+    public void validateUniqueAcademicHistoryPerStudent(String accountNumber) {
+        Optional<AcademicHistory> optionalAcademicHistory = academicHistoryRepository.findByStudentAccountNumber(accountNumber);
+        if (optionalAcademicHistory.isPresent()) {
+            throw new RuntimeException("Student with account number (" + accountNumber + ") already has academic history");
+        }
     }
 }

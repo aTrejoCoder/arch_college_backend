@@ -2,6 +2,12 @@ spring:
   application:
     name: grade-service
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
   data:
     mongodb:
       uri: mongodb://localhost:27017/arch_college_mongodb
@@ -52,4 +58,4 @@ springdoc:
     packages-to-scan: microservice.grade_service
 
 server:
-  port: 8088
+  port: 8089

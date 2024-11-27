@@ -1,10 +1,12 @@
 package microservice.grade_service.Model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import microservice.grade_service.Utils.GradeStatus;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.time.LocalDateTime;
 
@@ -29,6 +31,9 @@ public class Grade {
 
     @Column(name = "elective_subject_id", nullable = false)
     private Long electiveSubjectId;
+
+    @Column(name = "subject_name")
+    private String subjectName;
 
     @Column(name = "student_account_number", nullable = false)
     private String studentAccountNumber;

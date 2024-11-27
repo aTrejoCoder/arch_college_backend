@@ -8,6 +8,7 @@ import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +21,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 @Slf4j
-@Service("subjectFacadeServiceImpl")
+@Service("SubjectFacadeServiceImpl")
 public class SubjectFacadeServiceImpl implements SubjectFacadeService {
 
     private final RestTemplate restTemplate;
     private final Supplier<String> subjectServiceUrlProvider;
 
     @Autowired
-    public SubjectFacadeServiceImpl(RestTemplate restTemplate, Supplier<String> subjectServiceUrlProvider) {
+    public SubjectFacadeServiceImpl(RestTemplate restTemplate,
+                                    @Qualifier("subjectServiceUrlProvider") Supplier<String> subjectServiceUrlProvider) {
         this.restTemplate = restTemplate;
         this.subjectServiceUrlProvider = subjectServiceUrlProvider;
     }
@@ -39,7 +41,7 @@ public class SubjectFacadeServiceImpl implements SubjectFacadeService {
 
     @Override
     public CompletableFuture<ObligatorySubjectDTO> getOrdinarySubjectById(Long subjectId) {
-        String subjectUrl = subjectServiceUrlProvider.get() + "/v1/api/subjects/ordinaries/" + subjectId;
+        String subjectUrl = subjectServiceUrlProvider.get() + "/v1/api/subjects/obligatory/" + subjectId;
 
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -53,7 +55,7 @@ public class SubjectFacadeServiceImpl implements SubjectFacadeService {
                 log.info("getOrdinarySubjectById -> OrdinarySubject with ID: {} successfully fetched", subjectId);
 
                 return Objects.requireNonNull(responseEntity.getBody()).getData();
-            } catch (EntityNotFoundException e) {
+            } catch (EntityNotFoundException e ) {
                 log.warn("getOrdinarySubjectById -> OrdinarySubject with ID {} not found: {}", subjectId, e.getMessage());
                 return null;
             } catch (Exception e) {

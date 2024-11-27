@@ -21,9 +21,9 @@ public class GroupServiceConfig {
     @Qualifier("groupServiceUrlProvider")
     public Supplier<String> groupServiceUrlProvider() {
         return () -> {
-            List<ServiceInstance> instances = discoveryClient.getInstances("GROUP-SERVICE");
+            List<ServiceInstance> instances = discoveryClient.getInstances("SCHEDULE-SERVICE");
             if (instances.isEmpty()) {
-                throw new IllegalStateException("group service is not available");
+                throw new IllegalStateException("schedule service is not available");
             }
             return instances.get(0).getUri().toString();
         };

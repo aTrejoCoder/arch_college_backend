@@ -31,6 +31,7 @@ public class StudentInsertDTO {
     private Long careerId;
 
     @JsonProperty("curp")
+    @NotNull(message = "curp can't be null")
     @Pattern(
             regexp = "^[A-Z]{4}\\d{6}[H|M][A-Z]{2}[A-Z0-9]{3}[0-9A-Z]$",
             message = "curp must match the Mexican CURP format"

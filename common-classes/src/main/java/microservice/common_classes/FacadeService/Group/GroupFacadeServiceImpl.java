@@ -33,7 +33,7 @@ public class GroupFacadeServiceImpl implements GroupFacadeService {
 
     @Override
     public CompletableFuture<Boolean> validateExisitingGroup(Long groupId) {
-        String groupUrl = groupServiceUrlProvider.get() + "/v1/drugstore/groups/" + groupId + "/validate";
+        String groupUrl = groupServiceUrlProvider.get() + "/v1/api/groups/" + groupId + "/validate";
 
         return CompletableFuture.supplyAsync(() -> {
             ResponseEntity<Boolean> responseEntity = restTemplate.exchange(
@@ -51,7 +51,7 @@ public class GroupFacadeServiceImpl implements GroupFacadeService {
     @Override
     @Async("taskExecutor")
     public CompletableFuture<GroupDTO> getGroupById(Long groupId) {
-        String groupUrl = groupServiceUrlProvider.get() + "/v1/drugstore/groups/" + groupId;
+        String groupUrl = groupServiceUrlProvider.get() + "/v1/api/groups/" + groupId;
 
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -77,7 +77,7 @@ public class GroupFacadeServiceImpl implements GroupFacadeService {
 
     @Override
     public CompletableFuture<GroupDTO> getCurrentGroupByKey(String groupKey) {
-        String groupUrl = groupServiceUrlProvider.get() + "/v1/drugstore/key/" + groupKey;
+        String groupUrl = groupServiceUrlProvider.get() + "/v1/api/groups/key/" + groupKey;
 
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -103,13 +103,12 @@ public class GroupFacadeServiceImpl implements GroupFacadeService {
 
     @Override
     public CompletableFuture<Result<Void>> takeSpot(String groupKey) {
-        String groupUrl = groupServiceUrlProvider.get() + "/v1/drugstore/groups/" + groupKey + "/reduce-spot";
-
+        String groupUrl = groupServiceUrlProvider.get() + "/v1/api/groups/" + groupKey + "/decrease-spot";
         return CompletableFuture.supplyAsync(() -> {
             try {
                 ResponseEntity<ResponseWrapper<Void>> responseEntity = restTemplate.exchange(
                         groupUrl,
-                        HttpMethod.GET,
+                        HttpMethod.PUT,
                         null,
                         new ParameterizedTypeReference<ResponseWrapper<Void>>() {}
                 );
@@ -133,13 +132,13 @@ public class GroupFacadeServiceImpl implements GroupFacadeService {
 
     @Override
     public CompletableFuture<Result<Void>> returnSpot(String groupKey) {
-        String groupUrl = groupServiceUrlProvider.get() + "/v1/drugstore/groups/" + groupKey + "/increase-spot";
+        String groupUrl = groupServiceUrlProvider.get() + "/v1/api/groups/" + groupKey + "/increase-spot";
 
         return CompletableFuture.supplyAsync(() -> {
             try {
                 ResponseEntity<ResponseWrapper<Void>> responseEntity = restTemplate.exchange(
                         groupUrl,
-                        HttpMethod.GET,
+                        HttpMethod.PUT,
                         null,
                         new ParameterizedTypeReference<ResponseWrapper<Void>>() {}
                 );
@@ -156,7 +155,7 @@ public class GroupFacadeServiceImpl implements GroupFacadeService {
 
     @Override
     public CompletableFuture<Result<List<GroupDTO>>> getGroupsByIds(List<Long> idList) {
-        String groupUrl = groupServiceUrlProvider.get() + "/v1/drugstore/groups/by-ids/" + idList;
+        String groupUrl = groupServiceUrlProvider.get() + "/v1/api/groups/by-ids/" + idList;
 
         return CompletableFuture.supplyAsync(() -> {
             try {

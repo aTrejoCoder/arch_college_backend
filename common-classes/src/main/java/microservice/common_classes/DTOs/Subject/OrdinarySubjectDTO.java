@@ -12,6 +12,9 @@ public class OrdinarySubjectDTO {
     @JsonProperty("id")
     private Long id;
 
+    @JsonProperty("key")
+    private String key;
+
     @JsonProperty("name")
     private String name;
 

@@ -23,7 +23,7 @@ public class GradeServiceConfig {
         return () -> {
             List<ServiceInstance> instances = discoveryClient.getInstances("GRADE-SERVICE");
             if (instances.isEmpty()) {
-                throw new IllegalStateException("group service is not available");
+                throw new IllegalStateException("grade service is not available");
             }
             return instances.get(0).getUri().toString();
         };

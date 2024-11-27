@@ -159,12 +159,12 @@ public class JWTSecurity extends OncePerRequestFilter {
         return Result.success(getUserId(claimsResult.getData()));
     }
 
-    public Result<String> getUsernameFromToken(HttpServletRequest request) {
+    public String getAccountNumberFromToken(HttpServletRequest request) {
         Result<Claims> claimsResult = getClaimsFromToken(request);
         if (!claimsResult.isSuccess()) {
-            return Result.error(claimsResult.getErrorMessage());
+            throw new RuntimeException(claimsResult.getErrorMessage());
         }
-        return Result.success(getAccountNumber(claimsResult.getData()));
+        return getAccountNumber(claimsResult.getData());
     }
 
     public Result<List<String>> getRolesFromToken(HttpServletRequest request) {

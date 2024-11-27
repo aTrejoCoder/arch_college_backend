@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-11-21T21:23:26-0600",
+    date = "2024-11-26T14:25:38-0600",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.9.jar, environment: Java 17.0.11 (Amazon.com Inc.)"
 )
 @Component
@@ -24,6 +24,7 @@ public class ObligatorySubjectMapperImpl implements ObligatorySubjectMapper {
         ObligatorySubject obligatorySubject = new ObligatorySubject();
 
         obligatorySubject.setName( obligatorySubjectInsertDTO.getName() );
+        obligatorySubject.setKey( obligatorySubjectInsertDTO.getKey() );
         obligatorySubject.setNumber( obligatorySubjectInsertDTO.getNumber() );
         obligatorySubject.setSemester( obligatorySubjectInsertDTO.getSemester() );
         obligatorySubject.setCredits( obligatorySubjectInsertDTO.getCredits() );
@@ -45,6 +46,7 @@ public class ObligatorySubjectMapperImpl implements ObligatorySubjectMapper {
         if ( obligatorySubjectInsertDTO != null ) {
             obligatorySubject.setId( obligatorySubjectInsertDTO.getId() );
             obligatorySubject.setName( obligatorySubjectInsertDTO.getName() );
+            obligatorySubject.setKey( obligatorySubjectInsertDTO.getKey() );
             obligatorySubject.setNumber( obligatorySubjectInsertDTO.getNumber() );
             obligatorySubject.setSemester( obligatorySubjectInsertDTO.getSemester() );
             obligatorySubject.setCredits( obligatorySubjectInsertDTO.getCredits() );
@@ -65,6 +67,7 @@ public class ObligatorySubjectMapperImpl implements ObligatorySubjectMapper {
         obligatorySubjectDTO.setAreaId( obligatorySubjectAreaId( obligatorySubject ) );
         obligatorySubjectDTO.setId( obligatorySubject.getId() );
         obligatorySubjectDTO.setName( obligatorySubject.getName() );
+        obligatorySubjectDTO.setKey( obligatorySubject.getKey() );
         obligatorySubjectDTO.setNumber( obligatorySubject.getNumber() );
         obligatorySubjectDTO.setSemester( obligatorySubject.getSemester() );
         obligatorySubjectDTO.setCredits( obligatorySubject.getCredits() );

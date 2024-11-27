@@ -7,6 +7,7 @@ import microservice.common_classes.DTOs.Grade.GradeDTO;
 import microservice.common_classes.DTOs.Group.GroupDTO;
 import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
+import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import microservice.common_classes.DTOs.Subject.OrdinarySubjectDTO;
 
 import java.util.List;
@@ -18,14 +19,14 @@ public class EnrollmentRelationshipDTO {
     private List<GradeDTO> studentGrades;
     private StudentDTO studentDTO;
     private GroupDTO groupDTO;
-    private OrdinarySubjectDTO ordinarySubjectDTO;
+    private ObligatorySubjectDTO obligatorySubjectDTO;
     private ElectiveSubjectDTO electiveSubjectDTO;
 
-    public EnrollmentRelationshipDTO(StudentDTO studentDTO, GroupDTO groupDTO, OrdinarySubjectDTO ordinarySubjectDTO, List<GradeDTO> studentGrades) {
+    public EnrollmentRelationshipDTO(StudentDTO studentDTO, GroupDTO groupDTO, ObligatorySubjectDTO ordinarySubjectDTO, List<GradeDTO> studentGrades) {
         this.studentGrades = studentGrades;
         this.studentDTO = studentDTO;
         this.groupDTO = groupDTO;
-        this.ordinarySubjectDTO = ordinarySubjectDTO;
+        this.obligatorySubjectDTO = ordinarySubjectDTO;
     }
 
     public EnrollmentRelationshipDTO(StudentDTO studentDTO, GroupDTO groupDTO, ElectiveSubjectDTO electiveSubjectDTO, List<GradeDTO> studentGrades) {
@@ -34,4 +35,5 @@ public class EnrollmentRelationshipDTO {
         this.groupDTO = groupDTO;
         this.electiveSubjectDTO = electiveSubjectDTO;
     }
+
 }

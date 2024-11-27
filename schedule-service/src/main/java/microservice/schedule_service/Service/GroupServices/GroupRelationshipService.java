@@ -29,8 +29,8 @@ public class GroupRelationshipService {
 
     @Autowired
     public GroupRelationshipService(
-            @Qualifier("subjectFacadeServiceImpl") SubjectFacadeService subjectFacadeService,
-            @Qualifier("teacherFacadeServiceImpl") TeacherFacadeService teacherFacadeService,
+            @Qualifier("SubjectFacadeServiceImpl") SubjectFacadeService subjectFacadeService,
+            @Qualifier("TeacherFacadeServiceImpl") TeacherFacadeService teacherFacadeService,
             TeacherRepository teacherRepository) {
         this.subjectFacadeService = subjectFacadeService;
         this.teacherFacadeService = teacherFacadeService;

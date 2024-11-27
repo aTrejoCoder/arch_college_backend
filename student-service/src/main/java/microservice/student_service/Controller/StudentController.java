@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.DTOs.Student.StudentInsertDTO;
 import microservice.common_classes.Utils.ProfessionalLineModality;
@@ -16,22 +17,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/api/students")
+@RequiredArgsConstructor
 public class StudentController {
 
     private final StudentService studentService;
     private final StudentRelationService studentRelationService;
 
-    @Autowired
-    public StudentController(StudentService studentService,
-                             StudentRelationService studentRelationService) {
-        this.studentService = studentService;
-        this.studentRelationService = studentRelationService;
-    }
 
     @GetMapping("/{studentId}")
     @Operation(summary = "Get student by ID", description = "Fetches a student by their ID.")
@@ -95,9 +93,9 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(careerResult.getErrorMessage()));
         }
 
-        studentService.createStudent(studentInsertDTO);
+        StudentDTO studentDTO = studentService.createStudent(studentInsertDTO);
 
-        // Create Academic History
+        studentRelationService.initAcademicHistoryAsync(studentDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseWrapper.created("Student successfully created"));
     }

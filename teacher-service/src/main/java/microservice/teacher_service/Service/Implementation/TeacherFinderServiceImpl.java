@@ -50,7 +50,7 @@ public class TeacherFinderServiceImpl implements TeacherFinderService {
                 .collect(Collectors.toSet());
 
         if (!missingIds.isEmpty()) {
-            String errorMessage = "Groups not found for IDs: " + missingIds;
+            String errorMessage = "Teachers not found for IDs: " + missingIds;
             return Result.error(errorMessage);
         }
 

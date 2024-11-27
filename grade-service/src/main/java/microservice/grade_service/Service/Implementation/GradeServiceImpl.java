@@ -1,8 +1,8 @@
 package microservice.grade_service.Service.Implementation;
 
 import lombok.extern.slf4j.Slf4j;
+import microservice.common_classes.DTOs.Grade.GradeDTO;
 import microservice.common_classes.Utils.Result;
-import microservice.grade_service.DTOs.GradeWithRelationsDTO;
 import microservice.grade_service.DTOs.GradeInsertDTO;
 import microservice.grade_service.Mappers.GradeMapper;
 import microservice.grade_service.Model.Grade;
@@ -32,7 +32,7 @@ public class GradeServiceImpl implements GradeService {
 
     @Override
     @Cacheable(value = "gradeById", key = "#gradeId")
-    public Result<GradeWithRelationsDTO> getGradeById(Long gradeId) {
+    public Result<GradeDTO> getGradeById(Long gradeId) {
         Optional<Grade> optionalGrade = gradeRepository.findById(gradeId);
         return optionalGrade
                 .map(grade -> Result.success(gradeMapper.entityToDTO(grade)))
@@ -59,7 +59,7 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public List<GradeWithRelationsDTO> getAllGradeByStudentAccountNumber(String accountNumber) {
+    public List<GradeDTO> getAllGradeByStudentAccountNumber(String accountNumber) {
         List<Grade> currentGrades = gradeRepository.findByStudentAccountNumber(accountNumber);
         return currentGrades.stream()
                 .map(gradeMapper::entityToDTO)
@@ -67,7 +67,7 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
-    public List<GradeWithRelationsDTO> getGradesByStudentAccountNumberAndSchoolPeriod(String accountNumber, String schoolPeriod) {
+    public List<GradeDTO> getGradesByStudentAccountNumberAndSchoolPeriod(String accountNumber, String schoolPeriod) {
         return List.of();
     }
 

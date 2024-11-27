@@ -8,6 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @EnableEurekaServer
 @ComponentScan(basePackages = {"microservice.common_classes.GlobalExceptions",
+		"microservice.common_classes.JWT",
 		"microservice.schedule_service",
 		"microservice.common_classes.FacadeService.Teacher",
 		"microservice.common_classes.FacadeService.Subject"})

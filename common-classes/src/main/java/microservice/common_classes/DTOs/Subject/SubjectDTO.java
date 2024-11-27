@@ -15,6 +15,9 @@ public abstract class SubjectDTO {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("key")
+    private String key;
+
     @JsonProperty("area_id")
     private Long areaId;
 }

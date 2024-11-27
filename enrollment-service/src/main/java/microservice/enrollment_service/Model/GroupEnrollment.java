@@ -1,25 +1,38 @@
 package microservice.enrollment_service.Model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import microservice.common_classes.Utils.GroupType;
+import microservice.common_classes.Utils.SubjectType;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "enrollment")
 public class GroupEnrollment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "group_id", nullable = false)
-    private Long groupId;
+    @Column(name = "group_key", nullable = false)
+    private String groupKey;
 
-    @Column(name = "ordinary_subject_id", nullable = false)
-    private Long ordinarySubjectId;
+    @Column(name = "subject_key", nullable = false)
+    private String subjectKey;
 
-    @Column(name = "elective_subject_id", nullable = false)
-    private Long electiveSubjectId;
+    @Column(name = "subject_id", nullable = false)
+    private Long subjectId;
+
+    @Column(name = "subject_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private SubjectType subjectType;
 
     @Column(name = "student_account_number", nullable = false)
     private String studentAccountNumber;
@@ -40,24 +53,10 @@ public class GroupEnrollment {
         this.isActive = false;
     }
 
-    public GroupEnrollment() {
-    }
-
     @PrePersist
     protected void onCreate() {
-        var year = LocalDateTime.now().getYear() ;
-        int month = LocalDateTime.now().getMonthValue();
-
-        String semester;
-        if (month >= 6) {
-            semester = "2";
-        } else {
-            semester = "1";
-        }
-
         this.enrollmentDate = LocalDateTime.now();
-        this.enrollmentPeriod = year + "-" + semester;
+        this.isActive = Boolean.TRUE;
     }
-
 
 }

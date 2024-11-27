@@ -1,24 +1,24 @@
 package microservice.enrollment_service.Service;
 
+import lombok.extern.slf4j.Slf4j;
+import microservice.common_classes.DTOs.Enrollment.EnrollmentInsertDTO;
 import microservice.common_classes.DTOs.Grade.GradeDTO;
 import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
+import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import microservice.common_classes.DTOs.Subject.OrdinarySubjectDTO;
 import microservice.common_classes.Utils.ProfessionalLineModality;
 import microservice.common_classes.Utils.Result;
 import microservice.common_classes.Utils.Schedule.SemesterData;
-import microservice.enrollment_service.DTOs.EnrollmentInsertDTO;
 import microservice.enrollment_service.DTOs.EnrollmentRelationshipDTO;
 import microservice.enrollment_service.Model.GroupEnrollment;
 import microservice.enrollment_service.Repository.EnrollmentRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
+@Slf4j
 public class EnrollmentValidationServiceImpl implements EnrollmentValidationService {
     public final int MAX_CREDITS_PER_SCHOOL_PERIOD = 120;
     private static final String ERROR_ELECTIVES_COMPLETED = "You have already completed all your elective subjects. Enrollment in additional electives is not allowed.";
@@ -30,10 +30,10 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
         this.enrollmentRepository = enrollmentRepository;
     }
 
-    public Result<Void> validateEnrollment(EnrollmentInsertDTO enrollmentInsertDTO, EnrollmentRelationshipDTO enrollmentRelationshipDTO) {
-        List<GroupEnrollment> groupEnrollments = enrollmentRepository.findByStudentAccountNumberAndEnrollmentPeriod(enrollmentInsertDTO.getStudentAccountNumber(), schoolPeriod);
+    public Result<Void> validateEnrollment(EnrollmentInsertDTO enrollmentInsertDTO, EnrollmentRelationshipDTO enrollmentRelationshipDTO, String accountNumber) {
+        List<GroupEnrollment> groupEnrollments = enrollmentRepository.findByStudentAccountNumberAndEnrollmentPeriod(accountNumber, schoolPeriod);
 
-        Result<Void> notDuplicatedResult = validateNotDuplicatedEnrollment(enrollmentInsertDTO.getGroupId(), groupEnrollments);
+        Result<Void> notDuplicatedResult = validateNotDuplicatedEnrollment(enrollmentInsertDTO.getGroupKey(), groupEnrollments);
         if (!notDuplicatedResult.isSuccess()) {
             return Result.error(notDuplicatedResult.getErrorMessage());
         }
@@ -43,7 +43,7 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
             return Result.error(validateSubjectResult.getErrorMessage());
         }
 
-        Result<Void> maxCreditsResult = validateMaximumCreditsPerStudent(enrollmentInsertDTO.getStudentAccountNumber(), enrollmentRelationshipDTO);
+        Result<Void> maxCreditsResult = validateMaximumCreditsPerStudent(accountNumber, enrollmentRelationshipDTO);
         if (!maxCreditsResult.isSuccess()) {
             return Result.error(maxCreditsResult.getErrorMessage());
         }
@@ -59,10 +59,10 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
     private Result<Void> validateNotGradeConflict(EnrollmentRelationshipDTO enrollmentRelationshipDTO) {
          List<GradeDTO> studentGrades = enrollmentRelationshipDTO.getStudentGrades();
 
-         if (enrollmentRelationshipDTO.getOrdinarySubjectDTO() != null) {
+         if (enrollmentRelationshipDTO.getObligatorySubjectDTO() != null) {
              List<GradeDTO> gradesPerSubject = studentGrades.stream()
                      .filter(gradeDTO -> gradeDTO.getOrdinarySubjectId()
-                     .equals(enrollmentRelationshipDTO.getOrdinarySubjectDTO().getId()))
+                     .equals(enrollmentRelationshipDTO.getObligatorySubjectDTO().getId()))
                      .toList();
 
              // Doesn't have grades for this subject, won't have conflicts
@@ -108,9 +108,10 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
         return Result.success();
     }
 
-    private Result<Void> validateNotDuplicatedEnrollment(Long groupId, List<GroupEnrollment> groupEnrollments) {
+    private Result<Void> validateNotDuplicatedEnrollment(String groupKey, List<GroupEnrollment> groupEnrollments) {
+
         Optional<GroupEnrollment> optionalGroupEnrollment = groupEnrollments.stream()
-                .filter(groupEnrollment -> groupEnrollment.getGroupId().equals(groupId))
+                .filter(groupEnrollment -> groupEnrollment.getGroupKey().equals(groupKey))
                 .findAny();
 
         if (optionalGroupEnrollment.isPresent()) {
@@ -121,18 +122,18 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
     }
 
     private Result<Void> validateSubject(EnrollmentRelationshipDTO enrollmentRelationshipDTO) {
-        if (enrollmentRelationshipDTO.getOrdinarySubjectDTO() != null && enrollmentRelationshipDTO.getElectiveSubjectDTO() == null) {
-            return validateOrdinarySubject(enrollmentRelationshipDTO.getOrdinarySubjectDTO(), enrollmentRelationshipDTO.getStudentDTO());
-        } else if (enrollmentRelationshipDTO.getOrdinarySubjectDTO() == null && enrollmentRelationshipDTO.getElectiveSubjectDTO() != null) {
+        if (enrollmentRelationshipDTO.getObligatorySubjectDTO() != null && enrollmentRelationshipDTO.getElectiveSubjectDTO() == null) {
+            return validateOrdinarySubject(enrollmentRelationshipDTO.getObligatorySubjectDTO(), enrollmentRelationshipDTO.getStudentDTO());
+        } else if (enrollmentRelationshipDTO.getObligatorySubjectDTO() == null && enrollmentRelationshipDTO.getElectiveSubjectDTO() != null) {
             return validateElectiveSubject(enrollmentRelationshipDTO.getElectiveSubjectDTO(), enrollmentRelationshipDTO.getStudentDTO(), enrollmentRelationshipDTO.getStudentGrades());
         } else {
             return Result.success();
         }
     }
 
-    private Result<Void> validateOrdinarySubject(OrdinarySubjectDTO ordinarySubjectDTO, StudentDTO studentDTO ) {
+    private Result<Void> validateOrdinarySubject(ObligatorySubjectDTO ordinarySubjectDTO, StudentDTO studentDTO ) {
         int semestersCompleted = studentDTO.getSemestersCompleted();
-        int subjectSemesterNumber = ordinarySubjectDTO.getSemesterNumber();
+        int subjectSemesterNumber = ordinarySubjectDTO.getSemester();
 
         if (isSubjectInCurrentSemester(semestersCompleted, subjectSemesterNumber)
                 || isSubjectDelayed(semestersCompleted, subjectSemesterNumber)) {

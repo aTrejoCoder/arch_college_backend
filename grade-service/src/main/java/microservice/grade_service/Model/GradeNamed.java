@@ -3,6 +3,7 @@ package microservice.grade_service.Model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import microservice.grade_service.Utils.GroupType;
 import microservice.grade_service.Utils.SubjectType;
@@ -16,27 +17,21 @@ public class GradeNamed {
     @BsonProperty("career_id")
     private Long careerId;
 
-    @JsonProperty("subject_name")
-    @BsonProperty("subject_name")
+    @BsonProperty("subject_key")
     private int subjectKey;
 
-    @JsonProperty("subject_credits")
     @BsonProperty("subject_credits")
     private String subjectCredits;
 
-    @JsonProperty("subject_type")
     @BsonProperty("subject_type")
     private SubjectType subjectType;
 
-    @JsonProperty("subject_name")
     @BsonProperty("subject_name")
     private String subjectName;
 
-    @JsonProperty("grade_value")
     @BsonProperty("grade_value")
     private int gradeValue;
 
-    @JsonProperty("group_type")
     @BsonProperty("group_type")
     private GroupType groupType;
 
@@ -56,7 +51,7 @@ public class GradeNamed {
     @BsonProperty("extraordinary_count")
     private int extraordinaryCount;
 
-    @JsonProperty("extraordinary_count")
-    @BsonProperty("extraordinary_count")
+    @JsonProperty("is_authorized")
+    @BsonProperty("is_authorized")
     private boolean isAuthorized;
 }

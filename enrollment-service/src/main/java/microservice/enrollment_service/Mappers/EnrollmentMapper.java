@@ -1,7 +1,7 @@
 package microservice.enrollment_service.Mappers;
 
-import microservice.enrollment_service.DTOs.EnrollmentDTO;
-import microservice.enrollment_service.DTOs.EnrollmentInsertDTO;
+import microservice.common_classes.DTOs.Enrollment.EnrollmentDTO;
+import microservice.common_classes.DTOs.Enrollment.EnrollmentInsertDTO;
 import microservice.enrollment_service.Model.GroupEnrollment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

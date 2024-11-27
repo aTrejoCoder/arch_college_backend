@@ -22,11 +22,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GroupCreationService {
 
-    private GroupMapper groupMapper;
-    private GroupMappingService mappingService;
-    private ScheduleService scheduleService;
-    private KeyGenerationService keyGenerationService;
-    private GroupRelationshipService relationshipService;
+    private final GroupMapper groupMapper;
+    private final GroupMappingService mappingService;
+    private final ScheduleService scheduleService;
+    private final KeyGenerationService keyGenerationService;
+    private final GroupRelationshipService relationshipService;
     private final GroupRepository groupRepository;
     private final String currentSemester = SemesterData.getCurrentSemester();
 

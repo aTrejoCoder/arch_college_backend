@@ -54,7 +54,7 @@ public class TeacherFinderController {
         return ResponseEntity.ok(ResponseWrapper.ok(teacherResult.getData(), "Teacher data successfully fetched"));
     }
 
-    @Operation(summary = "Get teacher by account number", description = "Fetches a teacher by their account number.")
+    @Operation(summary = "Get teacher by ids", description = "Fetches a teacher by their account number.")
     @GetMapping("/by-ids/{idSet}")
     public ResponseEntity<ResponseWrapper<List<TeacherDTO>>> getTeacherByIds(@PathVariable Set<Long> idSet) {
         Result<List<TeacherDTO>> teachersResult = teacherFinderService.getTeachersByIds(idSet);

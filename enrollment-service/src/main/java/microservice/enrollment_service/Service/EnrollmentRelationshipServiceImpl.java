@@ -1,24 +1,26 @@
 package microservice.enrollment_service.Service;
 
+import lombok.extern.slf4j.Slf4j;
+import microservice.common_classes.DTOs.Enrollment.EnrollmentInsertDTO;
 import microservice.common_classes.DTOs.Grade.GradeDTO;
 import microservice.common_classes.DTOs.Group.GroupDTO;
 import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
-import microservice.common_classes.DTOs.Subject.OrdinarySubjectDTO;
+import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import microservice.common_classes.FacadeService.Grade.GradeFacadeService;
-import microservice.common_classes.FacadeService.Grade.GradeFacadeServiceImpl;
 import microservice.common_classes.FacadeService.Group.GroupFacadeService;
 import microservice.common_classes.FacadeService.Student.StudentFacadeService;
 import microservice.common_classes.FacadeService.Subject.SubjectFacadeService;
 import microservice.common_classes.Utils.Result;
-import microservice.enrollment_service.DTOs.EnrollmentInsertDTO;
 import microservice.enrollment_service.DTOs.EnrollmentRelationshipDTO;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Service
 public class EnrollmentRelationshipServiceImpl implements EnrollmentRelationshipService {
     public final StudentFacadeService studentFacadeService;
@@ -36,10 +38,10 @@ public class EnrollmentRelationshipServiceImpl implements EnrollmentRelationship
         this.subjectFacadeService = subjectFacadeService;
     }
 
-    public Result<EnrollmentRelationshipDTO> validateAndGetRelationships(EnrollmentInsertDTO enrollmentInsertDTO) {
-        CompletableFuture<StudentDTO> studentFuture = studentFacadeService.getStudentByAccountNumber(enrollmentInsertDTO.getStudentAccountNumber());
-        CompletableFuture<GroupDTO> groupFuture = groupFacadeService.getGroupById(enrollmentInsertDTO.getGroupId());
-        CompletableFuture<List<GradeDTO>> studentGradeFuture = gradeFacadeService.getGradesByStudentId(enrollmentInsertDTO.getGroupId());
+    public Result<EnrollmentRelationshipDTO> validateAndGetRelationships(EnrollmentInsertDTO enrollmentInsertDTO, String studentAccountNumber) {
+        CompletableFuture<StudentDTO> studentFuture = studentFacadeService.getStudentByAccountNumber(studentAccountNumber);
+        CompletableFuture<GroupDTO> groupFuture = groupFacadeService.getCurrentGroupByKey(enrollmentInsertDTO.getGroupKey());
+        CompletableFuture<List<GradeDTO>> studentGradeFuture = gradeFacadeService.getGradesByStudentAccountNumber(studentAccountNumber);
 
         return CompletableFuture.allOf(studentFuture, groupFuture, studentGradeFuture).thenApply(v -> {
             StudentDTO studentDTO = studentFuture.join();
@@ -55,25 +57,28 @@ public class EnrollmentRelationshipServiceImpl implements EnrollmentRelationship
             }
 
             if (studentGrades == null) {
-                return Result.<EnrollmentRelationshipDTO>error("Invalid Group");
+                studentGrades = new ArrayList<>();
             }
 
-            if (groupDTO.getElectiveSubjectId() !=  null && groupDTO.getOrdinarySubjectId() == null) {
+            if (groupDTO.getElectiveSubjectId() !=  null && groupDTO.getObligatorySubjectId() == null) {
                 ElectiveSubjectDTO electiveSubjectDTO = subjectFacadeService.getElectiveSubjectById(groupDTO.getElectiveSubjectId()).join();
-            } else if (groupDTO.getOrdinarySubjectId() != null && groupDTO.getElectiveSubjectId() == null ) {
-                OrdinarySubjectDTO ordinarySubjectDTO = subjectFacadeService.getOrdinarySubjectById(groupDTO.getOrdinarySubjectId()).join();
+                return Result.success(new EnrollmentRelationshipDTO(studentDTO,groupDTO, electiveSubjectDTO, studentGrades));
+            } else if (groupDTO.getObligatorySubjectId() != null && groupDTO.getElectiveSubjectId() == null ) {
+                ObligatorySubjectDTO ordinarySubjectDTO = subjectFacadeService.getOrdinarySubjectById(groupDTO.getObligatorySubjectId()).join();
+                return Result.success(new EnrollmentRelationshipDTO(studentDTO,groupDTO, ordinarySubjectDTO, studentGrades));
+
             } else {
                 return Result.<EnrollmentRelationshipDTO>error("No Subject Id Provided");
             }
 
 
-            return Result.success(new EnrollmentRelationshipDTO());
+
         }).join();
     }
 
     @Override
-    public Result<Void> takeSpot(Long groupId) {
-       Result<Void> spotResult = groupFacadeService.reduceSpot(groupId).join();
+    public Result<Void> takeSpot(String groupKey) {
+       Result<Void> spotResult = groupFacadeService.takeSpot(groupKey).join();
        if (!spotResult.isSuccess()) {
            return Result.error(spotResult.getErrorMessage());
        }

@@ -6,6 +6,10 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import microservice.common_classes.DTOs.Group.GroupDTO;
+import microservice.common_classes.DTOs.Student.StudentDTO;
+import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
+import microservice.common_classes.DTOs.Subject.OrdinarySubjectDTO;
 import microservice.common_classes.Utils.Grades.GradeStatus;
 
 @Data
@@ -35,4 +39,16 @@ public class GradeDTO {
 
     @JsonProperty("group_id")
     private Long groupId;
+
+    @JsonProperty("student")
+    private StudentDTO studentDTO;
+
+    @JsonProperty("group")
+    private GroupDTO groupDTO;
+
+    @JsonProperty("elective_subject")
+    private ElectiveSubjectDTO electiveSubjectDTO;
+
+    @JsonProperty("ordinary_subject")
+    private OrdinarySubjectDTO ordinarySubjectDTO;
 }

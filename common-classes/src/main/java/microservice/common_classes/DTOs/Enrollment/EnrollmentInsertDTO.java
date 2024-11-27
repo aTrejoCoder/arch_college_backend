@@ -17,13 +17,14 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class EnrollmentInsertDTO {
-    @JsonProperty("group_id")
-    @NotNull(message = "group_id can't be null")
-    @Positive(message = "group_id cant' be negative")
-    private Long groupId;
+    @JsonProperty("group_key")
+    @NotNull(message = "group_key can't be null")
+    @Positive(message = "group_key cant' be negative")
+    private String groupKey;
 
-    @JsonProperty("student_id")
-    @NotNull(message = "student_id can't be null")
-    @Positive(message = "student_id cant' be negative")
-    private Long studentId;
+    @JsonProperty("subject_key")
+    @NotNull(message = "subject_key can't be null")
+    @Positive(message = "subject_key cant' be negative")
+    private String subjectKey;
+
 }

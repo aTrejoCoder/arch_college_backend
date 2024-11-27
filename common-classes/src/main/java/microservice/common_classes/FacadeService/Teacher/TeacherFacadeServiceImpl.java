@@ -18,8 +18,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
-@Service("teacherFacadeServiceImpl")
+@Service("TeacherFacadeServiceImpl")
 @Slf4j
 @Primary
 public class TeacherFacadeServiceImpl implements TeacherFacadeService {
@@ -96,15 +97,11 @@ public class TeacherFacadeServiceImpl implements TeacherFacadeService {
 
     @Override
     public CompletableFuture<Result<List<TeacherDTO>>> getTeachersById(Set<Long> teacherIdSet) {
-        StringBuilder teacherParams = new StringBuilder("?teacherIds=" + teacherIdSet.toArray()[0]);
+        String teacherIds = teacherIdSet.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
 
-        if (teacherIdSet.size() > 1) {
-            for (Long teacherId : teacherIdSet) {
-                teacherParams.append(",").append(teacherId);
-            }
-        }
-
-        String teacherUrl = teacherServiceUrlProvider.get() + "/v1/api/teachers/by-ids" + teacherParams.toString();
+        String teacherUrl = teacherServiceUrlProvider.get() + "/v1/api/teachers/by-ids/" + teacherIds;
 
         return CompletableFuture.supplyAsync(() -> {
             try {

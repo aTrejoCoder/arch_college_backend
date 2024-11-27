@@ -5,13 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Grade.GradeDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -25,14 +29,15 @@ public class GradeFacadeServiceImpl implements GradeFacadeService {
 
     @Autowired
     public GradeFacadeServiceImpl(RestTemplate restTemplate,
-                                  Supplier<String> groupServiceUrlProvider) {
+                                  @Qualifier("gradeServiceUrlProvider") Supplier<String> groupServiceUrlProvider) {
         this.restTemplate = restTemplate;
         this.groupServiceUrlProvider = groupServiceUrlProvider;
     }
 
     @Override
+    @Async("taskExecutor")
     public CompletableFuture<GradeDTO> getGradeById(Long gradeId) {
-        String gradeUrl = groupServiceUrlProvider.get() + "/v1/drugstore/grades/" + gradeId;
+        String gradeUrl = groupServiceUrlProvider.get() + "/v1/api/grades/" + gradeId;
 
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -57,8 +62,9 @@ public class GradeFacadeServiceImpl implements GradeFacadeService {
     }
 
     @Override
-    public CompletableFuture<List<GradeDTO>> getGradesByStudentId(Long studentId) {
-        String gradeUrl = groupServiceUrlProvider.get() + "/v1/drugstore/grades/student-history/" + studentId;
+    @Async("taskExecutor")
+    public CompletableFuture<List<GradeDTO>> getGradesByStudentAccountNumber(String accountNumber) {
+        String gradeUrl = groupServiceUrlProvider.get() + "/v1/api/grades/student/" + accountNumber +  "/all";
 
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -70,16 +76,18 @@ public class GradeFacadeServiceImpl implements GradeFacadeService {
                         }
                 );
 
-                log.info("getGradesByStudentId -> Student History Grades with ID: {} successfully fetched", studentId);
+                log.info("getGradesByStudentId -> {}", responseEntity.getBody());
+                log.info("getGradesByStudentId -> Student History Grades with ID: {} successfully fetched", accountNumber);
 
                 return Objects.requireNonNull(responseEntity.getBody()).getData();
             } catch (EntityNotFoundException e) {
-                log.warn("getGradeById -> Student with ID {} not found: {}", studentId, e.getMessage());
+                log.warn("getGradeById -> Student with ID {} not found: {}", accountNumber, e.getMessage());
                 return null;
             } catch (Exception e) {
-                log.error("getGradesByStudentId -> Error fetching group with ID {}: {}", studentId, e.getMessage());
+                log.error("getGradesByStudentId -> Error fetching group with ID {}: {}", accountNumber, e.getMessage());
                 throw new RuntimeException(e);
             }
         });
     }
+
 }

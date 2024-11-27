@@ -27,11 +27,7 @@ public class AccountNumberGenerationService {
         Optional<Long> optionalLastId = studentRepository.findLastId();
         StringBuilder newAccountNumber = new StringBuilder();
 
-        if (student.getCreatedAt() == null) {
-            throw new IllegalArgumentException("Created date cannot be null");
-        }
-
-        int requestedYear = student.getCreatedAt().getYear();
+        int requestedYear = LocalDateTime.now().getYear();
         validateYear(requestedYear);
 
         int generationNumber = calculateGenerationNumber(requestedYear);
@@ -40,7 +36,7 @@ public class AccountNumberGenerationService {
         newAccountNumber.append(formattedGenerationNumber);
 
         // If last student doesn't exist, start count at "000001"
-        if (!optionalLastId.isPresent()) {
+        if (optionalLastId.isEmpty()) {
             newAccountNumber.append("000001");
         } else {
             Long nextId = optionalLastId.get() + 1;
