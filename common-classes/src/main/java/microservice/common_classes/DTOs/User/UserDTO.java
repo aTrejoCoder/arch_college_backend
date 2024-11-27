@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.management.relation.Role;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -29,5 +31,5 @@ public class UserDTO {
     @JsonProperty("teacher_id")
     private Integer teacherId;
 
-    private Set<RoleDTO> roles;
+    private List<RoleDTO> roles;
 }

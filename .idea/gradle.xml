@@ -19,6 +19,7 @@
             <option value="$PROJECT_DIR$/student-service" />
             <option value="$PROJECT_DIR$/subject-service" />
             <option value="$PROJECT_DIR$/teacher-service" />
+            <option value="$PROJECT_DIR$/user-service" />
           </set>
         </option>
       </GradleProjectSettings>
