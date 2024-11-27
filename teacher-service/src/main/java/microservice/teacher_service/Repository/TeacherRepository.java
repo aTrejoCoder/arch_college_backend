@@ -18,6 +18,8 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
 
     List<Teacher> findByIdIn(Set<Long> idSet);
 
+    boolean existsByAccountNumber(String accountNumber);
+
     Optional<Teacher> findByAccountNumber(String accountNumber);
 
     Page<Teacher> findByTitle(Title title, Pageable pageable);

@@ -23,6 +23,7 @@ public class AcademicHistoryConsumer {
     @RabbitListener(queues = RabbitMQConfig.ACADEMIC_HISTORY_QUEUE)
     public void processAcademicHistory(InitAcademicHistory initAcademicHistory) {
         log.info("Processing message to create academic history for user with account number: {}", initAcademicHistory.getStudent().getAccountNumber());
+        academicHistoryService.validateUniqueAcademicHistoryPerStudent(initAcademicHistory.getStudent().getAccountNumber());
 
         academicHistoryService.initAcademicHistory(initAcademicHistory.getStudent(), initAcademicHistory.getCareer());
         log.info("Academic History created for student: {}", initAcademicHistory.getStudent().getAccountNumber());

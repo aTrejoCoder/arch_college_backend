@@ -4,7 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import microservice.common_classes.DTOs.ProfessionalLine.ProfessionalLineDTO;
 import microservice.common_classes.DTOs.ProfessionalLine.ProfessionalLineInsertDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.subject_service.Mappers.ProfessionalLineMapper;
 import microservice.subject_service.Model.Area;
 import microservice.subject_service.Model.ProfessionalLine;

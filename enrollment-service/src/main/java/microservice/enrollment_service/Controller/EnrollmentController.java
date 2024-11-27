@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import microservice.common_classes.DTOs.Enrollment.EnrollmentDTO;
 import microservice.common_classes.DTOs.Enrollment.EnrollmentInsertDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.enrollment_service.DTOs.EnrollmentRelationshipDTO;
 import microservice.enrollment_service.Service.EnrollmentRelationshipService;
 import microservice.enrollment_service.Service.EnrollmentService;

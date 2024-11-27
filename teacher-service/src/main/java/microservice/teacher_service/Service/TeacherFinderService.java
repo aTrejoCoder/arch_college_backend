@@ -1,8 +1,8 @@
 package microservice.teacher_service.Service;
 
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.DTOs.Teacher.TeacherDTO;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.common_classes.Utils.Teacher.Title;
-import microservice.teacher_service.DTOs.TeacherDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

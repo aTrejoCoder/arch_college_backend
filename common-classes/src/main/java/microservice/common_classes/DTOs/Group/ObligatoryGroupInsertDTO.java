@@ -12,9 +12,11 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
-public class OrdinaryGroupInsertDTO {
-    @JsonProperty("ordinary_subject_id")
-    private Long ordinarySubjectId;
+public class ObligatoryGroupInsertDTO {
+    @JsonProperty("subject_id")
+    @NotNull(message = "subject_id can't be null")
+    @Positive(message = "subject_id can't be negative")
+    private Long subjectId;
 
     @JsonProperty("group_status")
     @NotNull(message = "group_status can't be null")

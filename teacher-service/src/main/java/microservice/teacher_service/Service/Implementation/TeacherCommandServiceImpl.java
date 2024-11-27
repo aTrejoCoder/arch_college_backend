@@ -45,7 +45,7 @@ public class TeacherCommandServiceImpl implements TeacherCommandService {
     }
 
     @Override
-    public boolean validateExistingTeacher(Long teacherId) {
-        return teacherRepository.existsById(teacherId);
+    public boolean validateExistingTeacher(String teacherAccountNumber) {
+        return teacherRepository.existsByAccountNumber(teacherAccountNumber);
     }
 }

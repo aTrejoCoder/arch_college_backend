@@ -13,5 +13,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("SELECT s.id FROM Student s ORDER BY s.id DESC LIMIT 1")
     Optional<Long> findLastId();
 
+    boolean existsByAccountNumber(String accountNumber);
     Optional<Student> findByAccountNumber(String accountNumber);
 }

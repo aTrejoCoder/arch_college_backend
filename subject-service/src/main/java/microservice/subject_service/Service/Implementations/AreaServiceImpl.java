@@ -9,7 +9,7 @@ import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectInsertDTO;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectInsertDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.subject_service.Mappers.AreaMapper;
 import microservice.subject_service.Model.Area;
 

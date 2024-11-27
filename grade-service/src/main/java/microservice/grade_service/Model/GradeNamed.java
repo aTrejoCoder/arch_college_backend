@@ -1,14 +1,11 @@
 package microservice.grade_service.Model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import microservice.grade_service.Utils.GroupType;
-import microservice.grade_service.Utils.SubjectType;
+import microservice.common_classes.Utils.Group.GroupType;
+import microservice.common_classes.Utils.SubjectType;
 import org.bson.codecs.pojo.annotations.BsonProperty;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @NoArgsConstructor

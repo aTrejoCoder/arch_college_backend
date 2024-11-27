@@ -1,21 +1,20 @@
 package microservice.schedule_service.Service.GroupServices;
 
-import lombok.RequiredArgsConstructor;
 import microservice.common_classes.DTOs.Group.ElectiveGroupInsertDTO;
-import microservice.common_classes.DTOs.Group.OrdinaryGroupInsertDTO;
+import microservice.common_classes.DTOs.Group.ObligatoryGroupInsertDTO;
+import microservice.common_classes.Utils.SubjectType;
 import microservice.schedule_service.Models.GroupRelationshipsDTO;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import microservice.common_classes.DTOs.Teacher.TeacherDTO;
 import microservice.common_classes.FacadeService.Subject.SubjectFacadeService;
 import microservice.common_classes.FacadeService.Teacher.TeacherFacadeService;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.schedule_service.Models.Group;
 import microservice.schedule_service.Models.Teacher;
 import microservice.schedule_service.Repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,8 +36,8 @@ public class GroupRelationshipService {
         this.teacherRepository = teacherRepository;
     }
 
-    public Result<GroupRelationshipsDTO> validateAndGetRelationships(OrdinaryGroupInsertDTO ordinaryGroupInsertDTO) {
-        return validateOrdinarySubjectGroup(ordinaryGroupInsertDTO);
+    public Result<GroupRelationshipsDTO> validateAndGetRelationships(ObligatoryGroupInsertDTO OBligatoryGroupInsertDTO) {
+        return validateOrdinarySubjectGroup(OBligatoryGroupInsertDTO);
     }
 
     public Result<GroupRelationshipsDTO> validateAndGetRelationships(ElectiveGroupInsertDTO electiveGroupInsertDTO) {
@@ -50,12 +49,14 @@ public class GroupRelationshipService {
             ElectiveSubjectDTO electiveSubject = relationshipsDTO.getElectiveSubjectDTO();
 
             group.setSubjectName(electiveSubject.getName());
-            group.setElectiveSubjectId(electiveSubject.getId());
+            group.setSubjectId(electiveSubject.getId());
+            group.setSubjectType(SubjectType.ELECTIVE);
         } else if (relationshipsDTO.getObligatorySubjectDTO() != null) {
             ObligatorySubjectDTO ordinarySubject = relationshipsDTO.getObligatorySubjectDTO();
 
             group.setSubjectName(ordinarySubject.getName() + " " + ordinarySubject.getNumber());
-            group.setObligatorySubjectId(ordinarySubject.getId());
+            group.setSubjectId(ordinarySubject.getId());
+            group.setSubjectType(SubjectType.OBLIGATORY);
         }
     }
 
@@ -64,8 +65,8 @@ public class GroupRelationshipService {
 
         if (groupRelationshipsDTO.getTeacherDTOS() != null) {
             List<Teacher> teachers = groupRelationshipsDTO.getTeacherDTOS().stream()
-                    .map(teacherDTO -> teacherRepository.findById(teacherDTO.getTeacherId())
-                            .orElseThrow(() -> new IllegalArgumentException("Teacher not found: " + teacherDTO.getTeacherId())))
+                    .map(teacherDTO -> teacherRepository.findById(teacherDTO.getId())
+                            .orElseThrow(() -> new IllegalArgumentException("Teacher not found: " + teacherDTO.getId())))
                     .toList();
 
             group.addTeachers(teachers);
@@ -73,7 +74,7 @@ public class GroupRelationshipService {
     }
 
     private Result<GroupRelationshipsDTO> validateElectiveSubjectGroup(ElectiveGroupInsertDTO electiveGroupInsertDTO) {
-        CompletableFuture<ElectiveSubjectDTO> electiveSubjectFuture = subjectFacadeService.getElectiveSubjectById(electiveGroupInsertDTO.getElectiveSubjectId());
+        CompletableFuture<ElectiveSubjectDTO> electiveSubjectFuture = subjectFacadeService.getElectiveSubjectById(electiveGroupInsertDTO.getSubjectId());
 
         if(electiveGroupInsertDTO.getTeacherId() != null) {
             CompletableFuture<TeacherDTO> teachersFuture = teacherFacadeService.getTeacherById(electiveGroupInsertDTO.getTeacherId());
@@ -103,11 +104,11 @@ public class GroupRelationshipService {
         }
     }
 
-    private Result<GroupRelationshipsDTO> validateOrdinarySubjectGroup(OrdinaryGroupInsertDTO ordinaryGroupInsertDTO) {
-        CompletableFuture<ObligatorySubjectDTO> obligatorySubjectFuture = subjectFacadeService.getOrdinarySubjectById(ordinaryGroupInsertDTO.getOrdinarySubjectId());
+    private Result<GroupRelationshipsDTO> validateOrdinarySubjectGroup(ObligatoryGroupInsertDTO ObligatoryGroupInsertDTO) {
+        CompletableFuture<ObligatorySubjectDTO> obligatorySubjectFuture = subjectFacadeService.getOrdinarySubjectById(ObligatoryGroupInsertDTO.getSubjectId());
 
-        if(!ordinaryGroupInsertDTO.getTeacherIds().isEmpty()) {
-            CompletableFuture<Result<List<TeacherDTO>>> teachersFuture = teacherFacadeService.getTeachersById(ordinaryGroupInsertDTO.getTeacherIds());
+        if(!ObligatoryGroupInsertDTO.getTeacherIds().isEmpty()) {
+            CompletableFuture<Result<List<TeacherDTO>>> teachersFuture = teacherFacadeService.getTeachersById(ObligatoryGroupInsertDTO.getTeacherIds());
 
             return CompletableFuture.allOf(teachersFuture , obligatorySubjectFuture).thenApply(v  -> {
                 ObligatorySubjectDTO ordinarySubjectDTO = obligatorySubjectFuture.join();

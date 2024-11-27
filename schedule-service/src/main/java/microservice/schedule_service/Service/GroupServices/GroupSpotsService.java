@@ -3,16 +3,12 @@ package microservice.schedule_service.Service.GroupServices;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import microservice.common_classes.DTOs.Group.GroupDTO;
-import microservice.common_classes.DTOs.Teacher.TeacherNameDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.common_classes.Utils.Schedule.SemesterData;
-import microservice.schedule_service.Mapppers.GroupMapper;
 import microservice.schedule_service.Models.Group;
 import microservice.schedule_service.Repository.GroupRepository;
 import microservice.schedule_service.Utils.GroupMappingService;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +16,7 @@ public class GroupSpotsService {
 
     private final GroupMappingService mappingService;
     private final GroupRepository groupRepository;
-    private final String currentSemester = SemesterData.getCurrentSemester();
+    private final String currentSemester = SemesterData.getCurrentSchoolPeriod();
 
     public Result<Void> decreaseSpot(String key) {
         Group group = groupRepository.findByKeyAndSchoolPeriod(key, currentSemester)

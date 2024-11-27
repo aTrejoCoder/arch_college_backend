@@ -2,6 +2,7 @@ package microservice.schedule_service.Service;
 
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
+import microservice.common_classes.Utils.SubjectType;
 import microservice.schedule_service.Models.Group;
 import microservice.schedule_service.Repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class KeyGenerationService {
     // (2) means the number of the semester that the semester that subject belongs
     // (10) means the number of the group from some subject
     public String generateObligatoryKey(Group group, ObligatorySubjectDTO ordinarySubjectDTO) {
-        List<Group> ordinaryGroups = groupRepository.findByObligatorySubjectId(group.getObligatorySubjectId());
+        List<Group> ordinaryGroups = groupRepository.findBySubjectIdAndSubjectType(group.getSubjectId(), SubjectType.OBLIGATORY);
 
         int semesterNumber = ordinarySubjectDTO.getSemester();
         int subjectGroupNumber = ordinaryGroups.size() + 1;
@@ -40,7 +41,7 @@ public class KeyGenerationService {
     // (10) means the ID of the elective subject
     // (9) means the number of the group from the elective subject
     public String generateElectiveKey(Group group, ElectiveSubjectDTO electiveSubjectDTO) {
-        List<Group> electiveGroups = groupRepository.findByElectiveSubjectId(group.getElectiveSubjectId());
+        List<Group> electiveGroups = groupRepository.findBySubjectIdAndSubjectType(group.getSubjectId(), SubjectType.ELECTIVE);
 
         int subjectGroupNumber = electiveGroups.size() + 1;
 

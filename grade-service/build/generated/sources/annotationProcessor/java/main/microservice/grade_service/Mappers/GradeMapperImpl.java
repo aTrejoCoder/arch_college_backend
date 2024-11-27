@@ -2,7 +2,6 @@ package microservice.grade_service.Mappers;
 
 import javax.annotation.processing.Generated;
 import microservice.common_classes.DTOs.Grade.GradeDTO;
-import microservice.common_classes.Utils.Grades.GradeStatus;
 import microservice.grade_service.DTOs.GradeInsertDTO;
 import microservice.grade_service.Model.Grade;
 import microservice.grade_service.Model.GradeNamed;
@@ -10,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-11-26T17:45:37-0600",
+    date = "2024-11-26T23:17:48-0600",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.9.jar, environment: Java 17.0.11 (Amazon.com Inc.)"
 )
 @Component
@@ -26,8 +25,8 @@ public class GradeMapperImpl implements GradeMapper {
 
         grade.setGradeValue( gradeInsertDTO.getGradeValue() );
         grade.setGradeStatus( gradeInsertDTO.getGradeStatus() );
-        grade.setOrdinarySubjectId( gradeInsertDTO.getOrdinarySubjectId() );
-        grade.setElectiveSubjectId( gradeInsertDTO.getElectiveSubjectId() );
+        grade.setSubjectId( gradeInsertDTO.getSubjectId() );
+        grade.setSubjectType( gradeInsertDTO.getSubjectType() );
         grade.setStudentAccountNumber( gradeInsertDTO.getStudentAccountNumber() );
         grade.setGroupId( gradeInsertDTO.getGroupId() );
 
@@ -44,9 +43,7 @@ public class GradeMapperImpl implements GradeMapper {
 
         gradeDTO.setId( grade.getId() );
         gradeDTO.setGradeValue( grade.getGradeValue() );
-        gradeDTO.setGradeStatus( gradeStatusToGradeStatus( grade.getGradeStatus() ) );
-        gradeDTO.setOrdinarySubjectId( grade.getOrdinarySubjectId() );
-        gradeDTO.setElectiveSubjectId( grade.getElectiveSubjectId() );
+        gradeDTO.setGradeStatus( grade.getGradeStatus() );
         gradeDTO.setGroupId( grade.getGroupId() );
 
         return gradeDTO;
@@ -60,37 +57,12 @@ public class GradeMapperImpl implements GradeMapper {
 
         GradeNamed gradeNamed = new GradeNamed();
 
+        gradeNamed.setSubjectType( grade.getSubjectType() );
         gradeNamed.setSubjectName( grade.getSubjectName() );
         gradeNamed.setGradeValue( grade.getGradeValue() );
         gradeNamed.setSchoolPeriod( grade.getSchoolPeriod() );
         gradeNamed.setAuthorized( grade.isAuthorized() );
 
         return gradeNamed;
-    }
-
-    protected GradeStatus gradeStatusToGradeStatus(microservice.grade_service.Utils.GradeStatus gradeStatus) {
-        if ( gradeStatus == null ) {
-            return null;
-        }
-
-        GradeStatus gradeStatus1;
-
-        switch ( gradeStatus ) {
-            case NORMAL_PENDING: gradeStatus1 = GradeStatus.NORMAL_PENDING;
-            break;
-            case DID_NOT_PRESENT_PENDING: gradeStatus1 = GradeStatus.DID_NOT_PRESENT_PENDING;
-            break;
-            case ACCREDITED_PENDING: gradeStatus1 = GradeStatus.ACCREDITED_PENDING;
-            break;
-            case NORMAL: gradeStatus1 = GradeStatus.NORMAL;
-            break;
-            case DID_NOT_PRESENT: gradeStatus1 = GradeStatus.DID_NOT_PRESENT;
-            break;
-            case ACCREDITED: gradeStatus1 = GradeStatus.ACCREDITED;
-            break;
-            default: throw new IllegalArgumentException( "Unexpected enum constant: " + gradeStatus );
-        }
-
-        return gradeStatus1;
     }
 }

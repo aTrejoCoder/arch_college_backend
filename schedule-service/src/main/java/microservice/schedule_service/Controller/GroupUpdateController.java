@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import microservice.common_classes.DTOs.Group.GroupDTO;
 import microservice.common_classes.DTOs.Group.GroupScheduleUpdateDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.schedule_service.Service.GroupServices.GroupFinderService;
 import microservice.schedule_service.Service.GroupServices.GroupSpotsService;
 import microservice.schedule_service.Service.GroupServices.GroupUpdateServiceImpl;

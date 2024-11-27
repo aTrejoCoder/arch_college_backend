@@ -3,7 +3,7 @@ package microservice.subject_service.Service.Implementations;
 import jakarta.persistence.EntityNotFoundException;
 import microservice.common_classes.DTOs.Carrer.CareerDTO;
 import microservice.common_classes.DTOs.Carrer.CareerInsertDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.subject_service.Mappers.CareerMapper;
 import microservice.subject_service.Model.Career;
 import microservice.subject_service.Repository.CareerRepository;

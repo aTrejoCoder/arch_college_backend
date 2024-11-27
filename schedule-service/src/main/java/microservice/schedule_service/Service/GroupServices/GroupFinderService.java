@@ -3,8 +3,9 @@ package microservice.schedule_service.Service.GroupServices;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import microservice.common_classes.DTOs.Group.GroupDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.common_classes.Utils.Schedule.SemesterData;
+import microservice.common_classes.Utils.SubjectType;
 import microservice.schedule_service.Models.Group;
 import microservice.schedule_service.Repository.GroupRepository;
 import microservice.schedule_service.Utils.GroupMappingService;
@@ -20,7 +21,11 @@ public class GroupFinderService {
     private final GroupRepository groupRepository;
     private final GroupQueryService queryService;
     private final GroupMappingService groupMappingService;
-    private final String CURRENT_SEMESTER = SemesterData.getCurrentSemester();
+    private final String CURRENT_SEMESTER = SemesterData.getCurrentSchoolPeriod();
+
+    public List<Group> getAll() {
+        return groupRepository.findAll();
+    }
 
     public Group findGroupById(Long id) {
         return groupRepository.findById(id)
@@ -78,7 +83,7 @@ public class GroupFinderService {
 
     @Cacheable(value = "currentGroupsByObligatorySubjectId", key = "#subjectId")
     public List<GroupDTO> getCurrentGroupsByObligatorySubjectId(Long subjectId) {
-        List<Group> groups = groupRepository.findByObligatorySubjectId(subjectId);
+        List<Group> groups = groupRepository.findBySubjectIdAndSubjectType(subjectId, SubjectType.OBLIGATORY);
 
         return groups.stream()
                 .map(groupMappingService::mapGroupToDTOWithTeachers)
@@ -87,7 +92,7 @@ public class GroupFinderService {
 
     @Cacheable(value = "currentGroupsByElectiveSubjectId", key = "#subjectId")
     public List<GroupDTO> getCurrentGroupsByElectiveSubjectId(Long subjectId) {
-        List<Group> groups = groupRepository.findByElectiveSubjectId(subjectId);
+        List<Group> groups = groupRepository.findBySubjectIdAndSubjectType(subjectId, SubjectType.ELECTIVE);
 
         return groups.stream()
                 .map(groupMappingService::mapGroupToDTOWithTeachers)

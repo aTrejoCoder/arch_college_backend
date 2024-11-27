@@ -3,7 +3,7 @@ package microservice.schedule_service.Service.GroupServices;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import microservice.common_classes.Utils.Group.GroupStatus;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.schedule_service.Models.Group;
 import microservice.schedule_service.Models.Teacher;
 import microservice.schedule_service.Repository.GroupRepository;

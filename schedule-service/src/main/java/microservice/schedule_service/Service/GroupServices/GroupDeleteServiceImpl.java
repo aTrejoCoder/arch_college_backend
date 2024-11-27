@@ -20,7 +20,7 @@ public class GroupDeleteServiceImpl {
 
     private final GroupRepository groupRepository;
     private final GroupMappingService mappingService;
-    private final String currentSemester = SemesterData.getCurrentSemester();
+    private final String currentSemester = SemesterData.getCurrentSchoolPeriod();
 
 
     public GroupDTO deleteTeacher(String groupKey, Long teacherId) {

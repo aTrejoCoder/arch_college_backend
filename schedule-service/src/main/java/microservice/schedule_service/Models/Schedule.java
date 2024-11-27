@@ -28,9 +28,6 @@ public class Schedule {
     @Column(name = "end_time", nullable = false)
     private LocalTime endTime;
 
-    @ManyToMany(mappedBy = "schedule", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Group> groups;
-
     public TimeRange getTimeRange() {
         return new TimeRange(startTime, endTime);
     }

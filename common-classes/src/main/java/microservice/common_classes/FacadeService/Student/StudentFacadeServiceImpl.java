@@ -33,25 +33,8 @@ public class StudentFacadeServiceImpl implements StudentFacadeService {
 
     @Override
     @Async("taskExecutor")
-    public CompletableFuture<Boolean> validateExisitingStudent(Long studentId) {
-        String studentUrl = studentServiceUrlProvider.get() + "/v1/api/students/validate/" + studentId ;
-
-        return CompletableFuture.supplyAsync(() -> {
-            ResponseEntity<Boolean> responseEntity = restTemplate.exchange(
-                    studentUrl,
-                    HttpMethod.GET,
-                    null,
-                    Boolean.class
-            );
-
-            return Objects.requireNonNull(responseEntity.getBody());
-        });
-    }
-
-    @Override
-    @Async("taskExecutor")
     public CompletableFuture<Boolean> validateExisitingStudent(String accountNumber) {
-        String studentUrl = studentServiceUrlProvider.get() + "/v1/api/students/validate/accountNumber/" + accountNumber  ;
+        String studentUrl = studentServiceUrlProvider.get() + "/v1/api/students/" + accountNumber + "/validate" ;
 
         return CompletableFuture.supplyAsync(() -> {
             ResponseEntity<Boolean> responseEntity = restTemplate.exchange(
@@ -65,33 +48,6 @@ public class StudentFacadeServiceImpl implements StudentFacadeService {
         });
     }
 
-
-    @Override
-    @Async("taskExecutor")
-    public CompletableFuture<StudentDTO> getStudentById(Long studentId) {
-        String studentUrl = studentServiceUrlProvider.get() + "/v1/api/students/" + studentId;
-
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                ResponseEntity<ResponseWrapper<StudentDTO>> responseEntity = restTemplate.exchange(
-                        studentUrl,
-                        HttpMethod.GET,
-                        null,
-                        new ParameterizedTypeReference<ResponseWrapper<StudentDTO>>() {}
-                );
-
-                log.info("Student with ID: {} successfully fetched", studentId);
-
-                return Objects.requireNonNull(responseEntity.getBody()).getData();
-            } catch (EntityNotFoundException e) {
-                log.warn("Student with ID {} not found: {}", studentId, e.getMessage());
-                return null;
-            } catch (Exception e) {
-                log.error("Error fetching student with ID {}: {}", studentId, e.getMessage());
-                throw new RuntimeException(e);
-            }
-        });
-    }
 
     @Override
     @Async("taskExecutor")

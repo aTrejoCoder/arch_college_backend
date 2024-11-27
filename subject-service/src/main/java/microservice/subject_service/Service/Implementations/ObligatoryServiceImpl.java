@@ -2,10 +2,9 @@ package microservice.subject_service.Service.Implementations;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectInsertDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.subject_service.Mappers.ObligatorySubjectMapper;
 import microservice.subject_service.Model.Area;
 import microservice.subject_service.Model.Career;

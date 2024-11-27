@@ -7,8 +7,7 @@ import microservice.common_classes.DTOs.Enrollment.EnrollmentDTO;
 import microservice.common_classes.DTOs.Enrollment.EnrollmentInsertDTO;
 import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
-import microservice.common_classes.DTOs.Subject.OrdinarySubjectDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.common_classes.Utils.Schedule.SemesterData;
 import microservice.common_classes.Utils.SubjectType;
 import microservice.enrollment_service.DTOs.EnrollmentRelationshipDTO;
@@ -30,7 +29,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     private final EnrollmentRepository enrollmentRepository;
     private final EnrollmentMapper enrollmentMapper;
-    private final String schoolPeriod = SemesterData.getCurrentSemester();
+    private final String schoolPeriod = SemesterData.getCurrentSchoolPeriod();
 
     @Autowired
     public EnrollmentServiceImpl(EnrollmentRepository enrollmentRepository,

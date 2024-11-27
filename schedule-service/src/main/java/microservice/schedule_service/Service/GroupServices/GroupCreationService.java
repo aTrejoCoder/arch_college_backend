@@ -4,8 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import microservice.common_classes.DTOs.Group.ElectiveGroupInsertDTO;
 import microservice.common_classes.DTOs.Group.GroupDTO;
-import microservice.common_classes.DTOs.Group.OrdinaryGroupInsertDTO;
-import microservice.common_classes.DTOs.Teacher.TeacherNameDTO;
+import microservice.common_classes.DTOs.Group.ObligatoryGroupInsertDTO;
 import microservice.common_classes.Utils.Schedule.SemesterData;
 import microservice.schedule_service.Mapppers.GroupMapper;
 import microservice.schedule_service.Models.Group;
@@ -15,8 +14,6 @@ import microservice.schedule_service.Service.KeyGenerationService;
 import microservice.schedule_service.Service.ScheduleService;
 import microservice.schedule_service.Utils.GroupMappingService;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,16 +25,16 @@ public class GroupCreationService {
     private final KeyGenerationService keyGenerationService;
     private final GroupRelationshipService relationshipService;
     private final GroupRepository groupRepository;
-    private final String currentSemester = SemesterData.getCurrentSemester();
+    private final String currentSemester = SemesterData.getCurrentSchoolPeriod();
 
 
     @Transactional
-    public GroupDTO createGroup(OrdinaryGroupInsertDTO ordinaryGroupInsertDTO, GroupRelationshipsDTO groupRelationshipsDTO) {
-        Group group = groupMapper.insertDtoToEntity(ordinaryGroupInsertDTO);
+    public GroupDTO createGroup(ObligatoryGroupInsertDTO OBligatoryGroupInsertDTO, GroupRelationshipsDTO groupRelationshipsDTO) {
+        Group group = groupMapper.insertDtoToEntity(OBligatoryGroupInsertDTO);
 
         group.setSchoolPeriod(currentSemester);
-        group.initSpots(ordinaryGroupInsertDTO.getTotalSpots());
-        group.setSchedule(scheduleService.mapScheduleDTOToEntity(ordinaryGroupInsertDTO.getSchedule()));
+        group.initSpots(OBligatoryGroupInsertDTO.getTotalSpots());
+        group.setSchedule(scheduleService.mapScheduleDTOToEntity(OBligatoryGroupInsertDTO.getSchedule()));
         group.setKey(keyGenerationService.generateObligatoryKey(group, groupRelationshipsDTO.getObligatorySubjectDTO()));
 
         relationshipService.setExternalGroupRelationships(group, groupRelationshipsDTO);

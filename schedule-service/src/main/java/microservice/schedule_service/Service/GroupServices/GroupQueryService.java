@@ -14,7 +14,7 @@ import java.util.Optional;
 public class GroupQueryService {
 
     private final GroupRepository groupRepository;
-    private final String SCHOOL_PERIOD = SemesterData.getCurrentSemester();
+    private final String SCHOOL_PERIOD = SemesterData.getCurrentSchoolPeriod();
 
     public Optional<Group> findGroupById(Long groupId) {
         return groupRepository.findById(groupId);

@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import microservice.common_classes.DTOs.Grade.GradeDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.grade_service.DTOs.GradeRelationshipsDTO;
 import microservice.grade_service.DTOs.GradeInsertDTO;
 import microservice.grade_service.Service.GradeRelationshipService;
@@ -113,7 +113,7 @@ public class GradeController {
             @ApiResponse(responseCode = "200", description = "Grade data successfully fetched"),
     })
     public ResponseEntity<ResponseWrapper<List<GradeDTO>>> getGradesById(@PathVariable String accountNumber, String schoolPeriod) {
-        List<GradeDTO> grades = gradeService.getGradesByStudentAccountNumberAndSchoolPeriod(accountNumber, schoolPeriod);
+        List<GradeDTO> grades = gradeService.getGradesByStudentAccountNumber(accountNumber, schoolPeriod);
         return ResponseEntity.ok(ResponseWrapper.found(grades,"Student", "Student Account Number", accountNumber));
     }
 }

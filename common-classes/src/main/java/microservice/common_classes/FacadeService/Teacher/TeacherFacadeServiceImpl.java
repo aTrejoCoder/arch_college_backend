@@ -4,7 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Teacher.TeacherDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.ParameterizedTypeReference;
@@ -35,25 +35,9 @@ public class TeacherFacadeServiceImpl implements TeacherFacadeService {
     }
 
     @Override
-    public CompletableFuture<Boolean> validateExisitingTeacher(Long teacherId) {
-        String teacherUrl = teacherServiceUrlProvider.get() + "/v1/api/teachers/" + teacherId + "/validate";
-
-        return CompletableFuture.supplyAsync(() -> {
-            ResponseEntity<Boolean> responseEntity = restTemplate.exchange(
-                    teacherUrl,
-                    HttpMethod.GET,
-                    null,
-                    Boolean.class
-            );
-
-            return Objects.requireNonNull(responseEntity.getBody());
-        });
-    }
-
-    @Override
     @Async("taskExecutor")
     public CompletableFuture<Boolean> validateExisitingTeacher(String accountNumber) {
-        String teacherUrl = teacherServiceUrlProvider.get() + "/v1/api/teachers/accountNumber/" + accountNumber + "/validate";
+        String teacherUrl = teacherServiceUrlProvider.get() + "/v1/api/teachers/" + accountNumber + "/validate";
 
         return CompletableFuture.supplyAsync(() -> {
             ResponseEntity<Boolean> responseEntity = restTemplate.exchange(

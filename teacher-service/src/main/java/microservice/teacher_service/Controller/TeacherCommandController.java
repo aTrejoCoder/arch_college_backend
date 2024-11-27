@@ -5,16 +5,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import microservice.common_classes.DTOs.Teacher.TeacherDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
-import microservice.common_classes.Utils.Result;
-import microservice.teacher_service.DTOs.TeacherDTO;
 import microservice.teacher_service.DTOs.TeacherInsertDTO;
 import microservice.teacher_service.Service.TeacherCommandService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -67,8 +61,8 @@ public class TeacherCommandController {
 
     // endpoint used to validate teacher data integrity in another services
     @Operation(summary = "Validate existing teacher by ID", description = "Validates if a teacher exists by their ID.")
-    @GetMapping("/{teacherId}/validate")
-    public boolean validateExistingTeacherById(@PathVariable Long teacherId) {
-        return teacherCommandService.validateExistingTeacher(teacherId);
+    @GetMapping("/{teacherAccountNumber}/validate")
+    public boolean validateExistingTeacherById(@PathVariable String teacherAccountNumber) {
+        return teacherCommandService.validateExistingTeacher(teacherAccountNumber);
     }
 }

@@ -1,7 +1,7 @@
 package microservice.schedule_service.Service;
 
 import microservice.common_classes.DTOs.Group.ScheduleDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.common_classes.Utils.Schedule.SemesterData;
 import microservice.schedule_service.Models.Group;
 import microservice.schedule_service.Models.Schedule;
@@ -22,7 +22,7 @@ public class ScheduleService {
 
     private final GroupRepository groupRepository;
     private final ScheduleRepository scheduleRepository;
-    private final String currentSemester = SemesterData.getCurrentSemester();
+    private final String currentSemester = SemesterData.getCurrentSchoolPeriod();
 
     @Autowired
     public ScheduleService(GroupRepository groupRepository, ScheduleRepository scheduleRepository) {

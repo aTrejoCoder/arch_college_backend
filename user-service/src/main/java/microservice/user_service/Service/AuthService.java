@@ -3,7 +3,7 @@ package microservice.user_service.Service;
 import microservice.common_classes.DTOs.User.LoginDTO;
 import microservice.common_classes.DTOs.User.SignupDTO;
 import microservice.common_classes.DTOs.User.UserDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 
 
 public interface AuthService {
@@ -15,4 +15,5 @@ public interface AuthService {
     Result<Void> validatePasswordFormat(String password);
     Result<Void> validateTeacher(String accountNumber);
     Result<Void> validateStudent(String accountNumber);
+
 }

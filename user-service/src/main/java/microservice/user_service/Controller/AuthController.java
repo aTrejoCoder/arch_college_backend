@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.User.LoginDTO;
 import microservice.common_classes.DTOs.User.SignupDTO;
 import microservice.common_classes.DTOs.User.UserDTO;
-import microservice.common_classes.Utils.ResponseWrapper;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.ResponseWrapper;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.user_service.Service.AuthService;
 import microservice.user_service.Service.UserService;
 import org.springframework.http.HttpStatus;
@@ -51,6 +51,27 @@ public class AuthController {
 
         String jwtToken = authService.getJWTToken(userDTO);
         log.info("signupStudent -> student with accountNumber {} successfully singed up", signupDTO.getAccountNumber());
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseWrapper.created(jwtToken, "User"));
+    }
+
+    @PostMapping("/signup/admin")
+    public ResponseEntity<ResponseWrapper<String>> signupAdmin(@Valid @RequestBody SignupDTO signupDTO){
+        Result<Void> passwordFormatResult = authService.validatePasswordFormat(signupDTO.getPassword());
+        if (!passwordFormatResult.isSuccess()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(passwordFormatResult.getErrorMessage()));
+        }
+
+        Result<Void> credentialsResult = authService.validateSignupCredentials(signupDTO);
+        if (!credentialsResult.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseWrapper.conflict(credentialsResult.getErrorMessage()));
+        }
+
+        UserDTO userDTO = userService.createUser(signupDTO, "ADMIN");
+
+        userService.addMemberRelationAsync(userDTO.getUsername());
+
+        String jwtToken = authService.getJWTToken(userDTO);
+        log.info("signupAdmin -> student with accountNumber {} successfully singed up", signupDTO.getAccountNumber());
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseWrapper.created(jwtToken, "User"));
     }
 

@@ -1,12 +1,11 @@
 package microservice.grade_service.Model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.grade_service.Utils.GradeStatus;
-import org.bson.codecs.pojo.annotations.BsonProperty;
+import microservice.common_classes.Utils.Grades.GradeStatus;
+import microservice.common_classes.Utils.SubjectType;
 
 import java.time.LocalDateTime;
 
@@ -26,11 +25,12 @@ public class Grade {
     @Enumerated(EnumType.STRING)
     private GradeStatus gradeStatus;
 
-    @Column(name = "ordinary_subject_id", nullable = false)
-    private Long ordinarySubjectId;
+    @Column(name = "subject_id", nullable = false)
+    private Long subjectId;
 
-    @Column(name = "elective_subject_id", nullable = false)
-    private Long electiveSubjectId;
+    @Column(name = "subject_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private SubjectType subjectType;
 
     @Column(name = "subject_name")
     private String subjectName;

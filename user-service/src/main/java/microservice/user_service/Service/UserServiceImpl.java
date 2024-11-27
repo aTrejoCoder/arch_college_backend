@@ -43,8 +43,8 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(UserMapper userMapper,
                            UserRepository userRepository,
                            RoleRepository roleRepository,
-                           @Qualifier("studentFacadeServiceImpl") StudentFacadeService studentFacadeService,
-                           TeacherFacadeService teacherFacadeService) {
+                           @Qualifier("StudentFacadeServiceImpl") StudentFacadeService studentFacadeService,
+                           @Qualifier("TeacherFacadeServiceImpl") TeacherFacadeService teacherFacadeService) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
        boolean isStudentFormat = AccountNumberValidator.isStudentAccountNumber(username);
        if (isStudentFormat) {
             CompletableFuture<StudentDTO> studentFuture = studentFacadeService.getStudentByAccountNumber(username);
-            Long studentId = studentFuture.join().getStudentId();
+            Long studentId = studentFuture.join().getId();
 
             user.setStudentId(studentId);
             userRepository.save(user);

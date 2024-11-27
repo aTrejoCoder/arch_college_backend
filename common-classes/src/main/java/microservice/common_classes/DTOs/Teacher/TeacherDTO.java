@@ -1,7 +1,6 @@
 package microservice.common_classes.DTOs.Teacher;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import microservice.common_classes.Utils.Teacher.Title;
@@ -11,8 +10,8 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class TeacherDTO {
-    @JsonProperty("teacher_id")
-    private Long teacherId;
+    @JsonProperty("id")
+    private Long id;
 
     @JsonProperty("title")
     private Title Title;

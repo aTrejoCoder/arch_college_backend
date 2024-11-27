@@ -6,7 +6,7 @@ import microservice.common_classes.DTOs.Area.AreaDTO;
 import microservice.common_classes.DTOs.Area.AreaInsertDTO;
 import microservice.common_classes.DTOs.Area.AreaWithRelationsDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 
 import microservice.subject_service.Service.AreaService;
 import org.springframework.beans.factory.annotation.Autowired;

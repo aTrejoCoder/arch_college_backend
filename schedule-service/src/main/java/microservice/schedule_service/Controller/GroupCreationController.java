@@ -7,15 +7,16 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import microservice.common_classes.DTOs.Group.ElectiveGroupInsertDTO;
 import microservice.common_classes.DTOs.Group.GroupDTO;
-import microservice.common_classes.DTOs.Group.OrdinaryGroupInsertDTO;
+import microservice.common_classes.DTOs.Group.ObligatoryGroupInsertDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.schedule_service.Models.GroupRelationshipsDTO;
 import microservice.schedule_service.Service.GroupServices.GroupCreationService;
 import microservice.schedule_service.Service.GroupServices.GroupRelationshipService;
 import microservice.schedule_service.Service.ScheduleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,16 +37,19 @@ public class GroupCreationController {
     @Operation(summary = "Create Group", description = "Create a new group with specified details")
     @ApiResponse(responseCode = "201", description = "Group created successfully")
     @ApiResponse(responseCode = "409", description = "Conflict in group schedule")
-    @PostMapping("/ordinary")
-    public ResponseEntity<ResponseWrapper<GroupDTO>> createOrdinaryGroup(@Valid @RequestBody OrdinaryGroupInsertDTO ordinaryGroupInsertDTO) {
-        Result<GroupRelationshipsDTO> relationshipsResult = groupRelationshipService.validateAndGetRelationships(ordinaryGroupInsertDTO);
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/obligatory")
+    public ResponseEntity<ResponseWrapper<GroupDTO>> createObligatoryGroup(@Valid @RequestBody ObligatoryGroupInsertDTO OBligatoryGroupInsertDTO) {
+        Result<GroupRelationshipsDTO> relationshipsResult = groupRelationshipService.validateAndGetRelationships(OBligatoryGroupInsertDTO);
         if (!relationshipsResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(relationshipsResult.getErrorMessage()));
         }
 
+        System.out.println(relationshipsResult.getData());
+
         // Creation: Group ID = Null || Update: Group ID = Not Null
-        CompletableFuture<Result<Void>> classroomScheduleResultFuture = scheduleService.validateClassroomSchedule(ordinaryGroupInsertDTO.getClassroom(), ordinaryGroupInsertDTO.getSchedule(), null);
-        CompletableFuture<Result<Void>> teacherScheduleResultFuture = scheduleService.validateTeachersSchedule(ordinaryGroupInsertDTO.getTeacherIds(), ordinaryGroupInsertDTO.getSchedule(), null);
+        CompletableFuture<Result<Void>> classroomScheduleResultFuture = scheduleService.validateClassroomSchedule(OBligatoryGroupInsertDTO.getClassroom(), OBligatoryGroupInsertDTO.getSchedule(), null);
+        CompletableFuture<Result<Void>> teacherScheduleResultFuture = scheduleService.validateTeachersSchedule(OBligatoryGroupInsertDTO.getTeacherIds(), OBligatoryGroupInsertDTO.getSchedule(), null);
 
         CompletableFuture.allOf(classroomScheduleResultFuture, teacherScheduleResultFuture);
         Result<Void> teacherScheduleResult = classroomScheduleResultFuture.join();
@@ -59,7 +63,7 @@ public class GroupCreationController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseWrapper.conflict(teacherScheduleResult.getErrorMessage()));
         }
 
-        GroupDTO group = groupCreationService.createGroup(ordinaryGroupInsertDTO, relationshipsResult.getData());
+        GroupDTO group = groupCreationService.createGroup(OBligatoryGroupInsertDTO, relationshipsResult.getData());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseWrapper.created(group,"Group"));
     }
@@ -67,6 +71,7 @@ public class GroupCreationController {
     @Operation(summary = "Create Group", description = "Create a new group with specified details")
     @ApiResponse(responseCode = "201", description = "Group created successfully")
     @ApiResponse(responseCode = "409", description = "Conflict in group schedule")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/elective")
     public ResponseEntity<ResponseWrapper<GroupDTO>> createElectiveGroup(@Valid @RequestBody ElectiveGroupInsertDTO electiveGroupInsertDTO) {
         Result<GroupRelationshipsDTO> relationshipsResult = groupRelationshipService.validateAndGetRelationships(electiveGroupInsertDTO);

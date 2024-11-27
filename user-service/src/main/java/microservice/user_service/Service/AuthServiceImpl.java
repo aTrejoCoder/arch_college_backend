@@ -7,7 +7,7 @@ import microservice.common_classes.DTOs.User.UserDTO;
 import microservice.common_classes.FacadeService.Student.StudentFacadeService;
 import microservice.common_classes.FacadeService.Teacher.TeacherFacadeService;
 import microservice.common_classes.JWT.JWTSecurity;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.user_service.Mappers.UserMapper;
 import microservice.user_service.Model.User;
 import microservice.user_service.Repository.UserRepository;
@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class AuthServiceImpl implements  AuthService {
+public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final JWTSecurity jwtSecurity;
@@ -36,8 +36,8 @@ public class AuthServiceImpl implements  AuthService {
     public AuthServiceImpl(UserRepository userRepository,
                            UserMapper userMapper,
                            JWTSecurity jwtSecurity,
-                           @Qualifier("studentFacadeServiceImpl") StudentFacadeService studentFacadeService,
-                           @Qualifier("teacherFacadeServiceImpl") TeacherFacadeService teacherFacadeService) {
+                           @Qualifier("StudentFacadeServiceImpl") StudentFacadeService studentFacadeService,
+                           @Qualifier("TeacherFacadeServiceImpl") TeacherFacadeService teacherFacadeService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.jwtSecurity = jwtSecurity;
@@ -157,7 +157,7 @@ public class AuthServiceImpl implements  AuthService {
 
                     Optional<User> optionalUser = optionalUserFuture.join();
                     if (optionalUser.isPresent()) {
-                        return Result.<Void>error("Teacher already has an account");
+                        return Result.<Void>error("Student already has an account");
                     }
 
                     return Result.success();

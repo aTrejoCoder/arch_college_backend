@@ -2,7 +2,7 @@ package microservice.enrollment_service.Service;
 
 import microservice.common_classes.DTOs.Enrollment.EnrollmentDTO;
 import microservice.common_classes.DTOs.Enrollment.EnrollmentInsertDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.enrollment_service.DTOs.EnrollmentRelationshipDTO;
 
 import java.util.List;

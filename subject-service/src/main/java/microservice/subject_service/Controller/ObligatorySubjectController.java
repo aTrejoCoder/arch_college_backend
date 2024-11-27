@@ -5,7 +5,7 @@ import jakarta.validation.Valid;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectInsertDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.subject_service.Service.SubjectService;
 
 import org.springframework.beans.factory.annotation.Autowired;

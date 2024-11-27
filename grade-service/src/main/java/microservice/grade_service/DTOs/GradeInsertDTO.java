@@ -8,8 +8,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.grade_service.Utils.GradeStatus;
-import org.checkerframework.checker.units.qual.N;
+import microservice.common_classes.Utils.Grades.GradeStatus;
+import microservice.common_classes.Utils.SubjectType;
 
 @Data
 @NoArgsConstructor
@@ -28,11 +28,11 @@ public class GradeInsertDTO {
     @NotNull(message = "grade_status can't be null")
     private GradeStatus gradeStatus;
 
-    @JsonProperty("ordinary_subject_id")
-    private Long ordinarySubjectId;
+    @JsonProperty("subject_id")
+    private Long subjectId;
 
-    @JsonProperty("elective_subject_id")
-    private Long electiveSubjectId;
+    @JsonProperty("subject_type")
+    private SubjectType subjectType;
 
     @JsonProperty("student_account_number")
     @NotNull(message = "student_account_number can't be null")

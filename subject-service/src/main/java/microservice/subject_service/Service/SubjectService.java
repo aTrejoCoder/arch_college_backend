@@ -1,7 +1,7 @@
 package microservice.subject_service.Service;
 
 import microservice.common_classes.DTOs.Subject.SubjectDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

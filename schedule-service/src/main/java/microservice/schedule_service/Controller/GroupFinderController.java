@@ -10,7 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import microservice.common_classes.DTOs.Group.GroupDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
+import microservice.schedule_service.Models.Group;
 import microservice.schedule_service.Service.GroupServices.GroupFinderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,13 @@ public class GroupFinderController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound(groupResult.getErrorMessage()));
         }
         return ResponseEntity.ok(ResponseWrapper.found(groupResult.getData(), "Group"));
+    }
+
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Group>> getAllGroup() {
+        List<Group> allRawGroups = groupFinderService.getAll();
+        return ResponseEntity.ok(allRawGroups);
     }
 
     @Operation(summary = "Get Groups by Classroom", description = "Retrieve a list of groups by classroom for the current school period")

@@ -11,10 +11,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class ElectiveGroupInsertDTO {
-    @JsonProperty("elective_subject_id")
-    @NotNull(message = "elective_subject_id can't be null")
-    @Positive(message = "elective_subject_id can't be negative")
-    private Long electiveSubjectId;
+    @JsonProperty("subject_id")
+    private Long subjectId;
 
     @JsonProperty("group_status")
     @NotNull(message = "group_status can't be null")

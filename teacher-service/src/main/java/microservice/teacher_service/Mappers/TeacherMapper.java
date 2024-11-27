@@ -1,6 +1,6 @@
 package microservice.teacher_service.Mappers;
 
-import microservice.teacher_service.DTOs.TeacherDTO;
+import microservice.common_classes.DTOs.Teacher.TeacherDTO;
 import microservice.teacher_service.DTOs.TeacherInsertDTO;
 import microservice.teacher_service.Model.Teacher;
 import org.mapstruct.Mapper;

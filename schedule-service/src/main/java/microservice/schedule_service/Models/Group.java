@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import microservice.common_classes.Utils.Group.GroupStatus;
+import microservice.common_classes.Utils.SubjectType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,11 +19,15 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "obligatory_subject_id", nullable = false)
-    private Long obligatorySubjectId;
+    @Column(name = "subject_id", nullable = false)
+    private Long subjectId;
 
-    @Column(name = "elective_subject_id", nullable = false)
-    private Long electiveSubjectId;
+    @Column(name = "subject_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private SubjectType subjectType;
+
+    @Column(name = "subject_key", nullable = false)
+    private String subjectKey;
 
     @Column(name = "subject_name")
     private String subjectName;
@@ -32,6 +37,9 @@ public class Group {
 
     @Column(name = "available_spots")
     private int availableSpots;
+
+    @Column(name = "total_spots")
+    private int totalSpots;
 
     @Column(name = "group_status", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -43,8 +51,11 @@ public class Group {
     @Column(name = "classroom")
     private String classroom;
 
-    @Column(name = "total_spots")
-    private int totalSpots;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
@@ -61,12 +72,6 @@ public class Group {
             inverseJoinColumns = @JoinColumn(name = "teacher_id")
     )
     private List<Teacher> teachers = new ArrayList<>();
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     public void addTeachers(List<Teacher> teachers) {
             this.teachers.addAll(teachers);

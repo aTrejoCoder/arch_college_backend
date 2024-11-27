@@ -6,7 +6,8 @@ import microservice.common_classes.DTOs.Subject.SubjectDTO;
 import microservice.common_classes.FacadeService.Group.GroupFacadeService;
 import microservice.common_classes.FacadeService.Student.StudentFacadeService;
 import microservice.common_classes.FacadeService.Subject.SubjectFacadeService;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
+import microservice.common_classes.Utils.SubjectType;
 import microservice.grade_service.DTOs.GradeInsertDTO;
 import microservice.grade_service.DTOs.GradeRelationshipsDTO;
 import microservice.grade_service.Service.GradeRelationshipService;
@@ -37,8 +38,8 @@ public class GradeRelationshipServiceImpl implements GradeRelationshipService {
         String studentAccountNumber = gradeInsertDTO.getStudentAccountNumber();
 
         CompletableFuture<? extends SubjectDTO> subjectFuture = resolveSubjectFuture(
-                gradeInsertDTO.getOrdinarySubjectId(),
-                gradeInsertDTO.getElectiveSubjectId()
+                gradeInsertDTO.getSubjectId(),
+                gradeInsertDTO.getSubjectType()
         );
 
         CompletableFuture<GroupDTO> groupFuture = groupFacadeService.getGroupById(groupId);
@@ -63,11 +64,11 @@ public class GradeRelationshipServiceImpl implements GradeRelationshipService {
         }).join();
     }
 
-    private CompletableFuture<? extends SubjectDTO> resolveSubjectFuture(Long ordinarySubjectId, Long electiveSubjectId) {
-        if (ordinarySubjectId != null) {
-            return subjectFacadeService.getOrdinarySubjectById(ordinarySubjectId);
-        } else if (electiveSubjectId != null) {
-            return subjectFacadeService.getElectiveSubjectById(electiveSubjectId);
+    private CompletableFuture<? extends SubjectDTO> resolveSubjectFuture(Long subjectId, SubjectType subjectType) {
+        if (subjectType == SubjectType.OBLIGATORY) {
+            return subjectFacadeService.getOrdinarySubjectById(subjectId);
+        } else if (subjectType == SubjectType.ELECTIVE) {
+            return subjectFacadeService.getElectiveSubjectById(subjectId);
         }
         return CompletableFuture.completedFuture(null);
     }

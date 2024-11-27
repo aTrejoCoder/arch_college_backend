@@ -5,8 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import microservice.common_classes.DTOs.Group.GroupDTO;
 import microservice.common_classes.DTOs.Group.GroupScheduleUpdateDTO;
-import microservice.common_classes.Utils.Group.GroupStatus;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.common_classes.Utils.Schedule.SemesterData;
 import microservice.schedule_service.Models.Group;
 import microservice.schedule_service.Models.Teacher;
@@ -16,7 +15,6 @@ import microservice.schedule_service.Service.ScheduleService;
 import microservice.schedule_service.Utils.GroupMappingService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -30,7 +28,7 @@ public class GroupUpdateServiceImpl {
     private final GroupValidationService groupValidationService;
     private final GroupMappingService mappingService;
     private final GroupValidationService validationService;
-    private final String currentSemester = SemesterData.getCurrentSemester();
+    private final String currentSemester = SemesterData.getCurrentSchoolPeriod();
 
 
     public GroupDTO updateGroupSchedule(GroupScheduleUpdateDTO groupUpdateDTO) {

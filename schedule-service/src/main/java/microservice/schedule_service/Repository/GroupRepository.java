@@ -1,5 +1,6 @@
 package microservice.schedule_service.Repository;
 
+import microservice.common_classes.Utils.SubjectType;
 import microservice.schedule_service.Models.Group;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,9 +11,8 @@ import java.util.Optional;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
         Optional<Group> findByKeyAndSchoolPeriod(String key, String schoolPeriod);
-        List<Group> findByObligatorySubjectId(Long subjectId);
+        List<Group> findBySubjectIdAndSubjectType(Long subjectId, SubjectType subjectType);
         List<Group> findByClassroom(String classroom);
-        List<Group> findByElectiveSubjectId(Long subjectId);
         List<Group> findByIdIn(List<Long> idList);
         List<Group> findByClassroomAndSchoolPeriod(String classroom, String schoolPeriod);
 

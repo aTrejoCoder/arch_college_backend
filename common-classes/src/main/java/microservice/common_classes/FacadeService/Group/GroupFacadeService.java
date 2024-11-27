@@ -1,7 +1,7 @@
 package microservice.common_classes.FacadeService.Group;
 
 import microservice.common_classes.DTOs.Group.GroupDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

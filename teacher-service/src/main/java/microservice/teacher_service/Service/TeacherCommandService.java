@@ -7,5 +7,5 @@ public interface TeacherCommandService {
     void updateTeacher(TeacherInsertDTO teacherInsertDTO, Long studentId);
     void deleteTeacher(Long studentId);
 
-    boolean validateExistingTeacher(Long studentId);
+    boolean validateExistingTeacher(String teacherAccountNumber);
 }

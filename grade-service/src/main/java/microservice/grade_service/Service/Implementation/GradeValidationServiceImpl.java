@@ -1,6 +1,6 @@
 package microservice.grade_service.Service.Implementation;
 
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.grade_service.DTOs.GradeInsertDTO;
 import microservice.grade_service.Model.Grade;
 import microservice.grade_service.Repository.GradeRepository;
@@ -38,9 +38,10 @@ public class GradeValidationServiceImpl implements GradeValidationService {
 
     @Override
     public Result<Void> validateGradeCreation(GradeInsertDTO gradeInsertDTO) {
-        List<Grade> grades = (gradeInsertDTO.getOrdinarySubjectId() != null)
-                ? gradeRepository.findByStudentAccountNumberAndOrdinarySubjectId(gradeInsertDTO.getStudentAccountNumber(), gradeInsertDTO.getOrdinarySubjectId())
-                : gradeRepository.findByStudentAccountNumberAndElectiveSubjectId(gradeInsertDTO.getStudentAccountNumber(), gradeInsertDTO.getElectiveSubjectId());
+        List<Grade> grades = gradeRepository.findByStudentAccountNumberAndSubjectIdAndSubjectType(
+                gradeInsertDTO.getStudentAccountNumber(),
+                gradeInsertDTO.getSubjectId(),
+                gradeInsertDTO.getSubjectType());
 
         if (grades.isEmpty()) {
             return Result.success(); // No subject cursed yet, grade can be created

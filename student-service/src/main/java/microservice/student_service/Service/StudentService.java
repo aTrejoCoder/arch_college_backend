@@ -3,7 +3,7 @@ package microservice.student_service.Service;
 import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.DTOs.Student.StudentInsertDTO;
 import microservice.common_classes.Utils.ProfessionalLineModality;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,5 +20,5 @@ public interface StudentService {
     void updateStudent(StudentInsertDTO studentInsertDTO,  Long studentId);
     void deleteStudent(Long studentId);
 
-    boolean validateExistingStudent(Long studentId);
+    boolean validateExistingStudent(String accountNumber);
 }

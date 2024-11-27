@@ -1,4 +1,4 @@
-package microservice.common_classes.Utils;
+package microservice.common_classes.Utils.Response;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

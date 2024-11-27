@@ -1,9 +1,9 @@
 package microservice.teacher_service.Service.Implementation;
 
 import lombok.RequiredArgsConstructor;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.DTOs.Teacher.TeacherDTO;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.common_classes.Utils.Teacher.Title;
-import microservice.teacher_service.DTOs.TeacherDTO;
 import microservice.teacher_service.Mappers.TeacherMapper;
 import microservice.teacher_service.Model.Teacher;
 import microservice.teacher_service.Repository.TeacherRepository;

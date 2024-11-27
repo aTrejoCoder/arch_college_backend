@@ -1,10 +1,13 @@
 package microservice.common_classes.DTOs.Group;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import microservice.common_classes.DTOs.Teacher.TeacherNameDTO;
 import microservice.common_classes.Utils.Group.GroupStatus;
+import microservice.common_classes.Utils.Group.GroupType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +18,8 @@ public class GroupDTO {
     @JsonProperty("id")
     private Long id;
 
-    @JsonProperty("obligatory_subject_id")
-    private Long obligatorySubjectId;
-
-    @JsonProperty("elective_subject_id")
-    private Long electiveSubjectId;
+    @JsonProperty("subject_id")
+    private Long subjectId;
 
     @JsonProperty("subject_name")
     private String subjectName;
@@ -32,6 +32,10 @@ public class GroupDTO {
 
     @JsonProperty("status")
     private GroupStatus groupStatus;
+
+    @JsonProperty("group_type")
+    @Enumerated(EnumType.STRING)
+    private GroupType groupType;
 
     @JsonProperty("schedule")
     private List<ScheduleDTO> schedule;

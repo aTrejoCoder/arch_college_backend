@@ -48,4 +48,4 @@ springdoc:
     packages-to-scan: microservice.schedule_service
 
 server:
-  port: 8085
+  port: 8090

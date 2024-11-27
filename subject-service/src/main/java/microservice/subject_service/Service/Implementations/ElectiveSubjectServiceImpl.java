@@ -3,7 +3,7 @@ package microservice.subject_service.Service.Implementations;
 import jakarta.persistence.EntityNotFoundException;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectInsertDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.subject_service.Mappers.ElectiveSubjectMapper;
 import microservice.subject_service.Model.*;
 import microservice.subject_service.Repository.AreaRepository;

@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import microservice.common_classes.DTOs.ProfessionalLine.ProfessionalLineDTO;
 import microservice.common_classes.DTOs.ProfessionalLine.ProfessionalLineInsertDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.subject_service.Service.ProfessionalLineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

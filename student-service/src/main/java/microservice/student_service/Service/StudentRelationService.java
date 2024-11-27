@@ -1,7 +1,7 @@
 package microservice.student_service.Service;
 
 import microservice.common_classes.DTOs.Student.StudentDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 
 public interface StudentRelationService {
     Result<Void> validateExistingCareerId(Long careerId);

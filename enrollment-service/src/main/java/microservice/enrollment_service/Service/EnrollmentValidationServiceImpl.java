@@ -6,9 +6,8 @@ import microservice.common_classes.DTOs.Grade.GradeDTO;
 import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
-import microservice.common_classes.DTOs.Subject.OrdinarySubjectDTO;
 import microservice.common_classes.Utils.ProfessionalLineModality;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.common_classes.Utils.Schedule.SemesterData;
 import microservice.enrollment_service.DTOs.EnrollmentRelationshipDTO;
 import microservice.enrollment_service.Model.GroupEnrollment;
@@ -24,7 +23,7 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
     private static final String ERROR_ELECTIVES_COMPLETED = "You have already completed all your elective subjects. Enrollment in additional electives is not allowed.";
     private static final String ERROR_FREE_ELECTIVES_LIMIT = "You have reached the limit for free electives from other professional lines. You can only enroll in electives from your professional line.";
     private final EnrollmentRepository enrollmentRepository;
-    private final String schoolPeriod = SemesterData.getCurrentSemester();
+    private final String schoolPeriod = SemesterData.getCurrentSchoolPeriod();
 
     public EnrollmentValidationServiceImpl(EnrollmentRepository enrollmentRepository) {
         this.enrollmentRepository = enrollmentRepository;

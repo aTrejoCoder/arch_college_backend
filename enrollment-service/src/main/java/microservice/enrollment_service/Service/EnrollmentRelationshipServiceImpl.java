@@ -11,7 +11,7 @@ import microservice.common_classes.FacadeService.Grade.GradeFacadeService;
 import microservice.common_classes.FacadeService.Group.GroupFacadeService;
 import microservice.common_classes.FacadeService.Student.StudentFacadeService;
 import microservice.common_classes.FacadeService.Subject.SubjectFacadeService;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 import microservice.enrollment_service.DTOs.EnrollmentRelationshipDTO;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

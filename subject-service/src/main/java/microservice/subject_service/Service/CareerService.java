@@ -2,7 +2,7 @@ package microservice.subject_service.Service;
 
 import microservice.common_classes.DTOs.Carrer.CareerDTO;
 import microservice.common_classes.DTOs.Carrer.CareerInsertDTO;
-import microservice.common_classes.Utils.Result;
+import microservice.common_classes.Utils.Response.Result;
 
 
 import java.util.List;
