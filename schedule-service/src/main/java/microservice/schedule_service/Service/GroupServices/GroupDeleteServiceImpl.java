@@ -24,7 +24,7 @@ public class GroupDeleteServiceImpl {
 
 
     public GroupDTO deleteTeacher(String groupKey, Long teacherId) {
-        Group group = groupRepository.findByKeyAndSchoolPeriod(groupKey, currentSemester)
+        Group group = groupRepository.findByGroupKeyAndSchoolPeriod(groupKey, currentSemester)
                 .orElseThrow(() -> new EntityNotFoundException("Group with Key " + groupKey + " not found"));
 
         Optional<Teacher> optionalTeacher = group.getTeachers().stream().filter(teacher ->  teacher.getTeacherId().equals(teacherId)).findAny();
@@ -40,7 +40,7 @@ public class GroupDeleteServiceImpl {
     }
 
     public void deleteCurrentGroupByKey(String key) {
-        Optional<Group> optionalGroup = groupRepository.findByKeyAndSchoolPeriod(key, currentSemester);
+        Optional<Group> optionalGroup = groupRepository.findByGroupKeyAndSchoolPeriod(key, currentSemester);
         if (optionalGroup.isEmpty()) {
             throw new EntityNotFoundException("Group with Key " + key + " not found");
         }

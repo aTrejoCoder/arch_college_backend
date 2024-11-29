@@ -1,6 +1,7 @@
 package microservice.common_classes.FacadeService.Group;
 
 import microservice.common_classes.DTOs.Group.GroupDTO;
+import microservice.common_classes.Utils.CustomPage;
 import microservice.common_classes.Utils.Response.Result;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface GroupFacadeService {
     CompletableFuture<Result<Void>> takeSpot(String groupKey);
     CompletableFuture<Result<Void>> returnSpot(String groupKey);
     CompletableFuture<Result<List<GroupDTO>>> getGroupsByIds(List<Long> idList);
+    CustomPage<GroupDTO> getGroupsPageable(int page, int size);
 }

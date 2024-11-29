@@ -8,6 +8,18 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ElectiveSubjectDTO extends SubjectDTO {
+    @JsonProperty("id")
+    private Long id;
+
+    @JsonProperty("name")
+    private String name;
+
+    @JsonProperty("key")
+    private String key;
+
+    @JsonProperty("area_id")
+    private Long areaId;
+
     @JsonProperty("professional_line_id")
     private Long professionalLineId;
 }

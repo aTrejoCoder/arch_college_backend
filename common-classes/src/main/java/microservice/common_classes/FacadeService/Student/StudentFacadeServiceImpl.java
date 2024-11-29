@@ -2,17 +2,19 @@ package microservice.common_classes.FacadeService.Student;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import microservice.common_classes.DTOs.Group.GroupDTO;
 import microservice.common_classes.DTOs.Student.StudentDTO;
+import microservice.common_classes.Utils.CustomPage;
 import microservice.common_classes.Utils.ProfessionalLineModality;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -33,7 +35,7 @@ public class StudentFacadeServiceImpl implements StudentFacadeService {
 
     @Override
     @Async("taskExecutor")
-    public CompletableFuture<Boolean> validateExisitingStudent(String accountNumber) {
+    public CompletableFuture<Boolean> validateExisitingStudentAsync(String accountNumber) {
         String studentUrl = studentServiceUrlProvider.get() + "/v1/api/students/" + accountNumber + "/validate" ;
 
         return CompletableFuture.supplyAsync(() -> {
@@ -51,7 +53,7 @@ public class StudentFacadeServiceImpl implements StudentFacadeService {
 
     @Override
     @Async("taskExecutor")
-    public CompletableFuture<StudentDTO> getStudentByAccountNumber(String accountNumber) {
+    public CompletableFuture<StudentDTO> getStudentByAccountNumberAsync(String accountNumber) {
         String studentUrl = studentServiceUrlProvider.get() + "/v1/api/students/by-accountNumber/" + accountNumber;
 
         return CompletableFuture.supplyAsync(() -> {
@@ -78,7 +80,7 @@ public class StudentFacadeServiceImpl implements StudentFacadeService {
 
     @Override
     @Async("taskExecutor")
-    public CompletableFuture<Void> setProfessionalLineData(String studentAccount, Long professionalLineId, ProfessionalLineModality professionalLineModality) {
+    public CompletableFuture<Void> setProfessionalLineDataAsync(String studentAccount, Long professionalLineId, ProfessionalLineModality professionalLineModality) {
         String studentUrl = studentServiceUrlProvider.get() + "/v1/api/students/" + studentAccount +
                 "/set-professionalLine/" + professionalLineId + "/modality/" + professionalLineModality;
 
@@ -101,7 +103,7 @@ public class StudentFacadeServiceImpl implements StudentFacadeService {
 
     @Override
     @Async("taskExecutor")
-    public CompletableFuture<Void> increaseSemesterCompleted(String studentAccount) {
+    public CompletableFuture<Void> increaseSemesterCompletedAsync(String studentAccount) {
         String studentUrl = studentServiceUrlProvider.get() + "/v1/api/students/" + studentAccount + "/increase-semester-completed";
 
         return CompletableFuture.runAsync(() -> {
@@ -121,4 +123,26 @@ public class StudentFacadeServiceImpl implements StudentFacadeService {
         });
     }
 
+    @Override
+    public CustomPage<StudentDTO> getStudentsPageable(int page, int pageSize) {
+        String baseUrl = studentServiceUrlProvider.get() + "/v1/api/students/current/pageable";
+        String url = String.format("%s?page=%d&size=%d", baseUrl, page, pageSize);
+
+        HttpHeaders headers = createHeaders();
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<ResponseWrapper<CustomPage<StudentDTO>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                requestEntity,
+                new ParameterizedTypeReference<ResponseWrapper<CustomPage<StudentDTO>>>() {}
+        );
+        return Objects.requireNonNull(response.getBody()).getData();
+    }
+
+    private HttpHeaders createHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        return headers;
+    }
 }

@@ -144,7 +144,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Result<Void> validateStudent(String accountNumber) {
-        CompletableFuture<Boolean> exisitingStudentFuture = studentFacadeService.validateExisitingStudent(accountNumber);
+        CompletableFuture<Boolean> exisitingStudentFuture = studentFacadeService.validateExisitingStudentAsync(accountNumber);
         CompletableFuture<Optional<User>> optionalUserFuture = CompletableFuture.supplyAsync(() -> userRepository.findByUsername(accountNumber)
         );
 

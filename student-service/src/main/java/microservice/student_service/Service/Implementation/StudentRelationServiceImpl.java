@@ -1,4 +1,4 @@
-package microservice.student_service.Service;
+package microservice.student_service.Service.Implementation;
 
 import microservice.common_classes.DTOs.Carrer.CareerDTO;
 import microservice.common_classes.DTOs.Grade.InitAcademicHistory;
@@ -6,6 +6,7 @@ import microservice.common_classes.DTOs.ProfessionalLine.ProfessionalLineDTO;
 import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.FacadeService.Subject.SubjectFacadeService;
 import microservice.common_classes.Utils.Response.Result;
+import microservice.student_service.Service.StudentRelationService;
 import microservice.student_service.messaging.RabbitMQSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

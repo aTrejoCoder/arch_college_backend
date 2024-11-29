@@ -11,8 +11,10 @@ import lombok.RequiredArgsConstructor;
 import microservice.common_classes.DTOs.Group.GroupDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
 import microservice.common_classes.Utils.Response.Result;
-import microservice.schedule_service.Models.Group;
 import microservice.schedule_service.Service.GroupServices.GroupFinderService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,20 +56,13 @@ public class GroupFinderController {
     }
 
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Group>> getAllGroup() {
-        List<Group> allRawGroups = groupFinderService.getAll();
-        return ResponseEntity.ok(allRawGroups);
-    }
+    @GetMapping("/current/pageable")
+    public ResponseEntity<ResponseWrapper<Page<GroupDTO>>> getCurrentGroupsPageable(@RequestParam(defaultValue = "0") int page,
+                                                                                    @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
 
-    @Operation(summary = "Get Groups by Classroom", description = "Retrieve a list of groups by classroom for the current school period")
-    @ApiResponse(responseCode = "200", description = "Groups found", content = @Content(schema = @Schema(implementation = GroupDTO.class)))
-    @ApiResponse(responseCode = "404", description = "Groups not found")
-    @GetMapping("/by-classroom/{classroom}")
-    public ResponseEntity<ResponseWrapper<List<GroupDTO>>> getGroupByClassroom(
-            @Parameter(description = "Classroom identifier") @PathVariable String classroom) {
-        List<GroupDTO> groupList = groupFinderService.getCurrentGroupsByClassroom(classroom);
-        return ResponseEntity.ok(ResponseWrapper.found(groupList, "Group"));
+        Page<GroupDTO> groupPage = groupFinderService.getCurrentGroups(pageable);
+        return ResponseEntity.ok(ResponseWrapper.found(groupPage, "Group"));
     }
 
     @Operation(summary = "Get Groups by IDs", description = "Retrieve multiple groups by their unique IDs")

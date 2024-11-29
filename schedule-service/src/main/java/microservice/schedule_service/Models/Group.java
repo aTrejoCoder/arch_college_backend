@@ -32,8 +32,8 @@ public class Group {
     @Column(name = "subject_name")
     private String subjectName;
 
-    @Column(name = "key", nullable = false)
-    private String key;
+    @Column(name = "group_key", nullable = false)
+    private String groupKey;
 
     @Column(name = "available_spots")
     private int availableSpots;

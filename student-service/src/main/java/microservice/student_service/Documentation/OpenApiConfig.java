@@ -1,4 +1,4 @@
-package microservice.student_service.documentation;
+package microservice.student_service.Documentation;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;

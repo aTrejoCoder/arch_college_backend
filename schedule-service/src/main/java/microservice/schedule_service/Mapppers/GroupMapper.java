@@ -30,7 +30,7 @@ public interface GroupMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "key", ignore = true)
+    @Mapping(target = "groupKey", ignore = true)
     @Mapping(target = "schoolPeriod", ignore = true)
     void updateDto(@MappingTarget Group group,  ObligatoryGroupInsertDTO OBligatoryGroupInsertDTO);
 

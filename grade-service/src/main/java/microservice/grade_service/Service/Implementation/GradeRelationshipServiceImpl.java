@@ -43,7 +43,7 @@ public class GradeRelationshipServiceImpl implements GradeRelationshipService {
         );
 
         CompletableFuture<GroupDTO> groupFuture = groupFacadeService.getGroupById(groupId);
-        CompletableFuture<StudentDTO> studentFuture = studentFacadeService.getStudentByAccountNumber(studentAccountNumber);
+        CompletableFuture<StudentDTO> studentFuture = studentFacadeService.getStudentByAccountNumberAsync(studentAccountNumber);
 
         return CompletableFuture.allOf(subjectFuture, groupFuture, studentFuture).thenApply(v -> {
             SubjectDTO subjectDTO = subjectFuture.join();

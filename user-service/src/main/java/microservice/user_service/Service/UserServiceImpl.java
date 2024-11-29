@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
 
        boolean isStudentFormat = AccountNumberValidator.isStudentAccountNumber(username);
        if (isStudentFormat) {
-            CompletableFuture<StudentDTO> studentFuture = studentFacadeService.getStudentByAccountNumber(username);
+            CompletableFuture<StudentDTO> studentFuture = studentFacadeService.getStudentByAccountNumberAsync(username);
             Long studentId = studentFuture.join().getId();
 
             user.setStudentId(studentId);
@@ -131,7 +131,7 @@ public class UserServiceImpl implements UserService {
 
     StudentDTO studentDTO = null;
     if (user.getStudentId() != null) {
-       CompletableFuture<StudentDTO> studentFuture = studentFacadeService.getStudentByAccountNumber(user.getUsername());
+       CompletableFuture<StudentDTO> studentFuture = studentFacadeService.getStudentByAccountNumberAsync(user.getUsername());
         studentDTO = studentFuture.join();
     }
 

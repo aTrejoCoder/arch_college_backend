@@ -1,4 +1,4 @@
-package microservice.grade_service.Config;
+package microservice.grade_service.Messaging;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;

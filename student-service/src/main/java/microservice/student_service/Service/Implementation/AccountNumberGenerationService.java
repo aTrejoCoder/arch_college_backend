@@ -1,4 +1,4 @@
-package microservice.student_service.Service;
+package microservice.student_service.Service.Implementation;
 
 import microservice.student_service.Model.Student;
 import microservice.student_service.Repository.StudentRepository;

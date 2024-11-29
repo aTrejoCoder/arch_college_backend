@@ -12,11 +12,11 @@ public class StudentServiceTest {
 
     /*
     public final StudentRepository studentRepository;
-    public final StudentService studentService;
+    public final StudentCommandService studentService;
 
     @Autowired
     public StudentServiceTest(StudentRepository studentRepository,
-                              StudentService studentService) {
+                              StudentCommandService studentService) {
         this.studentRepository = studentRepository;
         this.studentService = studentService;
     }

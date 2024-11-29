@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import microservice.common_classes.Utils.Schedule.SemesterData;
 import microservice.schedule_service.Models.Group;
 import microservice.schedule_service.Repository.GroupRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,16 +23,19 @@ public class GroupQueryService {
     }
 
     public Optional<Group> findGroupByKey(String groupKey) {
-        return groupRepository.findByKeyAndSchoolPeriod(groupKey, SCHOOL_PERIOD);
+        return groupRepository.findByGroupKeyAndSchoolPeriod(groupKey, SCHOOL_PERIOD);
     }
 
-
     public Optional<Group> findGroupByKeyAndSemester(String key, String semester) {
-        return groupRepository.findByKeyAndSchoolPeriod(key, semester);
+        return groupRepository.findByGroupKeyAndSchoolPeriod(key, semester);
     }
 
     public List<Group> findGroupsByClassroom(String classroom) {
         return groupRepository.findByClassroom(classroom);
+    }
+
+    public Page<Group> findBySchoolPeriodPageable(String schoolPeriod, Pageable pageable) {
+        return groupRepository.findBySchoolPeriod(schoolPeriod, pageable);
     }
 }
 

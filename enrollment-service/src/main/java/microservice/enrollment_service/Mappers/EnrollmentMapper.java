@@ -2,7 +2,7 @@ package microservice.enrollment_service.Mappers;
 
 import microservice.common_classes.DTOs.Enrollment.EnrollmentDTO;
 import microservice.common_classes.DTOs.Enrollment.EnrollmentInsertDTO;
-import microservice.enrollment_service.Model.GroupEnrollment;
+import microservice.enrollment_service.Model.Enrollment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -10,9 +10,9 @@ import org.mapstruct.Mapping;
 public interface EnrollmentMapper {
 
     @Mapping(target = "id", ignore = true)
-    GroupEnrollment insertDtoToEntity(EnrollmentInsertDTO studentInsertDTO);
+    Enrollment insertDtoToEntity(EnrollmentInsertDTO studentInsertDTO);
 
-    EnrollmentDTO entityToDTO(GroupEnrollment student);
+    EnrollmentDTO entityToDTO(Enrollment student);
 
 
 }

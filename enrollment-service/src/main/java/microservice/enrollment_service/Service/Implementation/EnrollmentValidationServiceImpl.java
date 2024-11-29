@@ -1,4 +1,4 @@
-package microservice.enrollment_service.Service;
+package microservice.enrollment_service.Service.Implementation;
 
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Enrollment.EnrollmentInsertDTO;
@@ -10,8 +10,9 @@ import microservice.common_classes.Utils.ProfessionalLineModality;
 import microservice.common_classes.Utils.Response.Result;
 import microservice.common_classes.Utils.Schedule.SemesterData;
 import microservice.enrollment_service.DTOs.EnrollmentRelationshipDTO;
-import microservice.enrollment_service.Model.GroupEnrollment;
+import microservice.enrollment_service.Model.Enrollment;
 import microservice.enrollment_service.Repository.EnrollmentRepository;
+import microservice.enrollment_service.Service.EnrollmentValidationService;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -30,7 +31,7 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
     }
 
     public Result<Void> validateEnrollment(EnrollmentInsertDTO enrollmentInsertDTO, EnrollmentRelationshipDTO enrollmentRelationshipDTO, String accountNumber) {
-        List<GroupEnrollment> groupEnrollments = enrollmentRepository.findByStudentAccountNumberAndEnrollmentPeriod(accountNumber, schoolPeriod);
+        List<Enrollment> groupEnrollments = enrollmentRepository.findByStudentAccountNumberAndEnrollmentPeriod(accountNumber, schoolPeriod);
 
         Result<Void> notDuplicatedResult = validateNotDuplicatedEnrollment(enrollmentInsertDTO.getGroupKey(), groupEnrollments);
         if (!notDuplicatedResult.isSuccess()) {
@@ -93,7 +94,7 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
     }
 
     private Result<Void> validateMaximumCreditsPerStudent(String accountNumber, EnrollmentRelationshipDTO enrollmentRelationshipDTO) {
-        List<GroupEnrollment> currentStudentEnrollments = enrollmentRepository.findByStudentAccountNumberAndEnrollmentPeriod(accountNumber, schoolPeriod);
+        List<Enrollment> currentStudentEnrollments = enrollmentRepository.findByStudentAccountNumberAndEnrollmentPeriod(accountNumber, schoolPeriod);
         int currentTotalCredits = 0;
 
         for (var studentEnrollment : currentStudentEnrollments) {
@@ -107,13 +108,13 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
         return Result.success();
     }
 
-    private Result<Void> validateNotDuplicatedEnrollment(String groupKey, List<GroupEnrollment> groupEnrollments) {
+    private Result<Void> validateNotDuplicatedEnrollment(String groupKey, List<Enrollment> groupEnrollments) {
 
-        Optional<GroupEnrollment> optionalGroupEnrollment = groupEnrollments.stream()
+        Optional<Enrollment> optionalEnrollment = groupEnrollments.stream()
                 .filter(groupEnrollment -> groupEnrollment.getGroupKey().equals(groupKey))
                 .findAny();
 
-        if (optionalGroupEnrollment.isPresent()) {
+        if (optionalEnrollment.isPresent()) {
             return Result.error("Enrollment Already Created");
         }
 

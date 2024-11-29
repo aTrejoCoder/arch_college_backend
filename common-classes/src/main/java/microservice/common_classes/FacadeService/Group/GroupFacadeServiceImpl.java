@@ -3,16 +3,17 @@ package microservice.common_classes.FacadeService.Group;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Group.GroupDTO;
+import microservice.common_classes.Utils.CustomPage;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
 import microservice.common_classes.Utils.Response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -178,5 +179,28 @@ public class GroupFacadeServiceImpl implements GroupFacadeService {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    @Override
+    public CustomPage<GroupDTO> getGroupsPageable(int page, int size) {
+        String baseUrl = groupServiceUrlProvider.get() + "/v1/api/groups/current/pageable";
+        String url = String.format("%s?page=%d&size=%d", baseUrl, page, size);
+
+        HttpHeaders headers = createHeaders();
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<ResponseWrapper<CustomPage<GroupDTO>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                requestEntity,
+                new ParameterizedTypeReference<ResponseWrapper<CustomPage<GroupDTO>>>() {}
+        );
+        return Objects.requireNonNull(response.getBody()).getData();
+    }
+
+    private HttpHeaders createHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        return headers;
     }
 }

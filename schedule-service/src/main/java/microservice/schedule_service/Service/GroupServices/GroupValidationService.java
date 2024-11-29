@@ -18,7 +18,7 @@ public class GroupValidationService {
     private final GroupRepository groupRepository;
 
     public Result<Void> cancelGroupIfEligible(String groupKey, String currentSemester) {
-        Group group = groupRepository.findByKeyAndSchoolPeriod(groupKey, currentSemester)
+        Group group = groupRepository.findByGroupKeyAndSchoolPeriod(groupKey, currentSemester)
                 .orElseThrow(() -> new EntityNotFoundException("Group with Key " + groupKey + " not found"));
 
         if (group.getAvailableSpots() != group.getTotalSpots()) {

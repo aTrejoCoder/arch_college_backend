@@ -11,7 +11,7 @@ import microservice.common_classes.Utils.ProfessionalLineModality;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
 import microservice.common_classes.Utils.Response.Result;
 import microservice.student_service.Service.StudentRelationService;
-import microservice.student_service.Service.StudentService;
+import microservice.student_service.Service.StudentCommandService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class StudentCommandController {
 
-    private final StudentService studentService;
+    private final StudentCommandService studentCommandService;
     private final StudentRelationService studentRelationService;
 
     // Data Validation failures handled by global exception handler
@@ -39,7 +39,7 @@ public class StudentCommandController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(careerResult.getErrorMessage()));
         }
 
-        StudentDTO studentDTO = studentService.createStudent(studentInsertDTO);
+        StudentDTO studentDTO = studentCommandService.createStudent(studentInsertDTO);
 
         studentRelationService.initAcademicHistoryAsync(studentDTO);
 
@@ -56,7 +56,7 @@ public class StudentCommandController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResponseWrapper<Void>> updatePersonalStudentData(@Valid @RequestBody StudentInsertDTO studentInsertDTO,
                                                                            @PathVariable Long studentId) {
-        studentService.updateStudent(studentInsertDTO, studentId);
+        studentCommandService.updateStudent(studentInsertDTO, studentId);
         return ResponseEntity.ok(ResponseWrapper.ok(null, "Student successfully updated"));
     }
 
@@ -64,13 +64,13 @@ public class StudentCommandController {
     public ResponseEntity<Void> setProfessionalLineData(@Valid @PathVariable String studentAccount,
                                                         @PathVariable ProfessionalLineModality professionalLineModality,
                                                         @PathVariable Long professionalLineId) {
-        studentService.setProfessionalLineData(studentAccount, professionalLineId, professionalLineModality);
+        studentCommandService.setProfessionalLineData(studentAccount, professionalLineId, professionalLineModality);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{studentAccount}/increase-semester-completed")
     public ResponseEntity<Void> increaseSemesterCompleted(@Valid @PathVariable String studentAccount) {
-        studentService.increaseSemestersCursed(studentAccount);
+        studentCommandService.increaseSemestersCursed(studentAccount);
         return ResponseEntity.ok().build();
     }
 
@@ -82,7 +82,7 @@ public class StudentCommandController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{studentId}")
     public ResponseEntity<ResponseWrapper<StudentDTO>> deleteStudentById(@PathVariable Long studentId) {
-        studentService.deleteStudent(studentId);
+        studentCommandService.deleteStudent(studentId);
         return ResponseEntity.ok(ResponseWrapper.ok(null, "Student successfully deleted"));
     }
 }

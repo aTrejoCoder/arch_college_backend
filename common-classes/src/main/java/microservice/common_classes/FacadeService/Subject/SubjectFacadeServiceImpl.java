@@ -3,18 +3,20 @@ package microservice.common_classes.FacadeService.Subject;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Carrer.CareerDTO;
+import microservice.common_classes.DTOs.Group.GroupDTO;
 import microservice.common_classes.DTOs.ProfessionalLine.ProfessionalLineDTO;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
+import microservice.common_classes.Utils.CustomPage;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -32,11 +34,6 @@ public class SubjectFacadeServiceImpl implements SubjectFacadeService {
                                     @Qualifier("subjectServiceUrlProvider") Supplier<String> subjectServiceUrlProvider) {
         this.restTemplate = restTemplate;
         this.subjectServiceUrlProvider = subjectServiceUrlProvider;
-    }
-
-    @Override
-    public CompletableFuture<Boolean> validateExistingOrdinarySubject(Long subjectId) {
-        return null;
     }
 
     @Override
@@ -117,11 +114,6 @@ public class SubjectFacadeServiceImpl implements SubjectFacadeService {
     }
 
     @Override
-    public CompletableFuture<Boolean> validateExistingElectiveSubject(Long subjectId) {
-        return null;
-    }
-
-    @Override
     public CompletableFuture<ElectiveSubjectDTO> getElectiveSubjectById(Long subjectId) {
         String subjectUrl = subjectServiceUrlProvider.get() + "/v1/api/subjects/electives/" + subjectId;
         return CompletableFuture.supplyAsync(() -> {
@@ -197,4 +189,45 @@ public class SubjectFacadeServiceImpl implements SubjectFacadeService {
             }
         });
     }
+
+    @Override
+    public CustomPage<ObligatorySubjectDTO> getObligatorySubjectsPageable(int page, int size) {
+        String baseUrl = subjectServiceUrlProvider.get() + "/v1/api/subjects/obligatory/current/pageable";
+        String url = String.format("%s?page=%d&size=%d", baseUrl, page, size);
+
+        HttpHeaders headers = createHeaders();
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<ResponseWrapper<CustomPage<ObligatorySubjectDTO>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                requestEntity,
+                new ParameterizedTypeReference<ResponseWrapper<CustomPage<ObligatorySubjectDTO>>>() {}
+        );
+        return Objects.requireNonNull(response.getBody()).getData();
+    }
+
+    @Override
+    public CustomPage<ElectiveSubjectDTO> getElectiveSubjectsPageable(int page, int size) {
+        String baseUrl = subjectServiceUrlProvider.get() + "/v1/api/subjects/electives/current/pageable";
+        String url = String.format("%s?page=%d&size=%d", baseUrl, page, size);
+
+        HttpHeaders headers = createHeaders();
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<ResponseWrapper<CustomPage<ElectiveSubjectDTO>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                requestEntity,
+                new ParameterizedTypeReference<ResponseWrapper<CustomPage<ElectiveSubjectDTO>>>() {}
+        );
+        return Objects.requireNonNull(response.getBody()).getData();
+    }
+
+    private HttpHeaders createHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        return headers;
+    }
+
 }

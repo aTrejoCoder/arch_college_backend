@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import microservice.common_classes.DTOs.Teacher.TeacherNameDTO;
 import microservice.common_classes.Utils.Group.GroupStatus;
 import microservice.common_classes.Utils.Group.GroupType;
+import microservice.common_classes.Utils.SubjectType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +19,20 @@ public class GroupDTO {
     @JsonProperty("id")
     private Long id;
 
+    @JsonProperty("group_key")
+    private String groupKey;
+
     @JsonProperty("subject_id")
     private Long subjectId;
+
+    @JsonProperty("subject_key")
+    private String subjectKey;
 
     @JsonProperty("subject_name")
     private String subjectName;
 
-    @JsonProperty("key")
-    private String key;
+    @JsonProperty("subject_type")
+    private SubjectType subjectType;
 
     @JsonProperty("available_spots")
     private int availableSpots;

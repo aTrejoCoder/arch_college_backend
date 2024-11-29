@@ -35,7 +35,7 @@ public class GroupCreationService {
         group.setSchoolPeriod(currentSemester);
         group.initSpots(OBligatoryGroupInsertDTO.getTotalSpots());
         group.setSchedule(scheduleService.mapScheduleDTOToEntity(OBligatoryGroupInsertDTO.getSchedule()));
-        group.setKey(keyGenerationService.generateObligatoryKey(group, groupRelationshipsDTO.getObligatorySubjectDTO()));
+        group.setGroupKey(keyGenerationService.generateObligatoryKey(group, groupRelationshipsDTO.getObligatorySubjectDTO()));
 
         relationshipService.setExternalGroupRelationships(group, groupRelationshipsDTO);
 
@@ -52,11 +52,11 @@ public class GroupCreationService {
         group.setSchoolPeriod(currentSemester);
 
         if (groupRelationshipsDTO.getObligatorySubjectDTO() != null) {
-            group.setKey(keyGenerationService.generateObligatoryKey(group, groupRelationshipsDTO.getObligatorySubjectDTO()));
+            group.setGroupKey(keyGenerationService.generateObligatoryKey(group, groupRelationshipsDTO.getObligatorySubjectDTO()));
         }
 
         if (groupRelationshipsDTO.getElectiveSubjectDTO() != null) {
-            group.setKey(keyGenerationService.generateElectiveKey(group, groupRelationshipsDTO.getElectiveSubjectDTO()));
+            group.setGroupKey(keyGenerationService.generateElectiveKey(group, groupRelationshipsDTO.getElectiveSubjectDTO()));
         }
 
         relationshipService.setExternalGroupRelationships(group, groupRelationshipsDTO);

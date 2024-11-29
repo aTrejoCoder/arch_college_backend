@@ -3,20 +3,18 @@ package microservice.common_classes.FacadeService.Grade;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Grade.GradeDTO;
+import microservice.common_classes.DTOs.Group.GroupDTO;
+import microservice.common_classes.Utils.CustomPage;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
@@ -25,19 +23,19 @@ import java.util.function.Supplier;
 public class GradeFacadeServiceImpl implements GradeFacadeService {
 
     private final RestTemplate restTemplate;
-    private final Supplier<String> groupServiceUrlProvider;
+    private final Supplier<String> gradeServiceUrlProvider;
 
     @Autowired
     public GradeFacadeServiceImpl(RestTemplate restTemplate,
-                                  @Qualifier("gradeServiceUrlProvider") Supplier<String> groupServiceUrlProvider) {
+                                  @Qualifier("gradeServiceUrlProvider") Supplier<String> gradeServiceUrlProvider) {
         this.restTemplate = restTemplate;
-        this.groupServiceUrlProvider = groupServiceUrlProvider;
+        this.gradeServiceUrlProvider = gradeServiceUrlProvider;
     }
 
     @Override
     @Async("taskExecutor")
     public CompletableFuture<GradeDTO> getGradeById(Long gradeId) {
-        String gradeUrl = groupServiceUrlProvider.get() + "/v1/api/grades/" + gradeId;
+        String gradeUrl = gradeServiceUrlProvider.get() + "/v1/api/grades/" + gradeId;
 
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -64,7 +62,7 @@ public class GradeFacadeServiceImpl implements GradeFacadeService {
     @Override
     @Async("taskExecutor")
     public CompletableFuture<List<GradeDTO>> getGradesByStudentAccountNumber(String accountNumber) {
-        String gradeUrl = groupServiceUrlProvider.get() + "/v1/api/grades/student/" + accountNumber +  "/all";
+        String gradeUrl = gradeServiceUrlProvider.get() + "/v1/api/grades/student/" + accountNumber +  "/all";
 
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -90,4 +88,27 @@ public class GradeFacadeServiceImpl implements GradeFacadeService {
         });
     }
 
+    @Override
+    public CustomPage<GradeDTO> getGradesByCareerPageable(int page, int pageSize) {
+        String baseUrl = gradeServiceUrlProvider.get() + "/v1/api/groups/by-career/1/pageable";
+        String url = String.format("%s?page=%d&size=%d", baseUrl, page, pageSize);
+
+        HttpHeaders headers = createHeaders();
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<ResponseWrapper<CustomPage<GradeDTO>>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                requestEntity,
+                new ParameterizedTypeReference<ResponseWrapper<CustomPage<GradeDTO>>>() {}
+        );
+        return Objects.requireNonNull(response.getBody()).getData();
+    }
+
+
+    private HttpHeaders createHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        return headers;
+    }
 }

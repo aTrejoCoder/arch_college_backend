@@ -10,6 +10,8 @@ import microservice.schedule_service.Models.Group;
 import microservice.schedule_service.Repository.GroupRepository;
 import microservice.schedule_service.Utils.GroupMappingService;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,9 +25,6 @@ public class GroupFinderService {
     private final GroupMappingService groupMappingService;
     private final String CURRENT_SEMESTER = SemesterData.getCurrentSchoolPeriod();
 
-    public List<Group> getAll() {
-        return groupRepository.findAll();
-    }
 
     public Group findGroupById(Long id) {
         return groupRepository.findById(id)
@@ -52,6 +51,11 @@ public class GroupFinderService {
         return queryService.findGroupsByClassroom(classroom).stream()
                 .map(groupMappingService::mapGroupToDTOWithTeachers)
                 .toList();
+    }
+
+    public Page<GroupDTO> getCurrentGroups(Pageable pageable) {
+        return queryService.findBySchoolPeriodPageable(CURRENT_SEMESTER, pageable)
+                .map(groupMappingService::mapGroupToDTOWithTeachers);
     }
 
     public List<GroupDTO> getCurrentGroupsByClassroomPrefix(char buildingLetter) {

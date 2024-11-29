@@ -47,7 +47,7 @@ public class GroupUpdateServiceImpl {
 
     @Transactional
     public GroupDTO removeTeacherToGroup(String groupKey, Long teacherId) {
-        Group group = groupRepository.findByKeyAndSchoolPeriod(groupKey, currentSemester)
+        Group group = groupRepository.findByGroupKeyAndSchoolPeriod(groupKey, currentSemester)
                 .orElseThrow(() -> new EntityNotFoundException("Group with Key " + groupKey + " not found"));
 
         Optional<Teacher> optionalTeacher = group.getTeachers()

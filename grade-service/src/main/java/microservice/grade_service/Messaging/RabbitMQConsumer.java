@@ -1,6 +1,5 @@
-package microservice.grade_service.MIddleware.RabbitMQ;
+package microservice.grade_service.Messaging;
 
-import microservice.grade_service.Config.RabbitMQConfig;
 import microservice.grade_service.Service.AcademicHistoryService;
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Grade.InitAcademicHistory;
@@ -11,12 +10,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class AcademicHistoryConsumer {
+public class RabbitMQConsumer {
 
     private final AcademicHistoryService academicHistoryService;
 
     @Autowired
-    public AcademicHistoryConsumer(AcademicHistoryService academicHistoryService) {
+    public RabbitMQConsumer(AcademicHistoryService academicHistoryService) {
         this.academicHistoryService = academicHistoryService;
     }
 

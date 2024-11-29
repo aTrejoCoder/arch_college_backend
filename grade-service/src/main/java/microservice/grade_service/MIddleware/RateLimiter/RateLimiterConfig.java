@@ -1,4 +1,4 @@
-package microservice.grade_service.Config;
+package microservice.grade_service.MIddleware.RateLimiter;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;

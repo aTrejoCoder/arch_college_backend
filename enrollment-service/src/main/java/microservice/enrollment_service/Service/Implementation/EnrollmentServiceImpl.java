@@ -1,4 +1,4 @@
-package microservice.enrollment_service.Service;
+package microservice.enrollment_service.Service.Implementation;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -12,8 +12,9 @@ import microservice.common_classes.Utils.Schedule.SemesterData;
 import microservice.common_classes.Utils.SubjectType;
 import microservice.enrollment_service.DTOs.EnrollmentRelationshipDTO;
 import microservice.enrollment_service.Mappers.EnrollmentMapper;
-import microservice.enrollment_service.Model.GroupEnrollment;
+import microservice.enrollment_service.Model.Enrollment;
 import microservice.enrollment_service.Repository.EnrollmentRepository;
+import microservice.enrollment_service.Service.EnrollmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -41,7 +42,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     @Override
     @Cacheable(value = "enrollmentById", key = "#enrollmentId")
     public Result<EnrollmentDTO> getEnrollmentById(Long enrollmentId) {
-        Optional<GroupEnrollment> optionalEnrollment = enrollmentRepository.findById(enrollmentId);
+        Optional<Enrollment> optionalEnrollment = enrollmentRepository.findById(enrollmentId);
         return optionalEnrollment
                 .map(groupEnrollment -> Result.success(enrollmentMapper.entityToDTO(groupEnrollment)))
                 .orElseGet(() -> Result.error("Enrollment not found"));
@@ -51,7 +52,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     @Override
     @Cacheable(value = "enrollmentByAccountNumber", key = "#studentAccountNumber")
     public List<EnrollmentDTO> getEnrollmentsByAccountNumber(String studentAccountNumber) {
-        List<GroupEnrollment> currentEnrollments = enrollmentRepository.findByStudentAccountNumberAndEnrollmentPeriod(studentAccountNumber, schoolPeriod);
+        List<Enrollment> currentEnrollments = enrollmentRepository.findByStudentAccountNumberAndEnrollmentPeriod(studentAccountNumber, schoolPeriod);
         return currentEnrollments.stream()
                 .map(enrollmentMapper::entityToDTO)
                 .toList();
@@ -66,12 +67,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         if (enrollmentRelationshipDTO.getObligatorySubjectDTO() != null) {
             ObligatorySubjectDTO subjectDTO = enrollmentRelationshipDTO.getObligatorySubjectDTO();
 
-            GroupEnrollment groupEnrollment = GroupEnrollment.builder()
+            Enrollment groupEnrollment = Enrollment.builder()
                     .enrollmentDate(LocalDateTime.now())
-                    .isActive(Boolean.TRUE)
                     .groupKey(enrollmentInsertDTO.getGroupKey())
                     .studentAccountNumber(studentDTO.getAccountNumber())
-                    .subjectId(subjectDTO.getId())
                     .subjectType(SubjectType.OBLIGATORY)
                     .subjectCredits(subjectDTO.getCredits())
                     .subjectKey(enrollmentInsertDTO.getSubjectKey())
@@ -88,7 +87,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     @Override
     public Result<Void> deleteEnrollment(String groupKey, String subjectKey, String studentAccountNumber) {
-        Optional<GroupEnrollment> optionalEnrollment = enrollmentRepository.findByGroupKeyAndSubjectKeyAndStudentAccountNumber(groupKey, subjectKey, studentAccountNumber);
+        Optional<Enrollment> optionalEnrollment = enrollmentRepository.findByGroupKeyAndSubjectKeyAndStudentAccountNumber(groupKey, subjectKey, studentAccountNumber);
         if (optionalEnrollment.isEmpty()) {
             return Result.error("Enrollment not found");
         }
@@ -101,16 +100,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     @Override
     public void deleteEnrollment(Long enrollmentId) {
         if (!enrollmentRepository.existsById(enrollmentId)) {
-            throw new EntityNotFoundException("GroupEnrollment with ID " + enrollmentId + " not found");
+            throw new EntityNotFoundException("Enrollment with ID " + enrollmentId + " not found");
         }
         enrollmentRepository.deleteById(enrollmentId);
     }
 
 
-    @Scheduled(cron = "0 0 0 * * ?")
-    @Transactional
-    public void expireOldEnrollments() {
-        LocalDateTime expirationDate = LocalDateTime.now().minusMonths(6);
-        enrollmentRepository.deactivateExpiredEnrollments(expirationDate);
-    }
 }

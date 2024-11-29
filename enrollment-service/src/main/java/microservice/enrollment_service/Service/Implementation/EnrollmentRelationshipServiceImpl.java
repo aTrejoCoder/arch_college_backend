@@ -1,4 +1,4 @@
-package microservice.enrollment_service.Service;
+package microservice.enrollment_service.Service.Implementation;
 
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Enrollment.EnrollmentInsertDTO;
@@ -12,7 +12,9 @@ import microservice.common_classes.FacadeService.Group.GroupFacadeService;
 import microservice.common_classes.FacadeService.Student.StudentFacadeService;
 import microservice.common_classes.FacadeService.Subject.SubjectFacadeService;
 import microservice.common_classes.Utils.Response.Result;
+import microservice.common_classes.Utils.SubjectType;
 import microservice.enrollment_service.DTOs.EnrollmentRelationshipDTO;
+import microservice.enrollment_service.Service.EnrollmentRelationshipService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +41,7 @@ public class EnrollmentRelationshipServiceImpl implements EnrollmentRelationship
     }
 
     public Result<EnrollmentRelationshipDTO> validateAndGetRelationships(EnrollmentInsertDTO enrollmentInsertDTO, String studentAccountNumber) {
-        CompletableFuture<StudentDTO> studentFuture = studentFacadeService.getStudentByAccountNumber(studentAccountNumber);
+        CompletableFuture<StudentDTO> studentFuture = studentFacadeService.getStudentByAccountNumberAsync(studentAccountNumber);
         CompletableFuture<GroupDTO> groupFuture = groupFacadeService.getCurrentGroupByKey(enrollmentInsertDTO.getGroupKey());
         CompletableFuture<List<GradeDTO>> studentGradeFuture = gradeFacadeService.getGradesByStudentAccountNumber(studentAccountNumber);
 
@@ -60,18 +62,13 @@ public class EnrollmentRelationshipServiceImpl implements EnrollmentRelationship
                 studentGrades = new ArrayList<>();
             }
 
-            if (groupDTO.getElectiveSubjectId() !=  null && groupDTO.getObligatorySubjectId() == null) {
-                ElectiveSubjectDTO electiveSubjectDTO = subjectFacadeService.getElectiveSubjectById(groupDTO.getElectiveSubjectId()).join();
+            if (groupDTO.getSubjectType() == SubjectType.ELECTIVE) {
+                ElectiveSubjectDTO electiveSubjectDTO = subjectFacadeService.getElectiveSubjectById(groupDTO.getSubjectId()).join();
                 return Result.success(new EnrollmentRelationshipDTO(studentDTO,groupDTO, electiveSubjectDTO, studentGrades));
-            } else if (groupDTO.getObligatorySubjectId() != null && groupDTO.getElectiveSubjectId() == null ) {
-                ObligatorySubjectDTO ordinarySubjectDTO = subjectFacadeService.getOrdinarySubjectById(groupDTO.getObligatorySubjectId()).join();
-                return Result.success(new EnrollmentRelationshipDTO(studentDTO,groupDTO, ordinarySubjectDTO, studentGrades));
-
-            } else {
-                return Result.<EnrollmentRelationshipDTO>error("No Subject Id Provided");
+            } else  {
+                ObligatorySubjectDTO ordinarySubjectDTO = subjectFacadeService.getOrdinarySubjectById(groupDTO.getSubjectId()).join();
+                return Result.success(new EnrollmentRelationshipDTO(studentDTO, groupDTO, ordinarySubjectDTO, studentGrades));
             }
-
-
 
         }).join();
     }

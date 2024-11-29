@@ -2,6 +2,7 @@ package microservice.subject_service.Model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import microservice.common_classes.Models.Subject;
 
 @Entity
 @Getter

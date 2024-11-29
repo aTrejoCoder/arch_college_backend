@@ -19,7 +19,7 @@ public class GroupSpotsService {
     private final String currentSemester = SemesterData.getCurrentSchoolPeriod();
 
     public Result<Void> decreaseSpot(String key) {
-        Group group = groupRepository.findByKeyAndSchoolPeriod(key, currentSemester)
+        Group group = groupRepository.findByGroupKeyAndSchoolPeriod(key, currentSemester)
                 .orElseThrow(() -> new EntityNotFoundException("Group with Key " + key + " not found"));
 
         if (group.getAvailableSpots() <= 0 ) {
@@ -33,7 +33,7 @@ public class GroupSpotsService {
     }
 
     public void increaseSpot(String key) {
-        Group group = groupRepository.findByKeyAndSchoolPeriod(key, currentSemester)
+        Group group = groupRepository.findByGroupKeyAndSchoolPeriod(key, currentSemester)
                 .orElseThrow(() -> new EntityNotFoundException("Group with Key " + key + " not found"));
 
         group.increaseAvailableSpot();
@@ -49,7 +49,7 @@ public class GroupSpotsService {
     }
 
     public GroupDTO addSpots(String key, int spotsToAdd) {
-        Group group = groupRepository.findByKeyAndSchoolPeriod(key, currentSemester)
+        Group group = groupRepository.findByGroupKeyAndSchoolPeriod(key, currentSemester)
                 .orElseThrow(() -> new EntityNotFoundException("Group with Key " + key + " not found"));
 
         group.increaseSpots(spotsToAdd);

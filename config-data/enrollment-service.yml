@@ -7,6 +7,10 @@ spring:
       client:
         url: http://localhost:8081
 
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/arch_college_mongodb
+
   datasource:
     url: jdbc:postgresql://localhost:5432/architecture_college_db
     username: alexistrejo

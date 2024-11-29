@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import microservice.common_classes.Models.Subject;
 
 import java.time.LocalDateTime;
 
