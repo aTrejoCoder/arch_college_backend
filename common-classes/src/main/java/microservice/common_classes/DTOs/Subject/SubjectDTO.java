@@ -12,6 +12,9 @@ public abstract class SubjectDTO {
     @JsonProperty("id")
     private Long id;
 
+    @JsonProperty("serial_number")
+    private int serialNumber;
+
     @JsonProperty("name")
     private String name;
 
@@ -20,4 +23,7 @@ public abstract class SubjectDTO {
 
     @JsonProperty("area_id")
     private Long areaId;
+
+    @JsonProperty("subject_series_id")
+    private Long seriesId;
 }

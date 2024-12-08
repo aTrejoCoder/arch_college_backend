@@ -10,18 +10,17 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI studentServiceOpenAPI() {
+    public OpenAPI enrollmentServiceOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("student Service API")
-                        .description("student Microservice that handles all employee Requests")
-                        .version("1.0")
+                        .title("Enrollment Service API")
+                        .description("Microservice for managing student enrollments, group relationships, and subject assignments. Provides endpoints for enrollment management, validations, and entity relationships.")
+                        .version("1.0.0")
                         .contact(new Contact()
-                                .name("Codmind")
-                                .url("https://codmind.com")
-                                .email("apis@codmind.com"))
-                        .termsOfService("http://codmind.com/terms")
+                                .name("Technical Support")
+                                .url("https://my-university.com/support")
+                                .email("support@my-university.com"))
+                        .termsOfService("https://my-university.com/terms")
                 );
     }
-
 }

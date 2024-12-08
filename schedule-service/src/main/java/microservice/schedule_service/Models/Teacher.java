@@ -18,6 +18,9 @@ public class Teacher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long teacherId;
 
+    @Column(name = "account_number")
+    private String accountNumber;
+
     @Column(name = "teacher_name")
     private String teacherName;
 

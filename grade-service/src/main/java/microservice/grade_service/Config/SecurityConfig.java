@@ -29,7 +29,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("v1/api/students/**").hasRole("STUDENT")
+                        .requestMatchers("v1/api/grades/teachers/groups/**").hasAnyRole("ADMIN", "TEACHER")
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtSecurity, UsernamePasswordAuthenticationFilter.class)
@@ -43,5 +43,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
 }

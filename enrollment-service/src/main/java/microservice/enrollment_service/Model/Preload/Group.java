@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import microservice.common_classes.DTOs.Group.ScheduleDTO;
@@ -16,12 +17,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Setter
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
 @Document(collection = "groups")
 public class Group {
-    @JsonProperty("id")
     @Id
     private Long id;
 
@@ -35,20 +34,25 @@ public class Group {
     private String subjectKey;
 
     @JsonProperty("subject_type")
+    @Enumerated(EnumType.STRING)
     private SubjectType subjectType;
 
-    @JsonProperty("key")
-    private String key;
+    @JsonProperty("group_key")
+    private String groupKey;
 
     @JsonProperty("available_spots")
     private int availableSpots;
 
     @JsonProperty("status")
+    @Enumerated(EnumType.STRING)
     private GroupStatus groupStatus;
 
     @JsonProperty("group_type")
     @Enumerated(EnumType.STRING)
     private GroupType groupType;
+
+    @JsonProperty("school_period")
+    private String schoolPeriod;
 
     @JsonProperty("schedule")
     private List<ScheduleDTO> schedule;
@@ -58,4 +62,7 @@ public class Group {
 
     @JsonProperty("teachers")
     private List<TeacherNameDTO> teacherDTOS;
+
+    @JsonProperty("head_teacher_accountNumber")
+    private String headTeacherAccountNumber;
 }

@@ -1,15 +1,20 @@
 package microservice.grade_service.Mappers;
 
 import javax.annotation.processing.Generated;
-import microservice.common_classes.DTOs.Grade.GradeDTO;
+import microservice.common_classes.DTOs.Enrollment.EnrollmentDTO;
+import microservice.common_classes.Utils.Group.GroupType;
+import microservice.common_classes.Utils.SubjectType;
+import microservice.grade_service.DTOs.GradeDTO;
 import microservice.grade_service.DTOs.GradeInsertDTO;
 import microservice.grade_service.Model.Grade;
-import microservice.grade_service.Model.GradeNamed;
+import microservice.grade_service.Model.Group;
+import microservice.grade_service.Model.Subject;
+import microservice.grade_service.Utils.GradeTrack;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-11-26T23:17:48-0600",
+    date = "2024-12-07T16:33:03-0600",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.9.jar, environment: Java 17.0.11 (Amazon.com Inc.)"
 )
 @Component
@@ -21,16 +26,15 @@ public class GradeMapperImpl implements GradeMapper {
             return null;
         }
 
-        Grade grade = new Grade();
+        Grade.GradeBuilder grade = Grade.builder();
 
-        grade.setGradeValue( gradeInsertDTO.getGradeValue() );
-        grade.setGradeStatus( gradeInsertDTO.getGradeStatus() );
-        grade.setSubjectId( gradeInsertDTO.getSubjectId() );
-        grade.setSubjectType( gradeInsertDTO.getSubjectType() );
-        grade.setStudentAccountNumber( gradeInsertDTO.getStudentAccountNumber() );
-        grade.setGroupId( gradeInsertDTO.getGroupId() );
+        grade.gradeValue( gradeInsertDTO.getGradeValue() );
+        grade.studentAccountNumber( gradeInsertDTO.getStudentAccountNumber() );
+        if ( gradeInsertDTO.getGradeStatus() != null ) {
+            grade.gradeStatus( Enum.valueOf( Grade.GradeStatus.class, gradeInsertDTO.getGradeStatus() ) );
+        }
 
-        return grade;
+        return grade.build();
     }
 
     @Override
@@ -41,28 +45,122 @@ public class GradeMapperImpl implements GradeMapper {
 
         GradeDTO gradeDTO = new GradeDTO();
 
-        gradeDTO.setId( grade.getId() );
+        gradeDTO.setStudentAccountNumber( grade.getStudentAccountNumber() );
         gradeDTO.setGradeValue( grade.getGradeValue() );
+        gradeDTO.setGradeResult( grade.getGradeResult() );
         gradeDTO.setGradeStatus( grade.getGradeStatus() );
-        gradeDTO.setGroupId( grade.getGroupId() );
 
         return gradeDTO;
     }
 
     @Override
-    public GradeNamed entityToNamedDTO(Grade grade) {
+    public GradeTrack entityToNamedDTO(Grade grade) {
         if ( grade == null ) {
             return null;
         }
 
-        GradeNamed gradeNamed = new GradeNamed();
+        GradeTrack gradeTrack = new GradeTrack();
 
-        gradeNamed.setSubjectType( grade.getSubjectType() );
-        gradeNamed.setSubjectName( grade.getSubjectName() );
-        gradeNamed.setGradeValue( grade.getGradeValue() );
-        gradeNamed.setSchoolPeriod( grade.getSchoolPeriod() );
-        gradeNamed.setAuthorized( grade.isAuthorized() );
+        gradeTrack.setSubjectName( gradeSubjectSubjectName( grade ) );
+        gradeTrack.setSubjectId( gradeSubjectId( grade ) );
+        Integer subjectCredits = gradeSubjectSubjectCredits( grade );
+        if ( subjectCredits != null ) {
+            gradeTrack.setSubjectCredits( String.valueOf( subjectCredits ) );
+        }
+        gradeTrack.setSubjectType( gradeSubjectSubjectType( grade ) );
+        gradeTrack.setGroupType( gradeGroupGroupType( grade ) );
+        gradeTrack.setLastSchoolPeriodCoursed( grade.getSchoolPeriod() );
+        if ( grade.getGradeValue() != null ) {
+            gradeTrack.setGradeValue( grade.getGradeValue() );
+        }
 
-        return gradeNamed;
+        return gradeTrack;
+    }
+
+    @Override
+    public Grade enrollmentDTOtoEntity(EnrollmentDTO enrollmentDTO) {
+        if ( enrollmentDTO == null ) {
+            return null;
+        }
+
+        Grade.GradeBuilder grade = Grade.builder();
+
+        grade.id( enrollmentDTO.getId() );
+        grade.studentAccountNumber( enrollmentDTO.getStudentAccountNumber() );
+        grade.schoolPeriod( enrollmentDTO.getSchoolPeriod() );
+
+        return grade.build();
+    }
+
+    private String gradeSubjectSubjectName(Grade grade) {
+        if ( grade == null ) {
+            return null;
+        }
+        Subject subject = grade.getSubject();
+        if ( subject == null ) {
+            return null;
+        }
+        String subjectName = subject.getSubjectName();
+        if ( subjectName == null ) {
+            return null;
+        }
+        return subjectName;
+    }
+
+    private Long gradeSubjectId(Grade grade) {
+        if ( grade == null ) {
+            return null;
+        }
+        Subject subject = grade.getSubject();
+        if ( subject == null ) {
+            return null;
+        }
+        Long id = subject.getId();
+        if ( id == null ) {
+            return null;
+        }
+        return id;
+    }
+
+    private Integer gradeSubjectSubjectCredits(Grade grade) {
+        if ( grade == null ) {
+            return null;
+        }
+        Subject subject = grade.getSubject();
+        if ( subject == null ) {
+            return null;
+        }
+        int subjectCredits = subject.getSubjectCredits();
+        return subjectCredits;
+    }
+
+    private SubjectType gradeSubjectSubjectType(Grade grade) {
+        if ( grade == null ) {
+            return null;
+        }
+        Subject subject = grade.getSubject();
+        if ( subject == null ) {
+            return null;
+        }
+        SubjectType subjectType = subject.getSubjectType();
+        if ( subjectType == null ) {
+            return null;
+        }
+        return subjectType;
+    }
+
+    private GroupType gradeGroupGroupType(Grade grade) {
+        if ( grade == null ) {
+            return null;
+        }
+        Group group = grade.getGroup();
+        if ( group == null ) {
+            return null;
+        }
+        GroupType groupType = group.getGroupType();
+        if ( groupType == null ) {
+            return null;
+        }
+        return groupType;
     }
 }

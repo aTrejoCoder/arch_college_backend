@@ -1,13 +1,11 @@
 package microservice.enrollment_service.Model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import microservice.common_classes.Utils.SubjectType;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
@@ -16,36 +14,50 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "groups")
+@Table(name = "enrollment")
 public class Enrollment {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonProperty("subject_key")
-    private String subjectKey;
-
-    @JsonProperty("group_key")
-    private String groupKey;
-
-    @JsonProperty("student_account_number")
+    @Column(name = "student_account_number")
     private String studentAccountNumber;
 
-    @JsonProperty("subject_type")
+    @Column(name = "subject_id")
+    private Long subjectId;
+
+    @Column(name = "subject_key")
+    private String subjectKey;
+
+    @Column(name = "subject_name")
+    private String subjectName;
+
+    @Column(name = "subject_credits")
+    private int subjectCredits;
+
+    @Column(name = "subject_type")
     @Enumerated(EnumType.STRING)
     private SubjectType subjectType;
 
-    @JsonProperty("subject_credits")
-    private int subjectCredits;
+    @Column(name = "group_id")
+    private Long groupId;
 
-    @JsonProperty("enrollment_date")
+    @Column(name = "group_key")
+    private String groupKey;
+
+    @Column(name = "school_period")
+    private String schoolPeriod;
+
+    @Column(name = "enrollment_date")
     private LocalDateTime enrollmentDate;
 
-    @JsonProperty("enrollment_period")
-    private String enrollmentPeriod;
-
     // When Enrollment period ends all enrollments gets locked and can't be modified
-    @JsonProperty("is_locked")
+    @Column(name = "is_locked")
     private boolean isLocked;
+
+    public void lock () {
+        this.isLocked = true;
+    }
 
     @PrePersist
     protected void onCreate() {

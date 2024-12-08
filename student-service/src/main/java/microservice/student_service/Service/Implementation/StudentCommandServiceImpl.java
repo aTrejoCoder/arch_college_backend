@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.DTOs.Student.StudentInsertDTO;
 import microservice.common_classes.Utils.ProfessionalLineModality;
-import microservice.common_classes.Utils.Schedule.SemesterData;
+import microservice.common_classes.Utils.Schedule.AcademicData;
 import microservice.student_service.Mappers.StudentMapper;
 import microservice.student_service.Model.Student;
 import microservice.student_service.Repository.StudentRepository;
@@ -21,7 +21,7 @@ public class StudentCommandServiceImpl implements StudentCommandService {
     private final StudentRepository studentRepository;
     private final StudentMapper studentMapper;
     private final AccountNumberGenerationService accountNumberGenerationService;
-    private final String currentGenerationIncome =  SemesterData.getCurrentSchoolPeriod();
+    private final String currentGenerationIncome =  AcademicData.getCurrentSchoolPeriod();
 
     @Override
     @Transactional

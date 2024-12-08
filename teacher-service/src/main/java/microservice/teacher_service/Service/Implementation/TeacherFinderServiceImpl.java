@@ -69,12 +69,12 @@ public class TeacherFinderServiceImpl implements TeacherFinderService {
     }
 
     @Override
+    @Cacheable(value = "teachersCache", key = "#pageable.pageNumber + '-' + #pageable.pageSize + '-' + #sortDirection + '-' + #sortBy")
     public Page<TeacherDTO> getAllTeachersSorted(Pageable pageable, String sortDirection, String sortBy) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
-        return teacherRepository.findAll(sortedPageable)
-                .map(teacherMapper::entityToDTO);
+        return teacherRepository.findAll(sortedPageable).map(teacherMapper::entityToDTO);
     }
 
     @Override

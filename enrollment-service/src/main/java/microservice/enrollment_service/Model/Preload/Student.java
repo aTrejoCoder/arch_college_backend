@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "students")
@@ -52,6 +52,6 @@ public class Student {
     private Long professionalLineId;
 
     @JsonProperty("professional_line_modality")
-    private String professionalLineModality;
+    private ProfessionalLineModality professionalLineModality;
 
 }

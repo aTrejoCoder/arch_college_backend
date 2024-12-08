@@ -4,15 +4,19 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
-import microservice.common_classes.FacadeService.Subject.SubjectFacadeService;
+import microservice.common_classes.DTOs.Subject.SubjectSeriesDTO;
+import microservice.common_classes.FacadeService.AcademicCurriculumService.AcademicCurriculumFacadeService;
 import microservice.common_classes.Models.Subject;
 import microservice.common_classes.Utils.CustomPage;
 import microservice.enrollment_service.Mappers.ElectiveSubjectMapper;
 import microservice.enrollment_service.Mappers.ObligatorySubjectMapper;
+import microservice.enrollment_service.Mappers.SubjectSeriesMapper;
 import microservice.enrollment_service.Model.Preload.ElectiveSubject;
 import microservice.enrollment_service.Model.Preload.ObligatorySubject;
+import microservice.enrollment_service.Model.Preload.SubjectSeries;
 import microservice.enrollment_service.Repository.ElectiveSubjectRepository;
 import microservice.enrollment_service.Repository.ObligatorySubjectRepository;
+import microservice.enrollment_service.Repository.SubjectSeriesRepository;
 import microservice.enrollment_service.Service.PreloadDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,24 +31,28 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class SubjectPreloadServiceImpl implements PreloadDataService<Subject> {
 
-    private final SubjectFacadeService obligatorySubjectFacadeService;
+    private final AcademicCurriculumFacadeService obligatoryAcademicCurriculumFacadeService;
     private final ObligatorySubjectRepository obligatorySubjectRepository;
     private final ElectiveSubjectRepository electiveSubjectRepository;
     private final ObligatorySubjectMapper obligatorySubjectMapper;
     private final ElectiveSubjectMapper electiveSubjectMapper;
+    private final SubjectSeriesMapper subjectSeriesMapper;
+    private final SubjectSeriesRepository subjectSeriesRepository;
     private final Map<String, String> processStatus = new ConcurrentHashMap<>();
 
     @Autowired
-    public SubjectPreloadServiceImpl(@Qualifier("SubjectFacadeServiceImpl") SubjectFacadeService obligatorySubjectFacadeService,
+    public SubjectPreloadServiceImpl(@Qualifier("AcademicCurriculumFacadeServiceImpl") AcademicCurriculumFacadeService obligatoryAcademicCurriculumFacadeService,
                                      ObligatorySubjectRepository obligatorySubjectRepository,
                                      ElectiveSubjectRepository electiveSubjectRepository,
                                      ObligatorySubjectMapper obligatorySubjectMapper,
-                                     ElectiveSubjectMapper electiveSubjectMapper) {
-        this.obligatorySubjectFacadeService = obligatorySubjectFacadeService;
+                                     ElectiveSubjectMapper electiveSubjectMapper, SubjectSeriesMapper subjectSeriesMapper, SubjectSeriesRepository subjectSeriesRepository) {
+        this.obligatoryAcademicCurriculumFacadeService = obligatoryAcademicCurriculumFacadeService;
         this.obligatorySubjectRepository = obligatorySubjectRepository;
         this.electiveSubjectRepository = electiveSubjectRepository;
         this.obligatorySubjectMapper = obligatorySubjectMapper;
         this.electiveSubjectMapper = electiveSubjectMapper;
+        this.subjectSeriesMapper = subjectSeriesMapper;
+        this.subjectSeriesRepository = subjectSeriesRepository;
     }
 
     @Override
@@ -68,15 +76,16 @@ public class SubjectPreloadServiceImpl implements PreloadDataService<Subject> {
         try {
             List<ObligatorySubject> obligatorySubjects = getAllObligatorySubjects(pageSize);
             List<ElectiveSubject> electiveSubjects = getAllElectiveSubjects(pageSize);
+            List<SubjectSeries> subjectSeries = getAllSubjectsSerialization(pageSize);
 
-            saveSubjects(obligatorySubjects, electiveSubjects);
+            saveSubjects(obligatorySubjects, electiveSubjects, subjectSeries);
             processStatus.put(processId, "Completed");
 
-            log.info("Preloaded {} schedules into enrollment-service", obligatorySubjects.size() + electiveSubjects.size());
+            log.info("Preloaded {} subjects into enrollment-service", obligatorySubjects.size() + electiveSubjects.size());
         } catch (Exception e) {
             processStatus.put(processId, "Failed");
 
-            log.error("Failed to preload schedules: {}", e.getMessage());
+            log.error("Failed to preload subjects: {}", e.getMessage());
         }
     }
 
@@ -91,11 +100,32 @@ public class SubjectPreloadServiceImpl implements PreloadDataService<Subject> {
         List<ObligatorySubject> allSubjects = new ArrayList<>();
 
         while (hasMorePages) {
-            CustomPage<ObligatorySubjectDTO> obligatorySubjectPage = obligatorySubjectFacadeService.getObligatorySubjectsPageable(page, pageSize);
+            CustomPage<ObligatorySubjectDTO> obligatorySubjectPage = obligatoryAcademicCurriculumFacadeService.getObligatorySubjectsPageable(page, pageSize);
 
             List<ObligatorySubject> obligatorySubjects = obligatorySubjectPage.getContent()
                     .stream()
                     .map(obligatorySubjectMapper::dtoToEntity)
+                    .toList();
+            allSubjects.addAll(obligatorySubjects);
+
+            hasMorePages = obligatorySubjectPage.hasNext();
+            page++;
+        }
+
+        return allSubjects;
+    }
+
+    private List<SubjectSeries> getAllSubjectsSerialization(int pageSize)  {
+        int page = 0;
+        boolean hasMorePages = true;
+        List<SubjectSeries> allSubjects = new ArrayList<>();
+
+        while (hasMorePages) {
+            CustomPage<SubjectSeriesDTO> obligatorySubjectPage = obligatoryAcademicCurriculumFacadeService.getSubjectSeriesPageable(page, pageSize);
+
+            List<SubjectSeries> obligatorySubjects = obligatorySubjectPage.getContent()
+                    .stream()
+                    .map(subjectSeriesMapper::dtoToEntity)
                     .toList();
             allSubjects.addAll(obligatorySubjects);
 
@@ -112,7 +142,7 @@ public class SubjectPreloadServiceImpl implements PreloadDataService<Subject> {
         List<ElectiveSubject> allSubjects = new ArrayList<>();
 
         while (hasMorePages) {
-            CustomPage<ElectiveSubjectDTO> obligatorySubjectPage = obligatorySubjectFacadeService.getElectiveSubjectsPageable(page, pageSize);
+            CustomPage<ElectiveSubjectDTO> obligatorySubjectPage = obligatoryAcademicCurriculumFacadeService.getElectiveSubjectsPageable(page, pageSize);
 
             List<ElectiveSubject> obligatorySubjects = obligatorySubjectPage.getContent()
                     .stream()
@@ -127,11 +157,13 @@ public class SubjectPreloadServiceImpl implements PreloadDataService<Subject> {
         return allSubjects;
     }
 
-    private void saveSubjects(List<ObligatorySubject> obligatorySubjects, List<ElectiveSubject> electiveSubjects) {
+    private void saveSubjects(List<ObligatorySubject> obligatorySubjects, List<ElectiveSubject> electiveSubjects, List<SubjectSeries> subjectSeries) {
         obligatorySubjectRepository.deleteAll();
         electiveSubjectRepository.deleteAll();
+        subjectSeriesRepository.deleteAll();
 
         obligatorySubjectRepository.saveAll(obligatorySubjects);
         electiveSubjectRepository.saveAll(electiveSubjects);
+        subjectSeriesRepository.saveAll(subjectSeries);
     }
 }

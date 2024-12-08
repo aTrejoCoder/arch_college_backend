@@ -4,7 +4,6 @@ import microservice.teacher_service.DTOs.TeacherInsertDTO;
 
 public interface TeacherCommandService {
     void createTeacher(TeacherInsertDTO teacherInsertDTO);
-    void updateTeacher(TeacherInsertDTO teacherInsertDTO, Long studentId);
     void deleteTeacher(Long studentId);
 
     boolean validateExistingTeacher(String teacherAccountNumber);

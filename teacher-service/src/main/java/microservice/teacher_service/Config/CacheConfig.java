@@ -19,7 +19,8 @@ public class CacheConfig {
                 "teacherById",
                 "teachersByAccountNumber",
                 "teachersByLastname",
-                "teacherByAccountNumber"
+                "teacherByAccountNumber",
+                "teachersCache"
         );        cacheManager.setCaffeine(Caffeine.newBuilder()
                 .maximumSize(100)
                 .expireAfterAccess(1, TimeUnit.DAYS));

@@ -4,8 +4,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import microservice.common_classes.DTOs.Group.GroupDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
-import microservice.schedule_service.Service.GroupServices.GroupDeleteServiceImpl;
-import microservice.schedule_service.Service.GroupServices.GroupFinderService;
+import microservice.schedule_service.Service.GroupServices.Implementation.GroupDeleteServiceImpl;
+import microservice.schedule_service.Service.GroupServices.Implementation.GroupFinderServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class GroupDeletionController {
 
     private final GroupDeleteServiceImpl groupDeleteService;
-    private final GroupFinderService groupFinderService;
+    private final GroupFinderServiceImpl groupFinderServiceImpl;
 
     @Operation(
             summary = "Remove Teacher from Group",

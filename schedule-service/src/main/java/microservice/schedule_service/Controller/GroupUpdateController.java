@@ -9,9 +9,9 @@ import microservice.common_classes.DTOs.Group.GroupDTO;
 import microservice.common_classes.DTOs.Group.GroupScheduleUpdateDTO;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
 import microservice.common_classes.Utils.Response.Result;
-import microservice.schedule_service.Service.GroupServices.GroupFinderService;
-import microservice.schedule_service.Service.GroupServices.GroupSpotsService;
-import microservice.schedule_service.Service.GroupServices.GroupUpdateServiceImpl;
+import microservice.schedule_service.Service.GroupServices.Implementation.GroupFinderServiceImpl;
+import microservice.schedule_service.Service.GroupServices.Implementation.GroupSpotsService;
+import microservice.schedule_service.Service.GroupServices.Implementation.GroupUpdateServiceImpl;
 import microservice.schedule_service.Service.ScheduleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class GroupUpdateController {
     private final ScheduleService scheduleService;
     private final GroupUpdateServiceImpl groupUpdateService;
     private final GroupSpotsService groupSpotsService;
-    private final GroupFinderService groupFinderService;
+    private final GroupFinderServiceImpl groupFinderServiceImpl;
 
     @Operation(summary = "Update Schedule Group", description = "Update the schedule of an existing group with specified details")
     @ApiResponse(responseCode = "200", description = "Group schedule updated successfully")
@@ -50,7 +50,7 @@ public class GroupUpdateController {
     @PutMapping("/{key}/add-teacher/{teacherId}")
     public ResponseEntity<ResponseWrapper<GroupDTO>> addTeacherToGroup(@Valid @PathVariable String key,
                                                                        @PathVariable Long teacherId) {
-        Result<GroupDTO> groupResult = groupFinderService.getGroupCurrentByKey(key);
+        Result<GroupDTO> groupResult = groupFinderServiceImpl.getCurrentGroupByKey(key);
         if (!groupResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound(groupResult.getErrorMessage()));
         }
@@ -74,9 +74,9 @@ public class GroupUpdateController {
     @ApiResponse(responseCode = "200", description = "Group spots increased successfully")
     @ApiResponse(responseCode = "404", description = "Group not found")
     @ApiResponse(responseCode = "400", description = "Invalid spot increase request")
-    @PutMapping("/{key}/add_spots/{spotsToAdd}")
-    public ResponseEntity<ResponseWrapper<GroupDTO>> increaseGroupSpotsByKey(@Valid @PathVariable String key, @PathVariable int spotsToAdd) {
-        Result<GroupDTO> groupResult = groupFinderService.getGroupCurrentByKey(key);
+    @PutMapping("/{groupId}/add_spots/{spotsToAdd}")
+    public ResponseEntity<ResponseWrapper<GroupDTO>> increaseGroupSpotsByKey(@Valid @PathVariable Long groupId, @PathVariable int spotsToAdd) {
+        Result<GroupDTO> groupResult = groupFinderServiceImpl.getGroupById(groupId);
         if (!groupResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ResponseWrapper.notFound(groupResult.getErrorMessage()));
         }
@@ -86,7 +86,7 @@ public class GroupUpdateController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(validationResult.getErrorMessage()));
         }
 
-        GroupDTO groupDTO = groupSpotsService.addSpots(key, spotsToAdd);
+        GroupDTO groupDTO = groupSpotsService.addSpots(groupId, spotsToAdd);
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.ok(groupDTO, "Spots Successfully increased"));
     }
@@ -94,11 +94,11 @@ public class GroupUpdateController {
     @Operation(summary = "Decrease Group Spot", description = "Decrease one available spot in a specific group")
     @ApiResponse(responseCode = "200", description = "Spot decreased successfully")
     @ApiResponse(responseCode = "400", description = "Invalid spot decrease request")
-    @PutMapping("/{groupKey}/decrease-spot")
-    public ResponseEntity<ResponseWrapper<Void>> decreaseGroupSpotsByKey(@Valid @PathVariable String groupKey) {
-        Result<Void> validationResult = groupSpotsService.decreaseSpot(groupKey);
+    @PutMapping("/{groupId}/decrease-spot")
+    public ResponseEntity<ResponseWrapper<Void>> decreaseGroupSpot(@Valid @PathVariable Long groupId) {
+        Result<Void> validationResult = groupSpotsService.decreaseSpot(groupId);
         if (!validationResult.isSuccess()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(validationResult.getErrorMessage()));
+            return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.badRequest(validationResult.getErrorMessage()));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.ok("Spot Successfully decreased"));
@@ -106,9 +106,9 @@ public class GroupUpdateController {
 
     @Operation(summary = "Increase Group Spot", description = "Increase one available spot in a specific group")
     @ApiResponse(responseCode = "200", description = "Spot increased successfully")
-    @PutMapping("/{groupKey}/increase-spot")
-    public ResponseEntity<ResponseWrapper<Void>> increaseGroupSpotsByKey(@Valid @PathVariable String groupKey) {
-        groupSpotsService.increaseSpot(groupKey);
+    @PutMapping("/{groupId}/increase-spot")
+    public ResponseEntity<ResponseWrapper<Void>> increaseGroupSpot(@Valid @PathVariable Long groupId) {
+        groupSpotsService.increaseSpot(groupId);
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseWrapper.ok("Spot Successfully increased"));
     }

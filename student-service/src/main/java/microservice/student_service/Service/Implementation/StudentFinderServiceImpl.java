@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.Utils.Response.Result;
-import microservice.common_classes.Utils.Schedule.SemesterData;
+import microservice.common_classes.Utils.Schedule.AcademicData;
 import microservice.common_classes.Utils.Student.StudentFilter;
 import microservice.student_service.Mappers.StudentMapper;
 import microservice.student_service.Model.Student;
@@ -25,7 +25,7 @@ import java.util.Optional;
 public class StudentFinderServiceImpl implements StudentFinderService {
     private final StudentRepository studentRepository;
     private final StudentMapper studentMapper;
-    private final String currentGenerationIncome =  SemesterData.getCurrentSchoolPeriod();
+    private final String currentGenerationIncome =  AcademicData.getCurrentSchoolPeriod();
 
     @Override
     @Cacheable(value = "studentById", key = "#studentId")

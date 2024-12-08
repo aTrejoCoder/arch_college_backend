@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 		"microservice.common_classes.JWT",
 		"microservice.schedule_service",
 		"microservice.common_classes.FacadeService.Teacher",
-		"microservice.common_classes.FacadeService.Subject"})
+		"microservice.common_classes.FacadeService.AcademicCurriculumService"})
 public class ScheduleServiceApplication {
 
 	public static void main(String[] args) {

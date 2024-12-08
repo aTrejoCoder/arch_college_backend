@@ -33,19 +33,6 @@ public class TeacherCommandController {
         return ResponseEntity.ok(ResponseWrapper.ok(null, "Teacher successfully created"));
     }
 
-    @Operation(summary = "Update teacher data", description = "Updates the personal data of an existing teacher.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Teacher successfully updated"),
-            @ApiResponse(responseCode = "404", description = "Teacher not found")
-    })
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{teacherId}")
-    public ResponseEntity<ResponseWrapper<Void>> updatePersonalTeacherData(@Valid @RequestBody TeacherInsertDTO teacherInsertDTO,
-                                                                           @PathVariable Long teacherId) {
-        teacherCommandService.updateTeacher(teacherInsertDTO, teacherId);
-        return ResponseEntity.ok(ResponseWrapper.ok(null, "Teacher successfully updated"));
-    }
-
     @Operation(summary = "Delete teacher by ID", description = "Deletes a teacher by their ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Teacher successfully deleted"),

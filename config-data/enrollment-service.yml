@@ -53,3 +53,7 @@ springdoc:
 
 server:
   port: 8086
+
+logging:
+  level:
+    org.springframework.data.mongodb.core: DEBUG

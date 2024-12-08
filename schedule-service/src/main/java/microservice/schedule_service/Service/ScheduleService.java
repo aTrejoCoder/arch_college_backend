@@ -1,8 +1,9 @@
 package microservice.schedule_service.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Group.ScheduleDTO;
 import microservice.common_classes.Utils.Response.Result;
-import microservice.common_classes.Utils.Schedule.SemesterData;
+import microservice.common_classes.Utils.Schedule.AcademicData;
 import microservice.schedule_service.Models.Group;
 import microservice.schedule_service.Models.Schedule;
 import microservice.schedule_service.Repository.GroupRepository;
@@ -18,11 +19,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 @Service
+@Slf4j
 public class ScheduleService {
 
     private final GroupRepository groupRepository;
     private final ScheduleRepository scheduleRepository;
-    private final String currentSemester = SemesterData.getCurrentSchoolPeriod();
+    private final String currentSemester = AcademicData.getCurrentSchoolPeriod();
 
     @Autowired
     public ScheduleService(GroupRepository groupRepository, ScheduleRepository scheduleRepository) {

@@ -1,9 +1,11 @@
 package microservice.schedule_service.Models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import microservice.common_classes.Utils.Group.GroupStatus;
+import microservice.common_classes.Utils.Group.GroupType;
 import microservice.common_classes.Utils.SubjectType;
 
 import java.time.LocalDateTime;
@@ -51,6 +53,9 @@ public class Group {
     @Column(name = "classroom")
     private String classroom;
 
+    @Column(name = "head_teacher_account_number")
+    private String headTeacherAccountNumber;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -91,7 +96,6 @@ public class Group {
         this.updatedAt = LocalDateTime.now();
     }
 
-    
     public void increaseSpots(int spotsToAdd) {
         this.availableSpots += spotsToAdd;
         this.totalSpots += spotsToAdd;
@@ -106,6 +110,17 @@ public class Group {
             throw new RuntimeException("Can't increase available spots above of total spots");
         }
         this.availableSpots++;
+    }
+
+    public void setHeadTeacherFromTeachers(Long teacherId) {
+        if (teacherId != null && !this.getTeachers().isEmpty()) {
+            Teacher headTeacher = this.getTeachers().stream()
+                    .filter(teacher -> teacher.getTeacherId().equals(teacherId))
+                    .findAny()
+                    .orElseThrow(() -> new RuntimeException("Request Head Teacher is not in Teacher list"));
+
+            this.headTeacherAccountNumber = headTeacher.getAccountNumber();
+        }
     }
 
     @PreUpdate

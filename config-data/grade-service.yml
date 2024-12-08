@@ -18,7 +18,7 @@ spring:
         url: http://localhost:8081
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/architecture_college_db
+    url: jdbc:postgresql://localhost:5432/architecture_college_grades_db
     username: alexistrejo
     password: vladilena
     driver-class-name: org.postgresql.Driver
@@ -59,3 +59,14 @@ springdoc:
 
 server:
   port: 8089
+
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE

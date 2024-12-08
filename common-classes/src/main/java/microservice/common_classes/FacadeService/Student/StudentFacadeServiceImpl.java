@@ -125,7 +125,7 @@ public class StudentFacadeServiceImpl implements StudentFacadeService {
 
     @Override
     public CustomPage<StudentDTO> getStudentsPageable(int page, int pageSize) {
-        String baseUrl = studentServiceUrlProvider.get() + "/v1/api/students/current/pageable";
+        String baseUrl = studentServiceUrlProvider.get() + "/v1/api/students/all";
         String url = String.format("%s?page=%d&size=%d", baseUrl, page, pageSize);
 
         HttpHeaders headers = createHeaders();

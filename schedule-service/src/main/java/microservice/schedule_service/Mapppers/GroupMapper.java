@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {TeacherMapper.class})
 public interface GroupMapper {
 
     @Mapping(target = "id", ignore = true)
@@ -34,6 +34,7 @@ public interface GroupMapper {
     @Mapping(target = "schoolPeriod", ignore = true)
     void updateDto(@MappingTarget Group group,  ObligatoryGroupInsertDTO OBligatoryGroupInsertDTO);
 
+    @Mapping(target = "teachers", source = "teachers")
     GroupDTO entityToDTO(Group group);
 
 

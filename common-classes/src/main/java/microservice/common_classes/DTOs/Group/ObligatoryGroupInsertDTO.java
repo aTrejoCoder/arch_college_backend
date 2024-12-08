@@ -26,6 +26,10 @@ public class ObligatoryGroupInsertDTO {
     @NotNull(message = "teacher_ids can't be null")
     private Set<Long> teacherIds = new HashSet<>();
 
+    @JsonProperty("head_teacher_id")
+    @Positive(message = "head_teacher_id can't be negative")
+    private Long headTeacherId;
+
     @JsonProperty("total_spots")
     @NotNull(message = "total_spots can't be null")
     @Positive(message = "total_spots can't be negative")

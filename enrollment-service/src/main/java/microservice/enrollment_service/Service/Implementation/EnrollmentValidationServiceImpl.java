@@ -2,14 +2,15 @@ package microservice.enrollment_service.Service.Implementation;
 
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Enrollment.EnrollmentInsertDTO;
-import microservice.common_classes.DTOs.Grade.GradeDTO;
-import microservice.common_classes.DTOs.Student.StudentDTO;
-import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
-import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
 import microservice.common_classes.Utils.ProfessionalLineModality;
 import microservice.common_classes.Utils.Response.Result;
-import microservice.common_classes.Utils.Schedule.SemesterData;
-import microservice.enrollment_service.DTOs.EnrollmentRelationshipDTO;
+import microservice.common_classes.Utils.Schedule.AcademicData;
+import microservice.common_classes.Utils.SubjectType;
+import microservice.enrollment_service.DTOs.EnrollmentRelationship;
+import microservice.enrollment_service.Model.Preload.ElectiveSubject;
+import microservice.enrollment_service.Model.Preload.Grade;
+import microservice.enrollment_service.Model.Preload.ObligatorySubject;
+import microservice.enrollment_service.Model.Preload.Student;
 import microservice.enrollment_service.Model.Enrollment;
 import microservice.enrollment_service.Repository.EnrollmentRepository;
 import microservice.enrollment_service.Service.EnrollmentValidationService;
@@ -24,46 +25,48 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
     private static final String ERROR_ELECTIVES_COMPLETED = "You have already completed all your elective subjects. Enrollment in additional electives is not allowed.";
     private static final String ERROR_FREE_ELECTIVES_LIMIT = "You have reached the limit for free electives from other professional lines. You can only enroll in electives from your professional line.";
     private final EnrollmentRepository enrollmentRepository;
-    private final String schoolPeriod = SemesterData.getCurrentSchoolPeriod();
+    private final String schoolPeriod = AcademicData.getCurrentSchoolPeriod();
 
     public EnrollmentValidationServiceImpl(EnrollmentRepository enrollmentRepository) {
         this.enrollmentRepository = enrollmentRepository;
     }
 
-    public Result<Void> validateEnrollment(EnrollmentInsertDTO enrollmentInsertDTO, EnrollmentRelationshipDTO enrollmentRelationshipDTO, String accountNumber) {
-        List<Enrollment> groupEnrollments = enrollmentRepository.findByStudentAccountNumberAndEnrollmentPeriod(accountNumber, schoolPeriod);
+    public Result<Void> validateEnrollment(EnrollmentInsertDTO enrollmentInsert, EnrollmentRelationship enrollmentRelationship, String accountNumber) {
+        List<Enrollment> groupEnrollments = enrollmentRepository.findByStudentAccountNumberAndSchoolPeriod(accountNumber, schoolPeriod);
 
-        Result<Void> notDuplicatedResult = validateNotDuplicatedEnrollment(enrollmentInsertDTO.getGroupKey(), groupEnrollments);
-        if (!notDuplicatedResult.isSuccess()) {
-            return Result.error(notDuplicatedResult.getErrorMessage());
-        }
-
-        Result<Void> validateSubjectResult = validateSubject(enrollmentRelationshipDTO);
-        if (!validateSubjectResult.isSuccess()) {
-            return Result.error(validateSubjectResult.getErrorMessage());
-        }
-
-        Result<Void> maxCreditsResult = validateMaximumCreditsPerStudent(accountNumber, enrollmentRelationshipDTO);
-        if (!maxCreditsResult.isSuccess()) {
-            return Result.error(maxCreditsResult.getErrorMessage());
-        }
-
-        Result<Void> gradeConflictResult = validateNotGradeConflict(enrollmentRelationshipDTO);
+        Result<Void> gradeConflictResult = validateNotGradeConflict(enrollmentRelationship);
         if (!gradeConflictResult.isSuccess()) {
             return Result.error(gradeConflictResult.getErrorMessage());
         }
 
+        Result<Void> notDuplicatedResult = validateNotDuplicatedEnrollment(enrollmentInsert.getGroupKey(), enrollmentInsert.getSubjectKey() ,groupEnrollments);
+        if (!notDuplicatedResult.isSuccess()) {
+            return Result.error(notDuplicatedResult.getErrorMessage());
+        }
+
+        Result<Void> validateSubjectResult = validateSubject(enrollmentRelationship);
+        if (!validateSubjectResult.isSuccess()) {
+            return Result.error(validateSubjectResult.getErrorMessage());
+        }
+
+        Result<Void> maxCreditsResult = validateMaximumCreditsPerStudent(accountNumber, enrollmentRelationship);
+        if (!maxCreditsResult.isSuccess()) {
+            return Result.error(maxCreditsResult.getErrorMessage());
+        }
+
+
         return Result.success();
     }
 
-    private Result<Void> validateNotGradeConflict(EnrollmentRelationshipDTO enrollmentRelationshipDTO) {
-         List<GradeDTO> studentGrades = enrollmentRelationshipDTO.getStudentGrades();
+    private Result<Void> validateNotGradeConflict(EnrollmentRelationship enrollmentRelationship) {
+         List<Grade> studentGrades = enrollmentRelationship.getStudentGrades();
 
-         if (enrollmentRelationshipDTO.getObligatorySubjectDTO() != null) {
-             List<GradeDTO> gradesPerSubject = studentGrades.stream()
-                     .filter(gradeDTO -> gradeDTO.getOrdinarySubjectId()
-                     .equals(enrollmentRelationshipDTO.getObligatorySubjectDTO().getId()))
-                     .toList();
+        if (enrollmentRelationship.getObligatorySubject() != null) {
+            List<Grade> gradesPerSubject = studentGrades.stream()
+                    .filter(grade -> grade.getSubjectId() != null
+                            && grade.getSubjectType() == SubjectType.OBLIGATORY
+                            && grade.getSubjectId().equals(enrollmentRelationship.getObligatorySubject().getId()))
+                    .toList();
 
              // Doesn't have grades for this subject, won't have conflicts
              if(gradesPerSubject.isEmpty()) {
@@ -73,7 +76,7 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
              int notApprovedCount = 0;
              for (var grade : gradesPerSubject) {
                  // Not Approved
-                 if (grade.getGradeValue() < 6) {
+                 if (!grade.isApproved()) {
                      notApprovedCount++;
                  } else {
                      // Approved
@@ -81,20 +84,18 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
                  }
              }
 
-             if (notApprovedCount >= 3) {
-                 return Result.error("This subject has been not approved more than twice. From now this subject can only be pass with an extraordinary exam");
+             if (notApprovedCount >= 2) {
+                 return Result.error("This subject has not been passed twice. From now on, it can only be completed through an extraordinary exam.");
              }
 
              return Result.success();
          }
 
-
-
         return Result.success();
     }
 
-    private Result<Void> validateMaximumCreditsPerStudent(String accountNumber, EnrollmentRelationshipDTO enrollmentRelationshipDTO) {
-        List<Enrollment> currentStudentEnrollments = enrollmentRepository.findByStudentAccountNumberAndEnrollmentPeriod(accountNumber, schoolPeriod);
+    private Result<Void> validateMaximumCreditsPerStudent(String accountNumber, EnrollmentRelationship enrollmentRelationship) {
+        List<Enrollment> currentStudentEnrollments = enrollmentRepository.findByStudentAccountNumberAndSchoolPeriod(accountNumber, schoolPeriod);
         int currentTotalCredits = 0;
 
         for (var studentEnrollment : currentStudentEnrollments) {
@@ -108,32 +109,39 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
         return Result.success();
     }
 
-    private Result<Void> validateNotDuplicatedEnrollment(String groupKey, List<Enrollment> groupEnrollments) {
-
+    private Result<Void> validateNotDuplicatedEnrollment(String groupKey, String subjectKey ,List<Enrollment> groupEnrollments) {
         Optional<Enrollment> optionalEnrollment = groupEnrollments.stream()
-                .filter(groupEnrollment -> groupEnrollment.getGroupKey().equals(groupKey))
+                .filter(groupEnrollment -> (groupEnrollment.getGroupKey().equals(groupKey) && groupEnrollment.getSubjectKey().equals(groupKey)))
                 .findAny();
 
         if (optionalEnrollment.isPresent()) {
             return Result.error("Enrollment Already Created");
         }
 
+        optionalEnrollment = groupEnrollments.stream()
+                .filter(groupEnrollment -> groupEnrollment.getSubjectKey().equals(subjectKey))
+                .findAny();
+
+        if (optionalEnrollment.isPresent()) {
+            return Result.error("Subject Already Enrolled");
+        }
+
         return Result.success();
     }
 
-    private Result<Void> validateSubject(EnrollmentRelationshipDTO enrollmentRelationshipDTO) {
-        if (enrollmentRelationshipDTO.getObligatorySubjectDTO() != null && enrollmentRelationshipDTO.getElectiveSubjectDTO() == null) {
-            return validateOrdinarySubject(enrollmentRelationshipDTO.getObligatorySubjectDTO(), enrollmentRelationshipDTO.getStudentDTO());
-        } else if (enrollmentRelationshipDTO.getObligatorySubjectDTO() == null && enrollmentRelationshipDTO.getElectiveSubjectDTO() != null) {
-            return validateElectiveSubject(enrollmentRelationshipDTO.getElectiveSubjectDTO(), enrollmentRelationshipDTO.getStudentDTO(), enrollmentRelationshipDTO.getStudentGrades());
+    private Result<Void> validateSubject(EnrollmentRelationship enrollmentRelationship) {
+        if (enrollmentRelationship.getObligatorySubject() != null && enrollmentRelationship.getElectiveSubject() == null) {
+            return validateOrdinarySubject(enrollmentRelationship.getObligatorySubject(), enrollmentRelationship.getStudent());
+        } else if (enrollmentRelationship.getObligatorySubject() == null && enrollmentRelationship.getElectiveSubject() != null) {
+            return validateElectiveSubject(enrollmentRelationship.getElectiveSubject(), enrollmentRelationship.getStudent(), enrollmentRelationship.getStudentGrades());
         } else {
             return Result.success();
         }
     }
 
-    private Result<Void> validateOrdinarySubject(ObligatorySubjectDTO ordinarySubjectDTO, StudentDTO studentDTO ) {
-        int semestersCompleted = studentDTO.getSemestersCompleted();
-        int subjectSemesterNumber = ordinarySubjectDTO.getSemester();
+    private Result<Void> validateOrdinarySubject(ObligatorySubject ordinarySubject, Student student ) {
+        int semestersCompleted = student.getSemestersCompleted();
+        int subjectSemesterNumber = ordinarySubject.getSemester();
 
         if (isSubjectInCurrentSemester(semestersCompleted, subjectSemesterNumber)
                 || isSubjectDelayed(semestersCompleted, subjectSemesterNumber)) {
@@ -148,10 +156,10 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
         return Result.success();
     }
 
-    private Result<Void> validateElectiveSubject(ElectiveSubjectDTO electiveSubjectDTO, StudentDTO studentDTO, List<GradeDTO> studentGrades) {
-        int semestersCompleted = studentDTO.getSemestersCompleted();
-        Long professionalLineId = studentDTO.getProfessionalLineId();
-        ProfessionalLineModality professionalLineModality = studentDTO.getProfessionalLineModality();
+    private Result<Void> validateElectiveSubject(ElectiveSubject electiveSubject, Student student, List<Grade> studentGrades) {
+        int semestersCompleted = student.getSemestersCompleted();
+        Long professionalLineId = student.getProfessionalLineId();
+        ProfessionalLineModality professionalLineModality = student.getProfessionalLineModality();
 
         if (!isStudentEligibleForElectives(semestersCompleted)) {
             return Result.error("Only students in 6th semester or above can enroll in elective subjects.");
@@ -166,24 +174,24 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
         }
 
         return switch (professionalLineModality) {
-            case ELECTIVES -> validateElectivesModality(studentDTO, electiveSubjectDTO, studentGrades);
-            case PROFESSIONAL_PRACTICES -> validateProfessionalPracticesModality(studentDTO, electiveSubjectDTO, studentGrades);
+            case ELECTIVES -> validateElectivesModality(student, electiveSubject, studentGrades);
+            case PROFESSIONAL_PRACTICES -> validateProfessionalPracticesModality(student, electiveSubject, studentGrades);
         };
     }
 
-    private Result<Void> validateElectivesModality(StudentDTO studentDTO, ElectiveSubjectDTO electiveSubjectDTO, List<GradeDTO> studentGrades) {
-        Map<String, List<GradeDTO>> classifiedGrades = classifyElectiveGrades(studentGrades, studentDTO.getProfessionalLineId());
+    private Result<Void> validateElectivesModality(Student student, ElectiveSubject electiveSubject, List<Grade> studentGrades) {
+        Map<String, List<Grade>> classifiedGrades = classifyElectiveGrades(studentGrades, student.getProfessionalLineId());
 
-        List<GradeDTO> gradesFromStudentProfessionalLine = classifiedGrades.get("professionalLine");
-        List<GradeDTO> gradesFromOtherProfessionalLines = classifiedGrades.get("freeElectives");
+        List<Grade> gradesFromStudentProfessionalLine = classifiedGrades.get("professionalLine");
+        List<Grade> gradesFromOtherProfessionalLines = classifiedGrades.get("freeElectives");
         int totalElectives = gradesFromStudentProfessionalLine.size() + gradesFromOtherProfessionalLines.size();
 
         if (totalElectives >= 8) {
             return Result.error(ERROR_ELECTIVES_COMPLETED);
         }
 
-        Long studentProfessionalLineId = studentDTO.getProfessionalLineId();
-        Long electiveSubjectProfessionalLineId = electiveSubjectDTO.getProfessionalLineId();
+        Long studentProfessionalLineId = student.getProfessionalLineId();
+        Long electiveSubjectProfessionalLineId = electiveSubject.getProfessionalLineId();
 
         if (studentProfessionalLineId.equals(electiveSubjectProfessionalLineId)) {
             return Result.success();
@@ -196,13 +204,13 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
         return Result.success();
     }
 
-    private Result<Void> validateProfessionalPracticesModality(StudentDTO studentDTO, ElectiveSubjectDTO electiveSubjectDTO, List<GradeDTO> studentGrades) {
-        if (!Objects.equals(electiveSubjectDTO.getProfessionalLineId(), studentDTO.getProfessionalLineId())) {
+    private Result<Void> validateProfessionalPracticesModality(Student student, ElectiveSubject electiveSubject, List<Grade> studentGrades) {
+        if (!Objects.equals(electiveSubject.getProfessionalLineId(), student.getProfessionalLineId())) {
             return Result.error("You can only enroll in elective subjects from your professional line.");
         }
 
-        List<GradeDTO> studentElectiveGrades = studentGrades.stream()
-                .filter(gradeDTO -> gradeDTO.getElectiveSubjectId() != null)
+        List<Grade> studentElectiveGrades = studentGrades.stream()
+                .filter(grade -> (grade.getSubjectId() != null && grade.getSubjectType() == SubjectType.ELECTIVE))
                 .toList();
 
         if (studentElectiveGrades.size() >= 4) {
@@ -229,14 +237,15 @@ public class EnrollmentValidationServiceImpl implements EnrollmentValidationServ
         return (subjectSemesterNumber - semestersCompleted) > 2;
     }
 
-    private Map<String, List<GradeDTO>> classifyElectiveGrades(List<GradeDTO> studentGrades, Long professionalLineId) {
-        List<GradeDTO> professionalLineGrades = studentGrades.stream()
-                .filter(gradeDTO -> gradeDTO.getElectiveSubjectId() != null && gradeDTO.getProfessionalLineId().equals(professionalLineId))
+    private Map<String, List<Grade>> classifyElectiveGrades(List<Grade> studentGrades, Long professionalLineId) {
+        List<Grade> professionalLineGrades = studentGrades.stream()
+                .filter(grade ->(grade.getSubjectId() != null && grade.getSubjectType() == SubjectType.ELECTIVE) && grade.getProfessionalLineId().equals(professionalLineId))
                 .toList();
 
-        List<GradeDTO> freeElectiveGrades = studentGrades.stream()
-                .filter(gradeDTO -> gradeDTO.getElectiveSubjectId() != null && !gradeDTO.getProfessionalLineId().equals(professionalLineId))
+        List<Grade> freeElectiveGrades = studentGrades.stream()
+                .filter(grade -> (grade.getSubjectId() != null && grade.getSubjectType() == SubjectType.ELECTIVE)  && !grade.getProfessionalLineId().equals(professionalLineId))
                 .toList();
+
 
         return Map.of(
                 "professionalLine", professionalLineGrades,

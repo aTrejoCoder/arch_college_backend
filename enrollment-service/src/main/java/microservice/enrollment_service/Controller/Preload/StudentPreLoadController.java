@@ -18,19 +18,19 @@ import java.util.UUID;
 public class StudentPreLoadController {
 
     @Autowired
-    private PreloadDataService<Student> groupPreloadDataService;
+    private PreloadDataService<Student> studentPreloadDataService;
 
     @PostMapping("/preload")
     public ResponseEntity<String> preloadAllStudents() {
         String processId = UUID.randomUUID().toString();
-        groupPreloadDataService.startPreload(processId);
+        studentPreloadDataService.startPreload(processId);
 
         return ResponseEntity.ok(processId);
     }
 
     @GetMapping("/preload/{processId}/status")
     public ResponseEntity<String> getProcessStatus(@PathVariable String processId) {
-        String status = groupPreloadDataService.getPreloadStatus(processId);
+        String status = studentPreloadDataService.getPreloadStatus(processId);
 
         if (status == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Process ID not found");
@@ -41,7 +41,7 @@ public class StudentPreLoadController {
 
     @DeleteMapping("/clear")
     public ResponseEntity<Void> clearStudents() {
-        groupPreloadDataService.clear();
+        studentPreloadDataService.clear();
 
         return ResponseEntity.ok().build();
     }

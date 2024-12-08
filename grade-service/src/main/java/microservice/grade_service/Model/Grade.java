@@ -2,10 +2,10 @@ package microservice.grade_service.Model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.common_classes.Utils.Grades.GradeStatus;
-import microservice.common_classes.Utils.SubjectType;
+import microservice.common_classes.Utils.Grades.GradeType;
 
 import java.time.LocalDateTime;
 
@@ -13,39 +13,41 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Table(name = "grades")
 public class Grade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "grade_value")
-    private int gradeValue;
-
-    @Column(name = "grade_status")
-    @Enumerated(EnumType.STRING)
-    private GradeStatus gradeStatus;
-
-    @Column(name = "subject_id", nullable = false)
-    private Long subjectId;
-
-    @Column(name = "subject_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private SubjectType subjectType;
-
-    @Column(name = "subject_name")
-    private String subjectName;
+    private Integer gradeValue;
 
     @Column(name = "student_account_number", nullable = false)
     private String studentAccountNumber;
 
-    @Column(name = "group_id", nullable = false)
-    private Long groupId;
+    @Column(name = "grade_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private GradeType gradeType;
+
+    @Column(name = "grade_result")
+    @Enumerated(EnumType.STRING)
+    private GradeResult gradeResult;
 
     @Column(name = "school_period", nullable = false)
     private String schoolPeriod;
 
-    @Column(name = "is_authorized", nullable = false)
-    private boolean isAuthorized;
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
+
+    @ManyToOne
+    @JoinColumn(name = "subject_id", nullable = false)
+    private Subject subject;
+
+    @Column(name = "grade_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private GradeStatus gradeStatus;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -59,47 +61,66 @@ public class Grade {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+    public enum GradeStatus {
+        PENDING_RESULT,
+        PENDING_VALIDATION,
+        VALIDATED,
+        NOT_VALID;
     }
 
-    public void setStatusAsPending() {
-        switch (this.gradeStatus) {
-            case NORMAL -> this.gradeStatus = GradeStatus.NORMAL_PENDING;
-            case ACCREDITED -> this.gradeStatus = GradeStatus.ACCREDITED_PENDING;
-            case  DID_NOT_PRESENT ->  this.gradeStatus = GradeStatus.DID_NOT_PRESENT_PENDING;
-        }
+    public enum GradeResult {
+        APPROVED,
+        NOT_APPROVED,
+        NOT_PRESENTED;
     }
 
-    public void removePendingStatus() {
-        switch (this.gradeStatus) {
-            case NORMAL_PENDING -> this.gradeStatus = GradeStatus.NORMAL;
-            case ACCREDITED_PENDING -> this.gradeStatus = GradeStatus.ACCREDITED;
-            case  DID_NOT_PRESENT_PENDING ->  this.gradeStatus = GradeStatus.DID_NOT_PRESENT;
-        }
+    public void setInitialValues(GradeType gradeType) {
+        this.gradeStatus = GradeStatus.PENDING_RESULT;
+        this.gradeType =  gradeType;
     }
 
     public void setAsDeleted() {
         this.deletedAt = LocalDateTime.now();
     }
 
-    public void setAsNotAuthorized() {
-        this.isAuthorized = false;
-    }
-
     public void setAsAuthorized() {
-        this.isAuthorized = true;
         this.authorizedAt = LocalDateTime.now();
+        this.gradeStatus = GradeStatus.VALIDATED;
     }
 
-    public boolean isGradeApproved() {
-        return this.gradeValue > 5 || this.gradeStatus == GradeStatus.ACCREDITED;
+    public void setAsNotPresent() {
+        this.gradeResult = GradeResult.NOT_PRESENTED;
+        this.gradeStatus = GradeStatus.PENDING_VALIDATION;
     }
 
-    public boolean isPending() {
-        return !this.isGradeApproved() || this.gradeStatus.isPendingStatus();
+    public void rate(int gradeValue) {
+        if (this.gradeStatus != GradeStatus.PENDING_RESULT) {
+            throw new IllegalStateException("Cannot rate a grade that is not in PENDING_RESULT status.");
+        }
+
+        if (this.deletedAt != null) {
+            throw new IllegalStateException("Cannot rate a deleted grade.");
+        }
+
+        if (gradeType == GradeType.CREDITABLE) {
+            this.gradeValue = gradeValue;
+        }
+
+        this.gradeResult = gradeValue > 5 ? GradeResult.APPROVED : GradeResult.NOT_APPROVED;
+        this.gradeStatus = GradeStatus.PENDING_VALIDATION;
+    }
+
+    public void setAsNotRated() {
+        this.gradeValue = null;
+        this.gradeResult = null;
+        this.gradeStatus = GradeStatus.PENDING_RESULT;
+        this.updatedAt = this.createdAt;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 }
 

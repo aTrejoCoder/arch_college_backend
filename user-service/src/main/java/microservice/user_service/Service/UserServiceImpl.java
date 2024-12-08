@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
             log.info("Student with ID({}) assigned to user ID({})", studentId, user.getId());
         } else {
            CompletableFuture<TeacherDTO> teacherFuture = teacherFacadeService.getTeacherByAccountNumber(username);
-           Long teacherId = teacherFuture.join().getTeacherId();
+           Long teacherId = teacherFuture.join().getId();
 
            user.setTeacherId(teacherId);
            userRepository.save(user);

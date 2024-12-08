@@ -7,7 +7,7 @@ import microservice.common_classes.FacadeService.Grade.GradeFacadeService;
 import microservice.common_classes.Utils.CustomPage;
 import microservice.enrollment_service.Mappers.GradeMapper;
 import microservice.enrollment_service.Model.Preload.Grade;
-import microservice.enrollment_service.Repository.GradRepository;
+import microservice.enrollment_service.Repository.GradeRepository;
 import microservice.enrollment_service.Service.PreloadDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,15 +24,15 @@ public class GradePreloadServiceImpl implements PreloadDataService<Grade> {
 
     private final GradeFacadeService gradeFacadeService;
     private final GradeMapper gradeMapper;
-    private final GradRepository gradRepository;
+    private final GradeRepository gradeRepository;
     private final Map<String, String> processStatus = new ConcurrentHashMap<>();
 
     @Autowired
     public GradePreloadServiceImpl(@Qualifier("GradeFacadeServiceImpl") GradeFacadeService gradeFacadeService,
-                                   GradeMapper gradeMapper, GradRepository gradRepository) {
+                                   GradeMapper gradeMapper, GradeRepository gradeRepository) {
         this.gradeFacadeService = gradeFacadeService;
         this.gradeMapper = gradeMapper;
-        this.gradRepository = gradRepository;
+        this.gradeRepository = gradeRepository;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class GradePreloadServiceImpl implements PreloadDataService<Grade> {
 
     @Override
     public void clear() {
-        gradRepository.deleteAll();
+        gradeRepository.deleteAll();
     }
 
     private List<Grade> getAllGrades(int pageSize)  {
@@ -92,7 +92,7 @@ public class GradePreloadServiceImpl implements PreloadDataService<Grade> {
     }
 
     private void saveGrades(List<Grade> grades) {
-        gradRepository.deleteAll();
-        gradRepository.saveAll(grades);
+        gradeRepository.deleteAll();
+        gradeRepository.saveAll(grades);
     }
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import microservice.grade_service.Utils.GradeTrack;
 import microservice.grade_service.Utils.Credits.CreditAdvance;
 import microservice.grade_service.Utils.Credits.ElectiveCredits;
 import microservice.grade_service.Utils.Credits.ObligatoryCredits;
@@ -47,7 +48,7 @@ public class AcademicHistory {
     private String incomeGeneration;
 
     @JsonProperty("grades")
-    private List<GradeNamed> grades;
+    private List<GradeTrack> grades;
 
     public void initCreditAdvance(int totalObligatoryCredits, int totalElectiveCredits) {
         int totalCareerCredits = totalElectiveCredits + totalObligatoryCredits;
@@ -61,7 +62,7 @@ public class AcademicHistory {
 
     public void reCalculateAverage() {
         double newAcademicAverage = this.grades.stream()
-                .mapToDouble(GradeNamed::getGradeValue)
+                .mapToDouble(GradeTrack::getGradeValue)
                 .average()
                 .orElse(0.0);
 

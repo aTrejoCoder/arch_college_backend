@@ -52,7 +52,7 @@ public class SchedulePreloadServiceImpl implements PreloadDataService<Group> {
         processStatus.put(processId, "Processing");
 
         try {
-            List<Group> allGroups = getAllGroups(pageSize);
+            List<Group> allGroups = getCurrentSchoolPeriodGroups(pageSize);
 
             saveGroups(allGroups);
             processStatus.put(processId, "Completed");
@@ -70,13 +70,13 @@ public class SchedulePreloadServiceImpl implements PreloadDataService<Group> {
         groupRepository.deleteAll();
     }
 
-    private List<Group> getAllGroups(int pageSize)  {
+    private List<Group> getCurrentSchoolPeriodGroups(int pageSize)  {
         int page = 0;
         boolean hasMorePages = true;
         List<Group> allGroups = new ArrayList<>();
 
         while (hasMorePages) {
-            CustomPage<GroupDTO> groupPage = groupFacadeService.getGroupsPageable(page, pageSize);
+            CustomPage<GroupDTO> groupPage = groupFacadeService.getCurrentGroups(page, pageSize);
             List<Group> groups = groupPage.getContent().stream()
                     .map(groupMapper::dtoToEntity)
                     .toList();

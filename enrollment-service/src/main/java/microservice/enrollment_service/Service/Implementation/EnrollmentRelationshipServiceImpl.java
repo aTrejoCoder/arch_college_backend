@@ -1,5 +1,7 @@
 package microservice.enrollment_service.Service.Implementation;
 
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Enrollment.EnrollmentInsertDTO;
 import microservice.common_classes.DTOs.Grade.GradeDTO;
@@ -7,75 +9,77 @@ import microservice.common_classes.DTOs.Group.GroupDTO;
 import microservice.common_classes.DTOs.Student.StudentDTO;
 import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
 import microservice.common_classes.DTOs.Subject.ObligatorySubjectDTO;
+import microservice.common_classes.FacadeService.AcademicCurriculumService.AcademicCurriculumFacadeService;
 import microservice.common_classes.FacadeService.Grade.GradeFacadeService;
 import microservice.common_classes.FacadeService.Group.GroupFacadeService;
 import microservice.common_classes.FacadeService.Student.StudentFacadeService;
-import microservice.common_classes.FacadeService.Subject.SubjectFacadeService;
 import microservice.common_classes.Utils.Response.Result;
 import microservice.common_classes.Utils.SubjectType;
-import microservice.enrollment_service.DTOs.EnrollmentRelationshipDTO;
+import microservice.enrollment_service.DTOs.EnrollmentRelationship;
+import microservice.enrollment_service.Model.Preload.*;
+import microservice.enrollment_service.Repository.*;
 import microservice.enrollment_service.Service.EnrollmentRelationshipService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class EnrollmentRelationshipServiceImpl implements EnrollmentRelationshipService {
-    public final StudentFacadeService studentFacadeService;
+
+    public final GradeRepository gradeRepository;
+    public final StudentRepository studentRepository;
+    public final ObligatorySubjectRepository obligatorySubjectRepository;
+    public final ElectiveSubjectRepository electiveSubjectRepository;
+    public final GroupRepository groupRepository;
     public final GroupFacadeService groupFacadeService;
-    public final GradeFacadeService gradeFacadeService;
-    public final SubjectFacadeService subjectFacadeService;
 
-    public EnrollmentRelationshipServiceImpl(@Qualifier("StudentFacadeServiceImpl") StudentFacadeService studentFacadeService,
-                                             @Qualifier("GroupFacadeServiceImpl") GroupFacadeService groupFacadeService,
-                                             @Qualifier("GradeFacadeServiceImpl") GradeFacadeService gradeFacadeService,
-                                             @Qualifier("SubjectFacadeServiceImpl") SubjectFacadeService subjectFacadeService) {
-        this.studentFacadeService = studentFacadeService;
-        this.groupFacadeService = groupFacadeService;
-        this.gradeFacadeService = gradeFacadeService;
-        this.subjectFacadeService = subjectFacadeService;
-    }
-
-    public Result<EnrollmentRelationshipDTO> validateAndGetRelationships(EnrollmentInsertDTO enrollmentInsertDTO, String studentAccountNumber) {
-        CompletableFuture<StudentDTO> studentFuture = studentFacadeService.getStudentByAccountNumberAsync(studentAccountNumber);
-        CompletableFuture<GroupDTO> groupFuture = groupFacadeService.getCurrentGroupByKey(enrollmentInsertDTO.getGroupKey());
-        CompletableFuture<List<GradeDTO>> studentGradeFuture = gradeFacadeService.getGradesByStudentAccountNumber(studentAccountNumber);
-
-        return CompletableFuture.allOf(studentFuture, groupFuture, studentGradeFuture).thenApply(v -> {
-            StudentDTO studentDTO = studentFuture.join();
-            GroupDTO groupDTO = groupFuture.join();
-            List<GradeDTO> studentGrades = studentGradeFuture.join();
-
-            if(studentDTO == null) {
-                return Result.<EnrollmentRelationshipDTO>error("Can't bring Student");
-            }
-
-            if(groupDTO == null) {
-                return Result.<EnrollmentRelationshipDTO>error("Invalid Group");
-            }
-
-            if (studentGrades == null) {
-                studentGrades = new ArrayList<>();
-            }
-
-            if (groupDTO.getSubjectType() == SubjectType.ELECTIVE) {
-                ElectiveSubjectDTO electiveSubjectDTO = subjectFacadeService.getElectiveSubjectById(groupDTO.getSubjectId()).join();
-                return Result.success(new EnrollmentRelationshipDTO(studentDTO,groupDTO, electiveSubjectDTO, studentGrades));
-            } else  {
-                ObligatorySubjectDTO ordinarySubjectDTO = subjectFacadeService.getOrdinarySubjectById(groupDTO.getSubjectId()).join();
-                return Result.success(new EnrollmentRelationshipDTO(studentDTO, groupDTO, ordinarySubjectDTO, studentGrades));
-            }
-
-        }).join();
+    public Result<Group> validateExistingGroup(EnrollmentInsertDTO enrollmentInsertDTO) {
+        Optional<Group> optionalGroup = groupRepository.findByGroupKeyAndSubjectKey(enrollmentInsertDTO.getGroupKey(), enrollmentInsertDTO.getSubjectKey());
+        return optionalGroup.map(Result::success)
+                .orElseGet(() -> Result.error("Invalid Keys Provided"));
     }
 
     @Override
-    public Result<Void> takeSpot(String groupKey) {
-       Result<Void> spotResult = groupFacadeService.takeSpot(groupKey).join();
+    public EnrollmentRelationship getRelationshipData(Group group, String accountNumber) {
+        EnrollmentRelationship enrollmentRelationship = new EnrollmentRelationship();
+        Student student = studentRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new RuntimeException("Student Not Found"));
+
+        List<Grade> studentGrades = gradeRepository.findByStudentAccountNumber(accountNumber);
+
+        if (group.getSubjectType() == SubjectType.OBLIGATORY) {
+            Optional<ObligatorySubject> subjectOptional = obligatorySubjectRepository.findByKey(group.getSubjectKey());
+            if (subjectOptional.isEmpty()) {
+                throw new RuntimeException("Subject Not Found for key: " + group.getSubjectKey());
+            }
+
+            enrollmentRelationship.setObligatorySubject(subjectOptional.get());
+        } else {
+            Optional<ElectiveSubject> subjectOptional = electiveSubjectRepository.findByKey(group.getGroupKey());
+            if (subjectOptional.isEmpty()) {
+                throw new RuntimeException("Subject Not Found for key: " + group.getSubjectKey());
+            }
+
+            enrollmentRelationship.setElectiveSubject(subjectOptional.get());
+        }
+
+        enrollmentRelationship.setStudent(student);
+        enrollmentRelationship.setGroup(group);
+        enrollmentRelationship.setStudentGrades(studentGrades);
+
+        return enrollmentRelationship;
+    }
+
+    @Override
+    public Result<Void> takeSpot(Long groupId) {
+       Result<Void> spotResult = groupFacadeService.takeSpot(groupId).join();
        if (!spotResult.isSuccess()) {
            return Result.error(spotResult.getErrorMessage());
        }

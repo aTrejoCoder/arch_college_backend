@@ -15,7 +15,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class GroupDTO {
+public class    GroupDTO {
     @JsonProperty("id")
     private Long id;
 
@@ -40,9 +40,12 @@ public class GroupDTO {
     @JsonProperty("status")
     private GroupStatus groupStatus;
 
+    @JsonProperty("head_teacher_accountNumber")
+    private String headTeacherAccountNumber;
+
     @JsonProperty("group_type")
     @Enumerated(EnumType.STRING)
-    private GroupType groupType;
+    private GroupType groupType =  GroupType.ORDINAL;
 
     @JsonProperty("schedule")
     private List<ScheduleDTO> schedule;
@@ -50,5 +53,5 @@ public class GroupDTO {
     @JsonProperty("classroom")
     private String classroom;
 
-    private List<TeacherNameDTO> teacherDTOS = new ArrayList<>();
+    private List<TeacherNameDTO> teachers = new ArrayList<>();
 }

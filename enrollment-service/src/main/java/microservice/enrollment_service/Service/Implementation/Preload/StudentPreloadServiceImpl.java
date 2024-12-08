@@ -59,11 +59,11 @@ public class StudentPreloadServiceImpl implements PreloadDataService<Student> {
             saveStudents(allStudents);
             processStatus.put(processId, "Completed");
 
-            log.info("Preloaded {} schedules into enrollment-service", allStudents.size());
+            log.info("Preloaded {} student into enrollment-service", allStudents.size());
         } catch (Exception e) {
             processStatus.put(processId, "Failed");
 
-            log.error("Failed to preload schedules: {}", e.getMessage());
+            log.error("Failed to preload student: {}", e.getMessage());
         }
     }
 

@@ -17,10 +17,12 @@ public class CacheConfig {
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
                 "groupById",
+                "groupsByIds",
                 "groupCurrentByKey",
-                "currentGroupsByObligatorySubjectId",
-                "currentGroupsByElectiveSubjectId",
-                "currentGroupsByTeacherId"
+                "groupsWithFilters",
+                "groupByTeacherId",
+                "currentGroups",
+                "currentGroupsByClassroomPrefix"
         );        cacheManager.setCaffeine(Caffeine.newBuilder()
                 .maximumSize(100)
                 .expireAfterAccess(1, TimeUnit.DAYS));

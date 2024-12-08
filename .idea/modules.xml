@@ -2,13 +2,14 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/academic_curriculum-service/arch_college_backend.academic_curriculum-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/academic_curriculum-service/arch_college_backend.academic_curriculum-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/common-classes/arch_college_backend.common-classes.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common-classes/arch_college_backend.common-classes.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/enrollment-service/arch_college_backend.enrollment-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/enrollment-service/arch_college_backend.enrollment-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/enrollment-service/arch_college_backend.enrollment-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/enrollment-service/arch_college_backend.enrollment-service.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/grade-service/arch_college_backend.grade-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/grade-service/arch_college_backend.grade-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/schedule-service/arch_college_backend.schedule-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/schedule-service/arch_college_backend.schedule-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/student-service/arch_college_backend.student-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/student-service/arch_college_backend.student-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/student-service/arch_college_backend.student-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/student-service/arch_college_backend.student-service.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/subject-service/arch_college_backend.subject-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/subject-service/arch_college_backend.subject-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/teacher-service/arch_college_backend.teacher-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/teacher-service/arch_college_backend.teacher-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/user-service/arch_college_backend.user-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/user-service/arch_college_backend.user-service.main.iml" />
     </modules>

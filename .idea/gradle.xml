@@ -8,6 +8,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/academic_curriculum-service" />
             <option value="$PROJECT_DIR$/admin-service" />
             <option value="$PROJECT_DIR$/common-classes" />
             <option value="$PROJECT_DIR$/config-server" />
@@ -17,7 +18,6 @@
             <option value="$PROJECT_DIR$/group-service" />
             <option value="$PROJECT_DIR$/schedule-service" />
             <option value="$PROJECT_DIR$/student-service" />
-            <option value="$PROJECT_DIR$/subject-service" />
             <option value="$PROJECT_DIR$/teacher-service" />
             <option value="$PROJECT_DIR$/user-service" />
           </set>

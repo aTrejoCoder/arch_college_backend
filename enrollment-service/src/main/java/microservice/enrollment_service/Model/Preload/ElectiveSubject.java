@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Document(collection = "elective_subject")
 public class ElectiveSubject  {
     @JsonProperty("id")
+    @Id
     private Long id;
 
     @JsonProperty("name")
@@ -26,6 +27,9 @@ public class ElectiveSubject  {
 
     @JsonProperty("area_id")
     private Long areaId;
+
+    @JsonProperty("credits")
+    private int credits;
 
     @JsonProperty("professional_line_id")
     private Long professionalLineId;

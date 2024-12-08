@@ -75,8 +75,8 @@ public class StudentFinderController {
                     @Parameter(name = "sortOrder", description = "Sort order, can be 'asc' or 'desc'", example = "asc", required = false)
             }
     )
-    @GetMapping("/all/sorted-by")
-    public ResponseEntity<ResponseWrapper<Page<StudentDTO>>> getAllStudentsSortedByFilterPageable(
+    @GetMapping("/all")
+    public ResponseEntity<ResponseWrapper<Page<StudentDTO>>> getAllStudentsSortedByFilter(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "filter", defaultValue = "SEMESTERS_COMPLETED") String filter,

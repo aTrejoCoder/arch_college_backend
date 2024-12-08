@@ -24,9 +24,8 @@ public class GradeInsertDTO {
     private int gradeValue;
 
     @JsonProperty("grade_status")
-    @Enumerated(EnumType.STRING)
     @NotNull(message = "grade_status can't be null")
-    private GradeStatus gradeStatus;
+    private String gradeStatus;
 
     @JsonProperty("subject_id")
     private Long subjectId;

@@ -29,7 +29,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().permitAll()
+                        .requestMatchers("/v1/api/groups/**").hasRole("ADMIN")
+                        .requestMatchers("/v1/api/finder/groups/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtSecurity, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(httpBasic ->

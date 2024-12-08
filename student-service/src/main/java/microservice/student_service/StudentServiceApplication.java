@@ -12,7 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {"microservice.student_service",
 		"microservice.common_classes.GlobalExceptions",
 		"microservice.common_classes.JWT",
-		"microservice.common_classes.FacadeService.Subject",
+		"microservice.common_classes.FacadeService.AcademicCurriculumService",
 		"microservice.common_classes.FacadeService.Grade"
 
 })

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 		"microservice.common_classes.GlobalExceptions",
 		"microservice.common_classes.JWT",
 		"microservice.common_classes.FacadeService.Group",
-		"microservice.common_classes.FacadeService.Subject",
+		"microservice.common_classes.FacadeService.AcademicCurriculumService",
 		"microservice.common_classes.FacadeService.Student",
 })
 public class GradeServiceApplication {

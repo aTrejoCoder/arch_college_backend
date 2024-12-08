@@ -8,9 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ObligatorySubjectDTO extends SubjectDTO {
-    @JsonProperty("number")
-    private int number;
-
     @JsonProperty("semester")
     private int semester;
 

@@ -2,7 +2,9 @@ package microservice.common_classes.FacadeService.Group;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import microservice.common_classes.DTOs.Grade.GradeDTO;
 import microservice.common_classes.DTOs.Group.GroupDTO;
+import microservice.common_classes.DTOs.Subject.SubjectSeriesDTO;
 import microservice.common_classes.Utils.CustomPage;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
 import microservice.common_classes.Utils.Response.Result;
@@ -103,8 +105,8 @@ public class GroupFacadeServiceImpl implements GroupFacadeService {
     }
 
     @Override
-    public CompletableFuture<Result<Void>> takeSpot(String groupKey) {
-        String groupUrl = groupServiceUrlProvider.get() + "/v1/api/groups/" + groupKey + "/decrease-spot";
+    public CompletableFuture<Result<Void>> takeSpot(Long groupId) {
+        String groupUrl = groupServiceUrlProvider.get() + "/v1/api/groups/" + groupId + "/decrease-spot";
         return CompletableFuture.supplyAsync(() -> {
             try {
                 ResponseEntity<ResponseWrapper<Void>> responseEntity = restTemplate.exchange(
@@ -116,24 +118,24 @@ public class GroupFacadeServiceImpl implements GroupFacadeService {
 
                  ResponseWrapper<Void> responseWrapper = Objects.requireNonNull(responseEntity.getBody());
                  if (!responseWrapper.isSuccess()) {
-                     log.info("takeSpot -> Spot for group with Key: {} can't be reduced", groupKey);
+                     log.info("takeSpot -> Spot for group with ID: {} can't be reduced", groupId);
                      return Result.error(responseWrapper.getMessage());
                  }
 
-                log.info("takeSpot -> Spot for group with Key: {} successfully reduced", groupKey);
+                log.info("takeSpot -> Spot for group with ID: {} successfully reduced", groupId);
                 return Result.success();
 
 
             } catch (Exception e) {
-                log.error("takeSpot ->  Error fetching reducing spot for group with Key {}: {}", groupKey, e.getMessage());
+                log.error("takeSpot ->  Error fetching reducing spot for group with ID {}: {}", groupId, e.getMessage());
                 throw new RuntimeException(e);
             }
         });
     }
 
     @Override
-    public CompletableFuture<Result<Void>> returnSpot(String groupKey) {
-        String groupUrl = groupServiceUrlProvider.get() + "/v1/api/groups/" + groupKey + "/increase-spot";
+    public CompletableFuture<Result<Void>> returnSpot(Long groupId) {
+        String groupUrl = groupServiceUrlProvider.get() + "/v1/api/groups/" + groupId + "/increase-spot";
 
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -148,7 +150,7 @@ public class GroupFacadeServiceImpl implements GroupFacadeService {
 
                 return Result.success();
             } catch (Exception e) {
-                log.error("reduceSpot ->  Error fetching increase spot for group with Key {}: {}", groupKey, e.getMessage());
+                log.error("reduceSpot ->  Error fetching increase spot for group with Key {}: {}", groupId, e.getMessage());
                 throw new RuntimeException(e);
             }
         });
@@ -182,8 +184,8 @@ public class GroupFacadeServiceImpl implements GroupFacadeService {
     }
 
     @Override
-    public CustomPage<GroupDTO> getGroupsPageable(int page, int size) {
-        String baseUrl = groupServiceUrlProvider.get() + "/v1/api/groups/current/pageable";
+    public CustomPage<GroupDTO> getCurrentGroups(int page, int size) {
+        String baseUrl = groupServiceUrlProvider.get() + "/v1/api/groups/current";
         String url = String.format("%s?page=%d&size=%d", baseUrl, page, size);
 
         HttpHeaders headers = createHeaders();

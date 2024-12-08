@@ -14,7 +14,7 @@ import java.util.UUID;
 */
 
 @RestController
-@RequestMapping("v1/api/subjects/")
+@RequestMapping("v1/api/subjects")
 public class SubjectPreLoadController {
 
     @Autowired

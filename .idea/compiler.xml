@@ -12,7 +12,7 @@
         <module name="arch_college_backend.common-classes.main" />
         <module name="arch_college_backend.user-service.test" />
         <module name="arch_college_backend.grade-service.test" />
-        <module name="arch_college_backend.subject-service.test" />
+        <module name="arch_college_backend.academic_curriculum-service.test" />
         <module name="arch_college_backend.enrollment-service.test" />
         <module name="arch_college_backend.common-classes.test" />
         <module name="arch_college_backend.student-service.test" />
@@ -24,9 +24,9 @@
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mapstruct/mapstruct-processor/1.5.5.Final/897f6f115930b936287bef552bf5fe28cc64717d/mapstruct-processor-1.5.5.Final.jar" />
         </processorPath>
         <module name="arch_college_backend.enrollment-service.main" />
+        <module name="arch_college_backend.academic_curriculum-service.main" />
         <module name="arch_college_backend.grade-service.main" />
         <module name="arch_college_backend.teacher-service.main" />
-        <module name="arch_college_backend.subject-service.main" />
         <module name="arch_college_backend.user-service.main" />
         <module name="arch_college_backend.student-service.main" />
         <module name="arch_college_backend.schedule-service.main" />

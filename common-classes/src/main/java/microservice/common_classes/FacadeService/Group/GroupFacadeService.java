@@ -11,8 +11,8 @@ public interface GroupFacadeService {
     CompletableFuture<Boolean> validateExisitingGroup(Long groupId);
     CompletableFuture<GroupDTO> getGroupById(Long groupId);
     CompletableFuture<GroupDTO> getCurrentGroupByKey(String groupKey);
-    CompletableFuture<Result<Void>> takeSpot(String groupKey);
-    CompletableFuture<Result<Void>> returnSpot(String groupKey);
+    CompletableFuture<Result<Void>> takeSpot(Long groupId);
+    CompletableFuture<Result<Void>> returnSpot(Long groupId);
     CompletableFuture<Result<List<GroupDTO>>> getGroupsByIds(List<Long> idList);
-    CustomPage<GroupDTO> getGroupsPageable(int page, int size);
+    CustomPage<GroupDTO> getCurrentGroups(int page, int size);
 }
