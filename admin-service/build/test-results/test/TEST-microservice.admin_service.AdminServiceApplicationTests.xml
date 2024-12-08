@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="microservice.admin_service.AdminServiceApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-11-22T00:04:29" hostname="Alexiss-MacBook-Air.local" time="0.533">
+  <properties/>
+  <testcase name="contextLoads()" classname="microservice.admin_service.AdminServiceApplicationTests" time="0.533"/>
+  <system-out><![CDATA[18:04:27.764 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [microservice.admin_service.AdminServiceApplicationTests]: AdminServiceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+18:04:27.825 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration microservice.admin_service.AdminServiceApplication for test class microservice.admin_service.AdminServiceApplicationTests
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.2)
+
+2024-11-21T18:04:28.303-06:00  INFO 80415 --- [    Test worker] c.c.c.ConfigServicePropertySourceLocator : Fetching config from server at : http://localhost:8888
+2024-11-21T18:04:28.397-06:00  INFO 80415 --- [    Test worker] c.c.c.ConfigServicePropertySourceLocator : Located environment: name=application, profiles=[default], label=null, version=null, state=null
+2024-11-21T18:04:28.398-06:00  INFO 80415 --- [    Test worker] b.c.PropertySourceBootstrapConfiguration : Located property source: [BootstrapPropertySource {name='bootstrapProperties-configClient'}]
+2024-11-21T18:04:28.408-06:00  INFO 80415 --- [    Test worker] m.a.AdminServiceApplicationTests         : No active profile set, falling back to 1 default profile: "default"
+2024-11-21T18:04:28.939-06:00  INFO 80415 --- [    Test worker] o.s.cloud.context.scope.GenericScope     : BeanFactory id=ac35b6c1-7139-3821-b066-52bf0b1ed48b
+2024-11-21T18:04:29.276-06:00  WARN 80415 --- [    Test worker] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2024-11-21T18:04:29.556-06:00  INFO 80415 --- [    Test worker] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2024-11-21T18:04:29.694-06:00 ERROR 80415 --- [    Test worker] i.n.r.d.DnsServerAddressStreamProviders  : Unable to load io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider, fallback to system defaults. This may result in incorrect DNS resolutions on MacOS. Check whether you have a dependency on 'io.netty:netty-resolver-dns-native-macos'. Use DEBUG level to see the full stack: java.lang.UnsatisfiedLinkError: failed to load the required native library
+2024-11-21T18:04:29.723-06:00  INFO 80415 --- [    Test worker] m.a.AdminServiceApplicationTests         : Started AdminServiceApplicationTests in 1.814 seconds (process running for 2.495)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

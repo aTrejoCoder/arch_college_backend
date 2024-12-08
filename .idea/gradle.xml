@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/academic_curriculum-service" />
+            <option value="$PROJECT_DIR$/admin-service" />
+            <option value="$PROJECT_DIR$/common-classes" />
+            <option value="$PROJECT_DIR$/config-server" />
+            <option value="$PROJECT_DIR$/enrollment-service" />
+            <option value="$PROJECT_DIR$/eureka-server" />
+            <option value="$PROJECT_DIR$/grade-service" />
+            <option value="$PROJECT_DIR$/group-service" />
+            <option value="$PROJECT_DIR$/schedule-service" />
+            <option value="$PROJECT_DIR$/student-service" />
+            <option value="$PROJECT_DIR$/teacher-service" />
+            <option value="$PROJECT_DIR$/user-service" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

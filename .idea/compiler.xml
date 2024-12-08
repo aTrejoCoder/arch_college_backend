@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.34/ec547ef414ab1d2c040118fb9c1c265ada63af14/lombok-1.18.34.jar" />
+        </processorPath>
+        <module name="arch_college_backend.teacher-service.test" />
+        <module name="arch_college_backend.schedule-service.test" />
+        <module name="arch_college_backend.common-classes.main" />
+        <module name="arch_college_backend.user-service.test" />
+        <module name="arch_college_backend.grade-service.test" />
+        <module name="arch_college_backend.academic_curriculum-service.test" />
+        <module name="arch_college_backend.enrollment-service.test" />
+        <module name="arch_college_backend.common-classes.test" />
+        <module name="arch_college_backend.student-service.test" />
+      </profile>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.34/ec547ef414ab1d2c040118fb9c1c265ada63af14/lombok-1.18.34.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mapstruct/mapstruct-processor/1.5.5.Final/897f6f115930b936287bef552bf5fe28cc64717d/mapstruct-processor-1.5.5.Final.jar" />
+        </processorPath>
+        <module name="arch_college_backend.enrollment-service.main" />
+        <module name="arch_college_backend.academic_curriculum-service.main" />
+        <module name="arch_college_backend.grade-service.main" />
+        <module name="arch_college_backend.teacher-service.main" />
+        <module name="arch_college_backend.user-service.main" />
+        <module name="arch_college_backend.student-service.main" />
+        <module name="arch_college_backend.schedule-service.main" />
+      </profile>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.34/ec547ef414ab1d2c040118fb9c1c265ada63af14/lombok-1.18.34.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mapstruct/mapstruct-processor/1.5.5.Final/897f6f115930b936287bef552bf5fe28cc64717d/mapstruct-processor-1.5.5.Final.jar" />
+        </processorPath>
+        <module name="arch_college_backend.enrollment-service.main" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="17">
+      <module name="backend.drugstore.address-service" target="21" />
+      <module name="backend.drugstore.address-service.main" target="21" />
+      <module name="backend.drugstore.address-service.test" target="21" />
+      <module name="backend.drugstore.admin-service" target="21" />
+      <module name="backend.drugstore.admin-service.main" target="21" />
+      <module name="backend.drugstore.admin-service.test" target="21" />
+      <module name="backend.drugstore.client-service" target="21" />
+      <module name="backend.drugstore.client-service.main" target="21" />
+      <module name="backend.drugstore.client-service.test" target="21" />
+      <module name="backend.drugstore.common-classes" target="21" />
+      <module name="backend.drugstore.common-classes.main" target="21" />
+      <module name="backend.drugstore.common-classes.test" target="21" />
+      <module name="backend.drugstore.config-server" target="21" />
+      <module name="backend.drugstore.config-server.main" target="21" />
+      <module name="backend.drugstore.config-server.test" target="21" />
+      <module name="backend.drugstore.ecommerce_cart-service" target="21" />
+      <module name="backend.drugstore.ecommerce_cart-service.main" target="21" />
+      <module name="backend.drugstore.ecommerce_cart-service.test" target="21" />
+      <module name="backend.drugstore.ecommerce_order-service" target="21" />
+      <module name="backend.drugstore.ecommerce_order-service.main" target="21" />
+      <module name="backend.drugstore.ecommerce_order-service.test" target="21" />
+      <module name="backend.drugstore.ecommerce_payment-service" target="21" />
+      <module name="backend.drugstore.ecommerce_payment-service.main" target="21" />
+      <module name="backend.drugstore.ecommerce_payment-service.test" target="21" />
+      <module name="backend.drugstore.ecommerce_sale-service" target="21" />
+      <module name="backend.drugstore.ecommerce_sale-service.main" target="21" />
+      <module name="backend.drugstore.ecommerce_sale-service.test" target="21" />
+      <module name="backend.drugstore.employee-service" target="21" />
+      <module name="backend.drugstore.employee-service.main" target="21" />
+      <module name="backend.drugstore.employee-service.test" target="21" />
+      <module name="backend.drugstore.eureka-server" target="21" />
+      <module name="backend.drugstore.eureka-server.main" target="21" />
+      <module name="backend.drugstore.eureka-server.test" target="21" />
+      <module name="backend.drugstore.inventory-service" target="21" />
+      <module name="backend.drugstore.inventory-service.main" target="21" />
+      <module name="backend.drugstore.inventory-service.test" target="21" />
+      <module name="backend.drugstore.product-service" target="21" />
+      <module name="backend.drugstore.product-service.main" target="21" />
+      <module name="backend.drugstore.product-service.test" target="21" />
+      <module name="backend.drugstore.sale-service" target="21" />
+      <module name="backend.drugstore.sale-service.main" target="21" />
+      <module name="backend.drugstore.sale-service.test" target="21" />
+      <module name="backend.drugstore.user-service" target="21" />
+      <module name="backend.drugstore.user-service.main" target="21" />
+      <module name="backend.drugstore.user-service.test" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
