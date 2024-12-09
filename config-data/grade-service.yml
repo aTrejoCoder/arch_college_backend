@@ -15,7 +15,8 @@ spring:
   boot:
     admin:
       client:
-        url: http://localhost:8081
+        url: http://localhost:8080
+
 
   datasource:
     url: jdbc:postgresql://localhost:5432/architecture_college_grades_db
@@ -59,14 +60,3 @@ springdoc:
 
 server:
   port: 8089
-
-
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: DEBUG
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE

@@ -5,7 +5,7 @@ spring:
   boot:
     admin:
       client:
-        url: http://localhost:8081
+        url: http://localhost:8080
 
   datasource:
     url: jdbc:postgresql://localhost:5432/architecture_college_schedule_db
