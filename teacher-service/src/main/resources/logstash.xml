@@ -7,17 +7,17 @@
         </encoder>
     </appender>
 
-    <!-- Appender for academic_curriculum-service -->
-    <appender name="ACADEMIC_FILE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/academic_curriculum-service.log</file>
+    <!-- Appender for teacher-service -->
+    <appender name="TEACHER_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/teacher-service.log</file>
         <encoder>
             <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- Logger for academic_curriculum-service -->
-    <logger name="microservice.academic_curriculum_service" level="info">
-        <appender-ref ref="ACADEMIC_FILE" />
+    <!-- Logger for teacher-service -->
+    <logger name="microservice.teacher_service" level="info">
+        <appender-ref ref="TEACHER_FILE" />
     </logger>
 
     <!-- Root logger configuration -->

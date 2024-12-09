@@ -8,16 +8,16 @@
     </appender>
 
     <!-- Appender for academic_curriculum-service -->
-    <appender name="ACADEMIC_FILE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/academic_curriculum-service.log</file>
+    <appender name="GRADE_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/grade-service.log</file>
         <encoder>
             <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%M - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- Logger for academic_curriculum-service -->
-    <logger name="microservice.academic_curriculum_service" level="info">
-        <appender-ref ref="ACADEMIC_FILE" />
+    <!-- Logger for grade-service -->
+    <logger name="microservice.grade_service" level="info">
+        <appender-ref ref="GRADE_FILE"/>
     </logger>
 
     <!-- Root logger configuration -->

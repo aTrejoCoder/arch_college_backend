@@ -50,6 +50,12 @@ eureka:
     lease-renewal-interval-in-seconds: 10
     lease-expiration-duration-in-seconds: 30
 
+logging:
+  level:
+    com.netflix.discovery: WARN
+    com.netflix.eureka: WARN
+    org.mongodb.driver: WARN
+
 springdoc:
   api-docs:
     path: /v3/api-docs

@@ -38,7 +38,6 @@ public class UserServiceImpl implements UserService {
     private final StudentFacadeService studentFacadeService;
     private final TeacherFacadeService teacherFacadeService;
 
-
     @Autowired
     public UserServiceImpl(UserMapper userMapper,
                            UserRepository userRepository,
