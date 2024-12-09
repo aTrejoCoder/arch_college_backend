@@ -1,6 +1,6 @@
 package microservice.grade_service.Service;
 
-import microservice.grade_service.DTOs.GradeDTO;
+import microservice.common_classes.DTOs.Grade.GradeDTO;
 import microservice.common_classes.Utils.Response.Result;
 import microservice.grade_service.Utils.Credits.GradeFinderFilter;
 import org.springframework.data.domain.Page;

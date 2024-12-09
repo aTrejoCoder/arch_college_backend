@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import microservice.common_classes.DTOs.Carrer.CareerDTO;
 import microservice.common_classes.DTOs.Student.StudentDTO;
+import microservice.common_classes.Utils.Grades.GradeResult;
 import microservice.common_classes.Utils.Grades.GradeType;
 import microservice.common_classes.Utils.Response.Result;
 import microservice.grade_service.Mappers.GradeMapper;
@@ -44,7 +45,7 @@ public class AcademicHistoryServiceImpl implements AcademicHistoryService {
 
         addGrade(grade, academicHistory.getGrades());
 
-        if (grade.getGradeResult() == Grade.GradeResult.APPROVED && grade.getGradeType() == GradeType.CREDITABLE) {
+        if (grade.getGradeResult() == GradeResult.APPROVED && grade.getGradeType() == GradeType.CREDITABLE) {
             updateCreditData(academicHistory,  grade.getSubject().getSubjectCredits());
             academicHistory.reCalculatePercentages();
         }

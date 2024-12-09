@@ -2,9 +2,7 @@ package microservice.common_classes.FacadeService.Group;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import microservice.common_classes.DTOs.Grade.GradeDTO;
 import microservice.common_classes.DTOs.Group.GroupDTO;
-import microservice.common_classes.DTOs.Subject.SubjectSeriesDTO;
 import microservice.common_classes.Utils.CustomPage;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
 import microservice.common_classes.Utils.Response.Result;

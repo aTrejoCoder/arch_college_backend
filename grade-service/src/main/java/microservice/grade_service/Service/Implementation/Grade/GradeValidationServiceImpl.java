@@ -2,10 +2,10 @@ package microservice.grade_service.Service.Implementation.Grade;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import microservice.common_classes.Utils.Grades.GradeStatus;
 import microservice.common_classes.Utils.Response.Result;
 import microservice.grade_service.Model.Grade;
 import microservice.grade_service.Repository.GradeRepository;
-import microservice.grade_service.Repository.GroupRepository;
 import microservice.grade_service.Service.AcademicHistoryService;
 import microservice.grade_service.Service.GradeValidationService;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class GradeValidationServiceImpl implements GradeValidationService {
         Grade grade = gradeRepository.findById(gradeId)
                 .orElseThrow(() -> new EntityNotFoundException("Grade with ID " + gradeId + " not found"));;
 
-        if (grade.getGradeStatus() == Grade.GradeStatus.VALIDATED || grade.getGradeStatus() == Grade.GradeStatus.NOT_VALID) {
+        if (grade.getGradeStatus() == GradeStatus.VALIDATED || grade.getGradeStatus() == GradeStatus.NOT_VALID) {
             return Result.error("Grade Already Authorized");
         }
 

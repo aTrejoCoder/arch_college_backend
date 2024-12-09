@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import microservice.common_classes.JWT.JWTSecurity;
 import microservice.common_classes.Utils.Response.ResponseWrapper;
-import microservice.grade_service.DTOs.GradeDTO;
+import microservice.common_classes.DTOs.Grade.GradeDTO;
 import microservice.grade_service.Model.AcademicHistory;
 import microservice.grade_service.Service.AcademicHistoryService;
 import microservice.grade_service.Service.GradeFinderService;

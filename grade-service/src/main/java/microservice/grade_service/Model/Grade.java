@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import microservice.common_classes.Utils.Grades.GradeResult;
+import microservice.common_classes.Utils.Grades.GradeStatus;
 import microservice.common_classes.Utils.Grades.GradeType;
 
 import java.time.LocalDateTime;
@@ -60,19 +62,6 @@ public class Grade {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
-
-    public enum GradeStatus {
-        PENDING_RESULT,
-        PENDING_VALIDATION,
-        VALIDATED,
-        NOT_VALID;
-    }
-
-    public enum GradeResult {
-        APPROVED,
-        NOT_APPROVED,
-        NOT_PRESENTED;
-    }
 
     public void setInitialValues(GradeType gradeType) {
         this.gradeStatus = GradeStatus.PENDING_RESULT;

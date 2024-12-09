@@ -21,7 +21,6 @@ public class GradeCommandController {
     private final GradeCommandService gradeCommandService;
     private final GradeValidationService gradeValidationService;
 
-
     @Operation(summary = "Authorize an exisiting grade and after validation this grades is part of student grades", description = "Validate an exisiting grade")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Grade successfully created"),

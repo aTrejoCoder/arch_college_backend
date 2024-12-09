@@ -1,7 +1,7 @@
 package microservice.grade_service.Mappers;
 
 import microservice.common_classes.DTOs.Enrollment.EnrollmentDTO;
-import microservice.grade_service.DTOs.GradeDTO;
+import microservice.common_classes.DTOs.Grade.GradeDTO;
 import microservice.grade_service.DTOs.GradeInsertDTO;
 import microservice.grade_service.Model.Grade;
 import microservice.grade_service.Utils.GradeTrack;

@@ -3,7 +3,8 @@ package microservice.grade_service.Service.Implementation.Grade;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import microservice.grade_service.DTOs.GradeDTO;
+import microservice.common_classes.DTOs.Grade.GradeDTO;
+import microservice.common_classes.Utils.Grades.GradeStatus;
 import microservice.common_classes.Utils.Response.Result;
 import microservice.common_classes.Utils.Schedule.AcademicData;
 import microservice.grade_service.Mappers.GradeMapper;
@@ -42,7 +43,7 @@ public class GradeFinderServiceImpl implements GradeFinderService {
 
     @Override
     public Page<GradeDTO> getPendingValidationGrades(Pageable pageable) {
-        Page<Grade> gradePage = gradeRepository.findByGradeStatus(Grade.GradeStatus.PENDING_VALIDATION, pageable);
+        Page<Grade> gradePage = gradeRepository.findByGradeStatus(GradeStatus.PENDING_VALIDATION, pageable);
 
         return gradePage.map(gradeMapper::entityToDTO);
     }

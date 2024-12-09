@@ -2,9 +2,10 @@ package microservice.grade_service.Mappers;
 
 import javax.annotation.processing.Generated;
 import microservice.common_classes.DTOs.Enrollment.EnrollmentDTO;
+import microservice.common_classes.DTOs.Grade.GradeDTO;
+import microservice.common_classes.Utils.Grades.GradeStatus;
 import microservice.common_classes.Utils.Group.GroupType;
 import microservice.common_classes.Utils.SubjectType;
-import microservice.grade_service.DTOs.GradeDTO;
 import microservice.grade_service.DTOs.GradeInsertDTO;
 import microservice.grade_service.Model.Grade;
 import microservice.grade_service.Model.Group;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-12-07T16:33:03-0600",
+    date = "2024-12-08T17:59:58-0600",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.9.jar, environment: Java 17.0.11 (Amazon.com Inc.)"
 )
 @Component
@@ -31,7 +32,7 @@ public class GradeMapperImpl implements GradeMapper {
         grade.gradeValue( gradeInsertDTO.getGradeValue() );
         grade.studentAccountNumber( gradeInsertDTO.getStudentAccountNumber() );
         if ( gradeInsertDTO.getGradeStatus() != null ) {
-            grade.gradeStatus( Enum.valueOf( Grade.GradeStatus.class, gradeInsertDTO.getGradeStatus() ) );
+            grade.gradeStatus( Enum.valueOf( GradeStatus.class, gradeInsertDTO.getGradeStatus() ) );
         }
 
         return grade.build();

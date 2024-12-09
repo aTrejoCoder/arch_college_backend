@@ -1,60 +1,29 @@
 package microservice.common_classes.DTOs.Grade;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import microservice.common_classes.DTOs.Group.GroupDTO;
-import microservice.common_classes.DTOs.Student.StudentDTO;
-import microservice.common_classes.DTOs.Subject.ElectiveSubjectDTO;
-import microservice.common_classes.DTOs.Subject.OrdinarySubjectDTO;
-import microservice.common_classes.Utils.Grades.GradeStatus;
-import microservice.common_classes.Utils.Grades.GradeType;
-import microservice.common_classes.Utils.SubjectType;
 
-import java.time.LocalDateTime;
+import microservice.common_classes.Utils.Grades.GradeResult;
+import microservice.common_classes.Utils.Grades.GradeStatus;
+
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class GradeDTO {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @JsonProperty("grade_value")
-    private Integer gradeValue;
-
-    @JsonProperty("student_account_number")
+    @Column(name = "student_account_number", nullable = false)
     private String studentAccountNumber;
 
-    @JsonProperty("grade_type")
+    @Column(name = "grade_value")
+    private Integer gradeValue;
+
+    @Column(name = "grade_result")
     @Enumerated(EnumType.STRING)
-    private GradeType gradeType;
+    private GradeResult gradeResult;
 
-    @JsonProperty("grade_result")
-    private String gradeResult;
-
-    @JsonProperty("school_period")
-    private String schoolPeriod;
-
-    @JsonProperty("group_id")
-    private Long groupId;
-
-    @JsonProperty("subject_id")
-    private Long subjectId;
-
-    @JsonProperty("grade_status")
-    private String gradeStatus;
-
-    @JsonProperty("created_at")
-    private LocalDateTime createdAt;
-
-    @JsonProperty("updated_at")
-    private LocalDateTime updatedAt;
-
-    @JsonProperty("authorized_at")
-    private LocalDateTime authorizedAt;
-
-    @JsonProperty("deleted_at")
-    private LocalDateTime deletedAt;
+    @Column(name = "grade_status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private GradeStatus gradeStatus;
 }

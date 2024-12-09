@@ -2,7 +2,6 @@ package microservice.enrollment_service.Service.Implementation.Preload;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import microservice.common_classes.DTOs.Grade.GradeDTO;
 import microservice.common_classes.FacadeService.Grade.GradeFacadeService;
 import microservice.common_classes.Utils.CustomPage;
 import microservice.enrollment_service.Mappers.GradeMapper;

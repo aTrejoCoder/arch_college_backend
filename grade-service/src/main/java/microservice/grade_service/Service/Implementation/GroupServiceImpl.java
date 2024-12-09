@@ -32,14 +32,15 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class GroupServiceImpl implements GroupService {
+
     private final GroupRepository groupRepository;
-    private final SubjectRepository subjectRepository;
     private final GroupMapper groupMapper;
     private final GradeRepository gradeRepository;
     private final AcademicHistoryService academicHistoryService;
 
     @Override
     public Group createGroupFromEnrollment(GroupEnrollmentDTO groupEnrollmentDTO, Subject subject) {
+        log.info("Creating group from enrollment: GroupId={}, SubjectId={}", groupEnrollmentDTO.getGroupId(), subject.getSubjectId());
         Group group = new Group();
         group.setGroupId(groupEnrollmentDTO.getGroupId());
         group.setGroupType(groupEnrollmentDTO.getGroupType());
@@ -47,28 +48,31 @@ public class GroupServiceImpl implements GroupService {
         group.setSubject(subject);
 
         groupRepository.saveAndFlush(group);
-
+        log.info("Group created successfully: {}", group);
         return group;
     }
 
     @Override
     public Result<GroupDTO> getGroupById(Long groupId) {
+        log.info("Fetching group by ID: {}", groupId);
         Optional<Group> optionalGroup = groupRepository.findById(groupId);
-        return optionalGroup.map(group -> Result.success(groupMapper.entityToDTO(group)))
-                .orElseGet(() -> Result.error("Group with ID " + groupId + " not found"));
+        return optionalGroup.map(group -> {
+            log.info("Group found: {}", group);
+            return Result.success(groupMapper.entityToDTO(group));
+        }).orElseGet(() -> {
+            return Result.error("Group with ID " + groupId + " not found");
+        });
     }
 
     @Override
     public Page<GroupDTO> getPendingGroups(Pageable pageable) {
         Page<Group> groupPage = groupRepository.findByIsGroupQualifiedFalse(pageable);
-
         return groupPage.map(groupMapper::entityToDTO);
     }
 
     @Override
     public List<GroupDTO> getTeacherGroupsPendingToBeQualified(String teacherAccountNumber) {
-        List<Group> groups  = groupRepository.findByHeadTeacherAccountNumberAndIsGroupQualifiedFalse(teacherAccountNumber);
-
+        List<Group> groups = groupRepository.findByHeadTeacherAccountNumberAndIsGroupQualifiedFalse(teacherAccountNumber);
         return groups.stream().map(groupMapper::entityToDTO).toList();
     }
 
@@ -77,17 +81,17 @@ public class GroupServiceImpl implements GroupService {
         List<Group> groups = groupRepository.findByHeadTeacherAccountNumberAndIsGroupQualifiedTrue(teacherAccountNumber)
                 .stream()
                 .sorted(Comparator.comparing(Group::getQualifiedAt))
-                .toList();;
-
+                .toList();
         return groups.stream().map(groupMapper::entityToDTO).toList();
     }
 
     @Override
     public Result<Void> validateGroupQualification(TeacherQualificationDTO teacherQualificationDTO, String teacherAccountNumber) {
         Group group = groupRepository.findByHeadTeacherAccountNumberAndGroupId(teacherAccountNumber, teacherQualificationDTO.getGroupId())
-                .orElseThrow(() -> new EntityNotFoundException("Group with Head Teacher ("+ teacherAccountNumber +") Not Found"));
+                .orElseThrow(() -> new EntityNotFoundException("Group with Head Teacher (" + teacherAccountNumber + ") Not Found"));
 
         if (group.isGroupQualified()) {
+            log.warn("Group already qualified: {}", group);
             return Result.error("Group Already Qualified");
         }
 
@@ -117,18 +121,17 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 
-
     @Override
     public void addGroupQualifications(TeacherQualificationDTO teacherQualificationDTO, String teacherAccountNumber) {
+        log.info("Adding qualifications to group: GroupId={}, TeacherAccountNumber={}", teacherQualificationDTO.getGroupId(), teacherAccountNumber);
         Group group = groupRepository.findByHeadTeacherAccountNumberAndGroupId(teacherAccountNumber, teacherQualificationDTO.getGroupId())
                 .orElseThrow(() -> new EntityNotFoundException("Group Not Found"));
 
         Map<String, GradeValues> studentGradeValues = teacherQualificationDTO.getStudentGradeMap();
-
         List<Grade> grades = group.getGrades();
+
         grades.forEach(grade -> {
             GradeValues gradeValue = studentGradeValues.get(grade.getStudentAccountNumber());
-
             if (gradeValue == GradeValues.NO_PRESENT) {
                 grade.setAsNotPresent();
             } else {
@@ -137,10 +140,10 @@ public class GroupServiceImpl implements GroupService {
         });
 
         gradeRepository.saveAll(grades);
-
         group.setGroupQualified(true);
         group.setQualifiedAt(LocalDateTime.now());
         groupRepository.save(group);
+        log.info("Group qualifications added successfully");
     }
 
     @Override
@@ -151,8 +154,8 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new EntityNotFoundException("Group Not Found"));
         Hibernate.initialize(group.getGrades());
 
-
         group.getGrades().forEach(academicHistoryService::setGradeToAcademicHistory);
+        log.info("addGradesToAcademicHistoryAsync -> Grades added to academic history for group: GroupId={}", groupId);
     }
 
     @Override
@@ -165,12 +168,11 @@ public class GroupServiceImpl implements GroupService {
         }
 
         group.getGrades().forEach(Grade::setAsNotRated);
-
         group.setGroupQualified(false);
         group.setQualifiedAt(null);
 
         groupRepository.save(group);
         gradeRepository.saveAll(group.getGrades());
+        log.info("undoGroupQualifications --> Qualifications for group: GroupId={}, TeacherAccountNumber={} successfully undo it", groupId, teacherAccountNumber);
     }
-
 }

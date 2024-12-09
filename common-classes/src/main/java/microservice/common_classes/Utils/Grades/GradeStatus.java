@@ -1,7 +1,8 @@
 package microservice.common_classes.Utils.Grades;
 
 public enum GradeStatus {
-    NOT_PRESENT,
-    NOT_ACCREDITED,
-    ACCREDITED
+    PENDING_RESULT,
+    PENDING_VALIDATION,
+    VALIDATED,
+    NOT_VALID;
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import microservice.common_classes.DTOs.Grade.GradeDTO;
 import microservice.common_classes.Utils.Group.GroupType;
 
 import java.util.List;
