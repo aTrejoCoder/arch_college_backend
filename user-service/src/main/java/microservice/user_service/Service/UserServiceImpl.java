@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
 
         addRole(user, roleName);
 
+        log.info("User successfully created for user with account number [{}]", user.getUsername());
         return userMapper.entityToDTO(user);
     }
 

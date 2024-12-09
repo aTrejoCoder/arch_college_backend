@@ -29,7 +29,9 @@ public class AuthController {
     }
 
     @PostMapping("/signup/student")
-    public ResponseEntity<ResponseWrapper<String>> signupStudent(@Valid @RequestBody SignupDTO signupDTO){
+    public ResponseEntity<ResponseWrapper<String>> signupStudent(@Valid @RequestBody SignupDTO signupDTO) {
+        log.info("Requesting user creation for student accountNumber: [{}] ", signupDTO.getAccountNumber());
+
         Result<Void> validateStudentResult = authService.validateStudent(signupDTO.getAccountNumber());
         if (!validateStudentResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(validateStudentResult.getErrorMessage()));
@@ -50,7 +52,8 @@ public class AuthController {
         userService.addMemberRelationAsync(userDTO.getUsername());
 
         String jwtToken = authService.getJWTToken(userDTO);
-        log.info("signupStudent -> student with accountNumber {} successfully singed up", signupDTO.getAccountNumber());
+
+        log.info("Student with accountNumber [{}] successfully singed up", signupDTO.getAccountNumber());
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseWrapper.created(jwtToken, "User"));
     }
 
@@ -71,13 +74,15 @@ public class AuthController {
         userService.addMemberRelationAsync(userDTO.getUsername());
 
         String jwtToken = authService.getJWTToken(userDTO);
-        log.info("signupAdmin -> student with accountNumber {} successfully singed up", signupDTO.getAccountNumber());
+        log.info("Admin with username [{}] successfully singed up", signupDTO.getAccountNumber());
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseWrapper.created(jwtToken, "User"));
     }
 
 
     @PostMapping("/signup/teacher")
     public ResponseEntity<ResponseWrapper<String>> signupTeacher(@Valid @RequestBody SignupDTO signupDTO){
+        log.info("Requesting user creation for teacher accountNumber: [{}] ", signupDTO.getAccountNumber());
+
         Result<Void> validateStudentResult = authService.validateTeacher(signupDTO.getAccountNumber());
         if (!validateStudentResult.isSuccess()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseWrapper.badRequest(validateStudentResult.getErrorMessage()));
@@ -97,6 +102,8 @@ public class AuthController {
         userService.addMemberRelationAsync(userDTO.getUsername());
 
         String jwtToken = authService.getJWTToken(userDTO);
+
+        log.info("Teacher with accountNumber [{}] successfully singed up", signupDTO.getAccountNumber());
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseWrapper.created(jwtToken, "User"));
     }
 
